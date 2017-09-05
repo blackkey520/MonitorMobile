@@ -1,0 +1,5 @@
+<resources>
+
+    <string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">huRHyf8y3MrIMaSrHxHPHlwhoBdw498f8bad-1845-470a-ae04-6807b96fecad</string>
+    <string name="app_name">环境监控系统</string>
+</resources>

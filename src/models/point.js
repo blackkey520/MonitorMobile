@@ -1,0 +1,104 @@
+import { createAction, NavigationActions,ShowToast} from '../utils'
+import {ShowResult} from '../utils'
+import * as pointService from '../services/pointService'
+import { getNetConfig } from '../logics/rpc';
+
+  import dateFormat from 'dateformat'
+export default {
+  namespace: 'point',
+  state: {
+    fetching: false,
+    result:[],
+    selectedpoint:null,
+    pollutantType:'',
+    monitordata:[],
+    collectpointlist:[],
+  },
+  reducers: {
+    fetchStart(state, { payload }) {
+      return { ...state, ...payload, fetching: true }
+    },
+    fetchEnd(state, { payload }) {
+      return { ...state, ...payload, fetching: false }
+    },
+    updateState(state, { payload }) {
+      return { ...state, ...payload }
+    }
+  },
+  effects: {
+       *collectpoint({ payload: {dgimn,callback} }, { call, put ,select}){
+        const state = yield select(state => state.point);
+        result = yield call(pointService.collectpoint,
+           {dgimn:state.selectedpoint.Point.Dgimn,polutantType:state.pollutantType})
+        let newselectedpoint=state.selectedpoint;
+        if(result.data!=null)
+        {
+          if(result.data==1)
+          {
+            ShowResult(true,'关注成功');
+            newselectedpoint.Point.CollectStatus=1;
+          }else{
+            ShowResult(true,'取消关注成功');
+            newselectedpoint.Point.CollectStatus=0;
+          }
+          callback(result.data);
+        }
+        yield put(createAction('updateState')({ selectedpoint:newselectedpoint}))
+      },
+      *uploadimage({ payload: {image,dgimn,callback} }, { call, put ,select}){
+        let result=null;
+        const state = yield select(state => state.alarm);
+        result = yield call(pointService.uploadimage,{img:image.data,FileType:'.'+image.fileName.split('.')[1].toLowerCase(),code:dgimn})
+         yield put({ type: 'selectpoint', payload: { dgimn: dgimn } });
+         callback();
+      },
+      *selectpoint({ payload: {dgimn} }, { call, put ,select}){
+        let now = new Date();
+        let result=null;
+        const state = yield select(state => state.point);
+        yield put(createAction('fetchStart')());
+        result = yield call(pointService.selectsinglepoint,
+           {dgimn:dgimn,fileLength:50000,width:300})
+        let netconfig=getNetConfig();
+
+        let img=[],lowimg=[],thumbimg=[];
+        let newresult=state.result;
+        if(result.data.ImgList!='')
+        {
+          let imgList=result.data.ImgList.split(',');
+          let lowimgList=result.data.LowimgList.split(',');
+          let thumbimgList=result.data.ThumbimgList.split(',');
+          imgList.map((item,key)=>{
+            img.push(netconfig.neturl+'/upload/'+imgList[key]);
+            lowimg.push(netconfig.neturl+'/upload/'+lowimgList[key]);
+            thumbimg.push(netconfig.neturl+'/upload/'+thumbimgList[key]);
+          });
+        }
+        result.data.img=img;
+        result.data.lowimg=lowimg;
+        result.data.thumbimg=thumbimg;
+        let pollutant=result.data.PollutantTypeInfo[0]
+        yield put(createAction('fetchEnd')({ selectedpoint:result.data}))
+        yield put({type: 'monitordata/searchdata',payload: {dgimn:dgimn,startDate:dateFormat(now,"yyyy-mm-dd"),
+        endDate:dateFormat(now.setDate(now.getDate() + 1),"yyyy-mm-dd"),pollutant:pollutant,dataType:'realtime'}})
+      },
+      *fetchmore({ payload: {pollutantType} }, { call, put ,select}) {
+        let result=null;
+        const state = yield select(state => state.point);
+        yield put(createAction('fetchStart')({pollutantType:pollutantType,result:[]}))
+        result = yield call(pointService.fetchlist,
+           {pollutantType:pollutantType,pageIndex:1,pageSize:10000})
+        newresult=result.data;
+        yield put(createAction('fetchEnd')({ result:newresult}))
+      },
+      *loadcollectpointlist({ payload: {pollutantType} }, { call, put ,select}) {
+        let result=null;
+        const state = yield select(state => state.point);
+        yield put(createAction('fetchStart')({pollutantType:pollutantType}))
+        result = yield call(pointService.getcollectpointlist,
+           {pageIndex:1,pageSize:10000})
+        newresult=result.data;
+        yield put(createAction('fetchEnd')({ collectpointlist:newresult}))
+      },
+  },
+}

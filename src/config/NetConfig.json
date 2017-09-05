@@ -1,0 +1,12 @@
+[
+  {
+    "configName":"内网",
+    "configIp":"172.16.12.152",
+    "configPort":"8013"
+  },
+  {
+    "configName":"外网",
+    "configIp":"61.50.135.114",
+    "configPort":"8013"
+  }
+]

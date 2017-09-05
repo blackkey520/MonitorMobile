@@ -1,0 +1,6 @@
+[
+  {"ID":"1","ReasonType":"设备故障","EstimatedTime":"100"},
+  {"ID":"2","ReasonType":"突发性环境污染","EstimatedTime":"200"},
+  {"ID":"3","ReasonType":"区域性环境污染","EstimatedTime":"300"},
+  {"ID":"4","ReasonType":"其他原因","EstimatedTime":"400"}
+]

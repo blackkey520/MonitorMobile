@@ -1,0 +1,12 @@
+[
+  {
+    "pointMenuID":"0",
+    "pointMenuName":"详细信息",
+    "pointMenuIcon":"png"
+  },
+  {
+    "pointMenuID":"1",
+    "pointMenuName":"监控数据",
+    "pointMenuIcon":"png"
+  }
+]

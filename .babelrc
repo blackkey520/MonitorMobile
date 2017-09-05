@@ -1,0 +1,8 @@
+{
+  "presets": ["react-native"],
+  "plugins": [
+    "syntax-decorators",
+    "transform-decorators-legacy",
+    ["import", { "libraryName": "antd-mobile" }]
+  ]
+}
