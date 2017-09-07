@@ -101,10 +101,13 @@ class Login extends PureComponent {
   };
   componentDidMount() {
        // 在收到点击事件之前调用此接口
-       JPushModule.notifyJSDidLoad((resultCode) => {
-           if (resultCode === 0) {
-           }
-       });
+       if(Platform.OS === 'android')
+       {
+         JPushModule.notifyJSDidLoad((resultCode) => {
+             if (resultCode === 0) {
+             }
+         });
+       }
        JPushModule.addReceiveNotificationListener((map) => {
           //  console.log("alertContent: " + map.alertContent);
           //  console.log("extras: " + map.extras);
@@ -114,7 +117,7 @@ class Login extends PureComponent {
        JPushModule.addReceiveCustomMsgListener((map) => {
           console.log("message: " + map.message);
        });
-       JPushModule.setStyleCustom();
+      //  JPushModule.setStyleCustom();
        JPushModule.addReceiveOpenNotificationListener((map) => {
            console.log("Opening notification!");
            console.log("map.extra: " + map.key);
@@ -126,7 +129,10 @@ class Login extends PureComponent {
      		JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
      		JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
      		console.log("Will clear all notifications");
-     		JPushModule.clearAllNotifications();
+        if(Platform.OS === 'android')
+        {
+     		   JPushModule.clearAllNotifications();
+        }
      	}
     // 组件渲染方法
   render() {
