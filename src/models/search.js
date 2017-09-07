@@ -38,7 +38,7 @@ export default {
       *associate({ payload: { searchText }},{call,put,select}){
         let result=[];
         const state = yield select(state => state.point);
-        yield put(createAction('fetchStart')())
+        yield put(createAction('fetchStart')({searchscene:'associate'}))
         result = yield call(searchService.associatefetch,
            {text:searchText})
         yield put(createAction('fetchEnd')({ associateresult:result}))
@@ -46,7 +46,7 @@ export default {
       *search({ payload: { current,searchText} }, { call, put ,select}) {
         let result=[];
         const state = yield select(state => state.point);
-        yield put(createAction('fetchStart')())
+        yield put(createAction('fetchStart')({searchscene:'result'}))
         result = yield call(searchService.searchfetch,
            {text:searchText})
          yield call(searchService.savesearchtext,

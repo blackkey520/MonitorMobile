@@ -99,15 +99,9 @@ class ResultCompontent extends PureComponent {
            targetCode:otherArray[0],
            baseType:rowData.Type
          }));
-         this.props.dispatch(NavigationActions.navigate({
-           routeName: 'Target',params:{targettype:rowData.Type,targetcode:otherArray[0]}
-         }));
        }else{
          this.props.dispatch(createAction('point/selectpoint')({
            dgimn:otherArray[5]
-         }));
-         this.props.dispatch(NavigationActions.navigate({
-           routeName: 'MonitorPoint',params:{dgimn:otherArray[5]}
          }));
        }
      }} style={{width:SCREEN_WIDTH-16,backgroundColor:'white',marginTop:5,marginLeft:8,borderRadius:5,flexDirection:'row',alignItems: 'center',justifyContent: 'space-between',}}>

@@ -8,7 +8,8 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  Image
+  Image,
+  Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
@@ -17,15 +18,13 @@ import ListCompontent from '../../components/Home/ListComponent'
 import { Badge } from 'antd-mobile';
 import { connect } from 'dva'
 import { createAction, NavigationActions } from '../../utils'
-import { loadStorage,saveStorage} from '../../logics/rpc';
 import LoadingComponent from '../../components/Common/LoadingComponent'
 import CustomTabBar from '../../components/Common/CustomTabBar'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-import dateFormat from 'dateformat'
-  const now = new Date();
+import moment from 'moment'
 
-@connect(({ point,alarm }) => ({ fetching:point.fetching,unverifiedCount:alarm.unverifiedCount}))
+@connect(({ point,alarm }) => ({ fetching:point.fetching,unverifiedCount:alarm.unverifiedCount,legend:point.legend}))
 class Home extends Component {
 
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -44,6 +43,10 @@ class Home extends Component {
       headerRight: (
         <View style={{flexDirection:'row',alignItems: 'center',justifyContent: 'space-around',width:110}}>
           <TouchableOpacity style={{width:27}} onPress ={()=>{
+            navigation.dispatch(createAction('alarm/loadawaitchecklist')({
+              isfirst:true,
+              time:moment().format('YYYY-MM-DD')
+            }));
             navigation.dispatch(NavigationActions.navigate({ routeName: 'Alarm' }))
           }}>
             <View style={{flexDirection:'row'}}>
@@ -58,54 +61,40 @@ class Home extends Component {
             navigation.setParams({ mode: navigation.state.params.mode === 'map' ? 'grid' : 'map' })
           }}>
             {navigation.state.params.mode === 'map' ?
-            // <Icon name="ios-map-outline" size={30} color="#fff" />
             <Image source={require('../../images/maphead.png')} style={{height:20,width:20}}/>
             :
-            // <Icon name="ios-list-box-outline" size={30} color="#fff" />
             <Image source={require('../../images/listhead.png')} style={{height:20,width:20}}/>
           }
           </TouchableOpacity>
           <TouchableOpacity onPress ={()=>{
             navigation.dispatch(NavigationActions.navigate({ routeName: 'Search' }))
           }}>
-            {/* <Icon name="ios-search" size={30} color="#fff" /> */}
             <Image source={require('../../images/searchhead.png')} style={{height:20,width:20}}/>
           </TouchableOpacity>
 
         </View>
       )
   });
-  constructor(props) {
-    super(props);
 
-    this.state = {
-      pollutanttype:null
-    };
-  }
-  async componentWillMount() {
-    let pollutanttype=await loadStorage('PollutantType');
-    // pollutanttype=[{ID:6,Name:'水质'},{ID:1,Name:'废水'}];
-    this.setState({
-      pollutanttype:pollutanttype
-    });
-    this.props.dispatch(createAction('point/fetchmore')({
-        pollutantType:this.state.pollutanttype[0].ID
-    }));
-    this.props.dispatch(createAction('alarm/loadawaitchecklist')({
-      isfirst:true,
-        time:dateFormat(now,"yyyy-mm-dd")
-    }));
-  }
   _handleChangeTab=({i, ref, from })=>{
     this.props.dispatch(createAction('point/fetchmore')({
-        pollutantType:this.state.pollutanttype[i].ID
+        pollutantType:this.props.navigation.state.params.pollutanttype[i].ID
     }));
+  }
+  _renderlegend=()=>{
+    let rtnVal=[];
+    this.props.legend.map((item,key)=>{
+      rtnVal.push(<View style={{flex:1,backgroundColor:item.Color,alignItems: 'center',justifyContent: 'center',}} key={item.Name} >
+        <Text style={{fontSize:13}}>{item.Name}</Text>
+      </View>);
+    });
+    return rtnVal;
   }
   render() {
     let tabnames=[];
-    if(this.state.pollutanttype!=null)
+    if(this.props.navigation.state.params.pollutanttype!=null)
     {
-      this.state.pollutanttype.map((item,key)=>{
+      this.props.navigation.state.params.pollutanttype.map((item,key)=>{
         tabnames.push(item.Name)
       });
     }
@@ -114,8 +103,6 @@ class Home extends Component {
       <View style={{height:SCREEN_HEIGHT,width:SCREEN_WIDTH}}>
 
         <View style={styles.layout}>
-          {
-            this.state.pollutanttype==null?<LoadingComponent Message={'正在加载数据'}/>:
             <ScrollableTabView
               tabBarBackgroundColor={'#fff'}
               tabBarUnderlineStyle={{backgroundColor:'#108ee9',height:1}}
@@ -126,16 +113,18 @@ class Home extends Component {
                 prerenderingSiblingsNumber={1}
                >
                  {
-                   this.state.pollutanttype.map((item,key)=>{
+                   this.props.navigation.state.params.pollutanttype.map((item,key)=>{
                      return(<MainContent key={key} arraykey={key} tabLabel={item.Name} PollutantType={item.ID}  />);
                    })
                  }
             </ScrollableTabView>
-          }
         </View>
         {this.props.navigation.state.params.mode=='map'?
-        <View style={{position:'absolute',left:0,top:41,height:SCREEN_HEIGHT-100,width:SCREEN_WIDTH}}>
+        <View style={{position:'absolute',left:0,top:41,height:Platform.OS === 'ios'?SCREEN_HEIGHT-100:SCREEN_HEIGHT-120,width:SCREEN_WIDTH}}>
           <MapCompontent style={{height:SCREEN_HEIGHT,width:SCREEN_WIDTH}}  />
+          <View style={{flexDirection:'row',width:SCREEN_WIDTH,height:30}}>
+            {this._renderlegend()}
+          </View>
         </View>
         :null}
       </View>

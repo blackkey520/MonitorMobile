@@ -18,9 +18,7 @@ import LoadingComponent from '../Common/LoadingComponent'
 import NoDataComponent from '../Common/NoDataComponent'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-
-import dateFormat from 'dateformat'
-  const now = new Date();
+import moment from 'moment'
 
 @connect(({ alarm }) => ({ fetching:alarm.fetching,awaitchecklist:alarm.awaitchecklist,fetchtime:alarm.fetchtime}))
 class UnVerifiedList extends PureComponent {
@@ -30,14 +28,14 @@ class UnVerifiedList extends PureComponent {
         <TouchableOpacity onPress={()=>{
           this.props.dispatch(createAction('alarm/loadalarmlist')({
             alarmdgimn:item.DGIMN,
-            alarmbegindate:item.DateNow.substring(0,10)+' 00:00:00',
-            alarmenddate:item.DateNow.substring(0,10)+' 23:59:59'
+            alarmbegindate:moment(item.DateNow).format('YYYY-MM-DD 00:00:00'),
+            alarmenddate:moment(item.DateNow).format('YYYY-MM-DD 23:59:59')
           }));
           this.props.dispatch(NavigationActions.navigate({
             routeName: 'AlarmDetail',params:{pointname:item.PointName,
-              alarmbegindate:item.DateNow.substring(0,10)+' 00:00:00',
+              alarmbegindate:moment(item.DateNow).format('YYYY-MM-DD 00:00:00'),
               alarmdgimn:item.DGIMN,
-            alarmenddate:item.DateNow.substring(0,10)+' 23:59:59'
+            alarmenddate:moment(item.DateNow).format('YYYY-MM-DD 23:59:59')
           },
           }));
         }} style={{flex:1,width:SCREEN_WIDTH-20,borderRadius:10,marginLeft:10,backgroundColor:'#fff',marginTop:5}}>
@@ -96,7 +94,7 @@ class UnVerifiedList extends PureComponent {
             onRefresh={()=>{
               this.props.dispatch(createAction('alarm/loadawaitchecklist')({
                 isfirst:true,
-                  time:dateFormat(now,"yyyy-mm-dd")
+                time:moment().format('YYYY-MM-DD')
               }));
             }}
             onEndReached={(info)=>{

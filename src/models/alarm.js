@@ -1,7 +1,7 @@
 import { createAction, NavigationActions,ShowToast,ShowResult} from '../utils'
 import { getNetConfig } from '../logics/rpc';
 import * as AlarmService from '../services/alarmService'
-import dateFormat from 'dateformat'
+import moment from 'moment'
   const now = new Date();
 export default {
   namespace: 'alarm',
@@ -51,9 +51,16 @@ export default {
   },
   effects: {
     *getfeedbackdetail({ payload: {verifyID} }, { call, put ,select}){
+
       let result=null;
       let alarmresult=null;
       const state = yield select(state => state.alarm);
+      yield put(
+        NavigationActions.navigate({
+          routeName: 'FeedbackDetail',params:{
+            verifyid:verifyID,
+        },})
+      )
       yield put(createAction('updateState')({feedbackdetailfetching:true}));
       result = yield call(AlarmService.getfeedbackdetail,{verifyID:verifyID})
       let netconfig=getNetConfig();
@@ -116,6 +123,7 @@ export default {
       *loadalarmlist({ payload: {alarmdgimn,alarmbegindate,alarmenddate} }, { call, put ,select}){
         let result=null;
         const state = yield select(state => state.alarm);
+
         yield put(createAction('alarmfetchStart')({alarmdgimn:alarmdgimn,alarmbegindate:alarmbegindate,
         alarmenddate:alarmenddate,alarmcurrent:1,alarmlist:[]}));
         result = yield call(AlarmService.loadalarmlist,
@@ -142,7 +150,7 @@ export default {
            }
          }
          let fetchtime = new Date(result.data[0].VerifyTime.substring(0,10)+'T'+'00:00:00');
-         let newtime=dateFormat(fetchtime.setDate(fetchtime.getDate()-1),"yyyy-mm-dd");
+         let newtime=moment(fetchtime).add(-1,'days').format('YYYY-MM-DD');
         yield put(createAction('fetchVerifiedEnd')({ verifiedlist:oldCollection,verifiedtime:newtime}))
       },
       *loadawaitchecklist({ payload: {isfirst,time} }, { call, put ,select}){
@@ -167,7 +175,7 @@ export default {
            }
            fetchtime = new Date(result.data[0].DateNow.replace(' ','T'));
          }
-         let newtime=dateFormat(fetchtime.setDate(fetchtime.getDate()-1),"yyyy-mm-dd");
+         let newtime=moment(fetchtime).add(-1,'days').format('YYYY-MM-DD');
 
         yield put(createAction('fetchEnd')({ awaitchecklist:oldCollection,fetchtime:newtime,
           unverifiedCount:isfirst?result.data.length:state.unverifiedCount}))

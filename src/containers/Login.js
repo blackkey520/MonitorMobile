@@ -20,11 +20,25 @@ import { createAction, NavigationActions } from '../utils'
 import { Button } from 'antd-mobile';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-import { loadLoginMsg,saveLoginMsg,loadToken } from '../logics/rpc';
+import { loadLoginMsg,saveLoginMsg,loadToken,loadStorage,saveStorage} from '../logics/rpc';
 import {loadawaitcheck} from '../services/alarmService'
-
-import dateFormat from 'dateformat'
-  const now = new Date();
+import SplashScreen from 'react-native-splash-screen'
+import JPushModule from 'jpush-react-native';
+import moment from 'moment'
+  function getCurrentScreen(navigationState) {
+    if (!navigationState) {
+      return null
+    }
+    const route = navigationState.routes[navigationState.index]
+    if (route.routes) {
+      return getCurrentScreen(route)
+    }
+    return route.routeName
+  }
+  const receiveCustomMsgEvent = "receivePushMsg";
+  const receiveNotificationEvent = "receiveNotification";
+  const openNotificationEvent = "openNotification";
+  const getRegistrationIdEvent = "getRegistrationId";
 @connect(({ app }) => ({ ismaintenance:app.ismaintenance,fetching:app.fetching }))
 class Login extends PureComponent {
   constructor(props) {
@@ -52,21 +66,68 @@ class Login extends PureComponent {
       this.props.dispatch(createAction('app/loaduser')({
         user:user
       }));
+      console.log(user);
+      JPushModule.setAlias(user.User_Account, (map) => {
+				if (map.errorCode === 0) {
+					console.log("set alias succeed");
+				} else {
+					console.log("set alias failed, errorCode: " + map.errorCode);
+				}
+			});
+      let pollutanttype=await loadStorage('PollutantType');
+      this.props.dispatch(createAction('point/fetchmore')({
+          pollutantType:pollutanttype[0].ID
+      }));
+      let alarmCount = await loadawaitcheck({time:moment().format('YYYY-MM-DD')});
+      const currentScreen = getCurrentScreen(this.props.router)
+      if (currentScreen==null||currentScreen === 'Login') {
+        this.props.dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Main',params:{unverifiedCount:alarmCount.data.length,pollutanttype:pollutanttype} })],
+        }))
+      }
+    }
 
-      let alarmCount = await loadawaitcheck({time:dateFormat(now,"yyyy-mm-dd")});
-      this.props.dispatch(NavigationActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'Main',params:{unverifiedCount:alarmCount.data.length} })],
-      }))
-     }
+     SplashScreen.hide();
   }
   _userLogin = async () => {
+      let pollutanttype=await loadStorage('PollutantType');
       this.props.dispatch(createAction('app/login')({
         username:this.state.username,
         password:this.state.password,
+        pollutanttype:pollutanttype
       }));
       await saveLoginMsg(this.state);
   };
+  componentDidMount() {
+       // 在收到点击事件之前调用此接口
+       JPushModule.notifyJSDidLoad((resultCode) => {
+           if (resultCode === 0) {
+           }
+       });
+       JPushModule.addReceiveNotificationListener((map) => {
+          //  console.log("alertContent: " + map.alertContent);
+          //  console.log("extras: " + map.extras);
+           // var extra = JSON.parse(map.extras);
+           // console.log(extra.key + ": " + extra.value);
+       });
+       JPushModule.addReceiveCustomMsgListener((map) => {
+          console.log("message: " + map.message);
+       });
+       JPushModule.setStyleCustom();
+       JPushModule.addReceiveOpenNotificationListener((map) => {
+           console.log("Opening notification!");
+           console.log("map.extra: " + map.key);
+       });
+     }
+     componentWillUnmount() {
+     		JPushModule.removeReceiveCustomMsgListener(receiveCustomMsgEvent);
+     		JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
+     		JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
+     		JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
+     		console.log("Will clear all notifications");
+     		JPushModule.clearAllNotifications();
+     	}
     // 组件渲染方法
   render() {
     return (

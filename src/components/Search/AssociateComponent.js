@@ -28,16 +28,10 @@ class AssociateCompontent extends PureComponent {
           this.props.dispatch(createAction('target/selecttarget')({
             targetCode:rowData.Code,
             baseType:rowData.Type
-          }));
-          this.props.dispatch(NavigationActions.navigate({
-            routeName: 'Target',params:{targettype:rowData.Type,targetcode:rowData.Code}
-          }));
+          })); 
         }else{
           this.props.dispatch(createAction('point/selectpoint')({
             dgimn:otherArray[0]
-          }));
-          this.props.dispatch(NavigationActions.navigate({
-            routeName: 'MonitorPoint',params:{dgimn:otherArray[0]}
           }));
         }
 

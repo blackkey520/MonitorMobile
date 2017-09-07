@@ -20,8 +20,7 @@ import Calendar from 'react-native-calendar-select';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import { Button } from 'antd-mobile';
-import dateFormat from 'dateformat'
-  const now = new Date();
+import moment from 'moment'
 @connect(({ alarm }) => ({ alarmtotal:alarm.alarmtotal,alarmcurrent:alarm.alarmcurrent,alarmlistfetching:alarm.alarmlistfetching,alarmlist:alarm.alarmlist}))
 class AlarmDetail extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -90,13 +89,13 @@ class AlarmDetail extends PureComponent {
   }
   _confirmDate=({startDate, endDate, startMoment, endMoment})=>{
     this.setState({
-      begintime:dateFormat(startDate,"yyyy-mm-dd"),
-      endtime:dateFormat(endDate,"yyyy-mm-dd")
+      begintime:moment(startDate).format('YYYY-MM-DD'),
+      endtime:moment(endDate).format('YYYY-MM-DD')
     });
     this.props.dispatch(createAction('alarm/loadalarmlist')({
       alarmdgimn:this.props.navigation.state.params.alarmdgimn,
-      alarmbegindate:dateFormat(new Date(startDate),"yyyy-mm-dd 00:00:00"),
-      alarmenddate:dateFormat(new Date(endDate),"yyyy-mm-dd 23:59:59")
+      alarmbegindate:moment(startDate).format('YYYY-MM-DD 00:00:00'),
+      alarmenddate:moment(endDate).format('YYYY-MM-DD 23:59:59'),
     }));
   }
   _clearselect=()=>{
@@ -184,8 +183,8 @@ class AlarmDetail extends PureComponent {
         format="YYYYMMDD"
         startDate={this.state.begintime}
         endDate={this.state.endtime}
-        minDate={dateFormat(now,"yyyy0101")}
-        maxDate={dateFormat(now,"yyyymmdd")}
+        minDate={moment().format('YYYY0101')}
+        maxDate={moment().format('YYYYMMDD')}
         onConfirm={this._confirmDate}
       />
       </View>

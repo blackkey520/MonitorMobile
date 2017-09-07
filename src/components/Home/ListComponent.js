@@ -17,8 +17,7 @@ import { connect } from 'dva'
 import { createAction, NavigationActions } from '../../utils'
 import LoadingComponent from '../Common/LoadingComponent'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH=Dimensions.get('window').width;
-import dateFormat from 'dateformat'
+const SCREEN_WIDTH=Dimensions.get('window').width; 
 
 @connect(({ point }) => ({ fetching:point.fetching,result:point.result }))
 class ListCompontent extends PureComponent {
@@ -44,10 +43,6 @@ class ListCompontent extends PureComponent {
       <TouchableOpacity onPress={()=>{
         this.props.dispatch(createAction('point/selectpoint')({
           dgimn:rowData.dgimn
-        }));
-
-        this.props.dispatch(NavigationActions.navigate({
-          routeName: 'MonitorPoint',params:{dgimn:rowData.dgimn}
         }));
       }} style={{width:SCREEN_WIDTH-16,backgroundColor:'white',marginTop:5,
         marginLeft:8,borderRadius:5,flexDirection:'row',alignItems: 'center',justifyContent: 'space-between',}}>

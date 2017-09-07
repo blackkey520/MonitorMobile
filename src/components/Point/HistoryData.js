@@ -18,7 +18,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import MonitorData from './MonitorData';
 import MonitorChart from './MonitorChart';
-import dateFormat from 'dateformat'
+import moment from 'moment'
 import Calendar from 'react-native-calendar-select';
 import {parseDate} from '../../utils'
 import { Modal,SegmentedControl} from 'antd-mobile';
@@ -37,8 +37,8 @@ class HistoryData extends PureComponent {
 
     this.state = {
       isupdate:false,
-      startDate:dateFormat(now,"yyyy-mm-dd"),
-      endDate:dateFormat(now.setDate(now.getDate() + 1),"yyyy-mm-dd"),
+      startDate:moment().format('YYYY-MM-DD'),
+      endDate:moment().add(1, 'days').format('YYYY-MM-DD'),
       pollutant:this.props.selectedpoint.PollutantTypeInfo[0]?this.props.selectedpoint.PollutantTypeInfo[0]:{PolluntCode:'001',PolluntName:'COD',Sort:'1',Unit:'mg/L'}
     };
 
@@ -58,13 +58,13 @@ class HistoryData extends PureComponent {
 
     _confirmDate=({startDate, endDate, startMoment, endMoment})=>{
       this.setState({
-        startDate:dateFormat(startDate,"yyyy-mm-dd"),
-        endDate:dateFormat(endDate,"yyyy-mm-dd")
+        startDate:moment(startDate).format('YYYY-MM-DD'),
+        endDate:moment(endDate).format('YYYY-MM-DD')
       });
       this.props.dispatch(createAction('monitordata/searchdata')({
         dgimn:this.props.navdgimn,
-        startDate:dateFormat(startDate,"yyyy-mm-dd"),
-        endDate:dateFormat(endDate,"yyyy-mm-dd"),
+        startDate:moment(startDate).format('YYYY-MM-DD'),
+        endDate:moment(endDate).format('YYYY-MM-DD'),
         pollutant:this.state.pollutant,
         dataType:this.props.dataType
       }));
@@ -97,7 +97,7 @@ class HistoryData extends PureComponent {
      const xAxis=[];
     const monitorData=[];
     this.props.monitordata.map((type, i) => {
-      xAxis.push(dateFormat(parseDate(type.MonitorTime),"dd日HH时MM分"));
+      xAxis.push(moment(type.MonitorTime).format('DD日HH时mm分'));
       if(this.props.dataType=='realtime')
       {
         monitorData.push(type.MonitorValue);
@@ -145,8 +145,8 @@ class HistoryData extends PureComponent {
             format="YYYYMMDD"
             startDate={this.state.startDate}
             endDate={this.state.endDate}
-            minDate={dateFormat(new Date(),"yyyy0101")}
-            maxDate={dateFormat(new Date(),"yyyymmdd")}
+            minDate={moment().format('YYYY0101')}
+            maxDate={moment().format('YYYYMMDD')}
             onConfirm={this._confirmDate}
           />
           </View>

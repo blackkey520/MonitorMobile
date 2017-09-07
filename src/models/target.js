@@ -4,7 +4,6 @@ import * as targetService from '../services/targetService'
 import * as pointService from '../services/pointService'
 import { getNetConfig } from '../logics/rpc';
   const now = new Date();
-  import dateFormat from 'dateformat'
 export default {
   namespace: 'target',
   state: {
@@ -34,6 +33,11 @@ export default {
       *selecttarget({ payload: {targetCode,baseType} }, { call, put ,select}){
         let result=null;
         const state = yield select(state => state.point);
+        yield put(
+          NavigationActions.navigate({
+            routeName: 'Target',params:{targettype:targetCode,targetcode:baseType}
+          })
+        )
         yield put(createAction('fetchStart')());
         result = yield call(targetService.selecttarget,
            {targetCode:targetCode,baseType:baseType,fileLength:50000,width:300})

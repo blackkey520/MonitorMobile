@@ -15,8 +15,7 @@ import UnVerifiedList from '../../components/Alarm/UnVerifiedList'
 import VerifiedHistory from '../../components/Alarm/VerifiedHistory'
 import CustomTabBar from '../../components/Common/CustomTabBar'
 
-import dateFormat from 'dateformat'
-  const now = new Date();
+import moment from 'moment'
 @connect(({ alarm }) => ({ unverifiedCount:alarm.unverifiedCount}))
 class Alarm extends PureComponent {
   static navigationOptions = {
@@ -31,12 +30,12 @@ class Alarm extends PureComponent {
     {
       this.props.dispatch(createAction('alarm/loadawaitchecklist')({
         isfirst:true,
-          time:dateFormat(now,"yyyy-mm-dd")
+          time:moment().format('YYYY-MM-DD')
       }));
     }else{
       this.props.dispatch(createAction('alarm/loadverifiedlist')({
         isfirst:true,
-          time:dateFormat(now,"yyyy-mm-dd")
+          time:moment().format('YYYY-MM-DD')
       }));
     }
   }

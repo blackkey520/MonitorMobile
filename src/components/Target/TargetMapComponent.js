@@ -127,9 +127,6 @@ class TargetMapComponent extends PureComponent {
                this.props.dispatch(createAction('point/selectpoint')({
                 dgimn:item.Dgimn
               }));
-              this.props.dispatch(NavigationActions.navigate({
-                routeName: 'MonitorPoint',params:{dgimn:item.Dgimn}
-              }));
              }} style={{justifyContent: 'center', height:25,marginBottom:5,
                backgroundColor:'#6996ff',borderRadius:7,alignItems: 'center',width:SCREEN_WIDTH/2-10}}>
                <Text style={{color:'#fff',fontSize:13}}>

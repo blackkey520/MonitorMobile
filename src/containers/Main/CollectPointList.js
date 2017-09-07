@@ -43,9 +43,6 @@ class CollectPointList extends PureComponent {
         this.props.dispatch(createAction('point/selectpoint')({
           dgimn:rowData.dgimn
         }));
-        this.props.dispatch(NavigationActions.navigate({
-          routeName: 'MonitorPoint',params:{dgimn:rowData.dgimn}
-        }));
       }} style={{width:SCREEN_WIDTH-16,backgroundColor:'white',marginTop:5,
         marginLeft:8,borderRadius:5,flexDirection:'row',alignItems: 'center',justifyContent: 'space-between',}}>
         <View style={{width:SCREEN_WIDTH-70,height:75,flexDirection:'row',

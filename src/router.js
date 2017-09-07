@@ -7,7 +7,7 @@ import {
   NavigationActions,
 } from 'react-navigation'
 import { loadToken } from './logics/rpc';
-import SplashScreen from 'react-native-splash-screen'
+
 
 import { connect } from 'dva'
 
@@ -119,22 +119,8 @@ class Router extends PureComponent {
 
   async componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandle)
-    // if (await loadToken()) {
-    //     this.props.dispatch(NavigationActions.navigate({ routeName: 'Main' }))
-    //   // this.props.dispatch(NavigationActions.reset({ index: 1,
-    //   // actions: [
-    //   //   NavigationActions.navigate({ routeName: 'Login'}),
-    //   //   NavigationActions.navigate({ routeName: 'Main'})
-    //   // ] }))
-    // } else {
-    //     this.props.dispatch(NavigationActions.navigate({ routeName: 'Login' }))
-    //   // this.props.dispatch(NavigationActions.reset({ index: 0,
-    //   // actions: [
-    //   //   NavigationActions.navigate({ routeName: 'Login'}),
-    //   //   NavigationActions.navigate({ routeName: 'Main'})
-    //   // ] }))
-    // }
-    SplashScreen.hide();
+
+    
   }
 
   componentWillUnmount() {

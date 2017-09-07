@@ -38,9 +38,7 @@ class PointBaseMessage extends PureComponent {
               targetCode:this.props.selectedpoint.Point.TargetCode,
               baseType:this.props.selectedpoint.Point.BaseType
             }));
-            this.props.dispatch(NavigationActions.navigate({
-              routeName: 'Target',params:{targettype:this.props.selectedpoint.Point.TargetCode,targetcode:this.props.selectedpoint.Point.BaseType}
-            }));
+            
           }}>
             <Text style={{marginLeft:11,fontSize:17,color:'#bebebe'}}>{this.props.selectedpoint.Point.TargetName}</Text>
           </TouchableOpacity>

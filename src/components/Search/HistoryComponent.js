@@ -40,9 +40,6 @@ class HistoryCompontent extends PureComponent {
      return(
       //  需要二级查询的ListView行组件渲染
        <TouchableOpacity onPress={()=>{
-         this.props.dispatch(createAction('search/changeScene')({
-           Scene:'result'
-         }));
          this.props.dispatch(createAction('search/search')({
            current:1,
            searchText:rowData.SearchContent

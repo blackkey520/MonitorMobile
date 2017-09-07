@@ -53,9 +53,6 @@ export default class QRCodeScreen extends PureComponent {
           this.props.dispatch(createAction('point/selectpoint')({
             dgimn:e.data
           }));
-          this.props.dispatch(NavigationActions.navigate({
-            routeName: 'MonitorPoint',params:{dgimn:e.data,title:''}
-          }));
           setTimeout(function() {
             this.barCodeFlag = true;
           }.bind(this),8000);

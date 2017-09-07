@@ -2,6 +2,38 @@ import {ShowToast} from '../utils'
 import { loadToken,get,posturl,getNetConfig,upload } from '../logics/rpc';
 // 全局api文件
 import api from '../config/globalapi';
+//legend
+export const getlegend =async(param)=>{
+  try {
+
+        let user=await loadToken();
+        //构建参数对象
+        let body = {
+            authorCode: user.User_ID,
+            pollutantType:param.pollutantType
+        };
+        let result=[];
+        // NOTE: 获取网络配置信息
+        const netconfig = getNetConfig();
+        let url = netconfig.neturl + api.monitorpoint.legend;
+        await get(url,body).then(async(data) => {
+
+            //处理 请求success
+            if (data&&data!=null) {
+              result=data;
+            } else {
+              // dispatch错误的原因
+              ShowToast(data.reason);
+            }
+        }, (json) => {
+          ShowToast('查询异常');
+        })
+        return result;
+    } catch (e) {
+      return e;
+    } finally {
+    }
+}
 //uploadimage
 export const uploadimage =async(param)=>{
   try {
@@ -84,8 +116,7 @@ export const collectpoint =async(param)=>{
         let body = {
             authorCode: user.User_ID,
             userId: user.User_ID,
-            dgimn:param.dgimn,
-            polutantType:param.polutantType
+            dgimn:param.dgimn
         };
         let result=[];
         // NOTE: 获取网络配置信息

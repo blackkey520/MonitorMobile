@@ -19,9 +19,8 @@ import NoDataComponent from '../Common/NoDataComponent'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import WarningReason from '../../config/configjson/WarningReason.json';
+import moment from 'moment'
 
-import dateFormat from 'dateformat'
-  const now = new Date();
 @connect(({ alarm }) => ({ verifiedfetching:alarm.verifiedfetching,verifiedlist:alarm.verifiedlist,verifiedtime:alarm.verifiedtime}))
 class VerifiedHistory extends PureComponent {
   _renderItem = ({item}) =>{
@@ -33,13 +32,6 @@ class VerifiedHistory extends PureComponent {
       <TouchableOpacity onPress={()=>{
         this.props.dispatch(createAction('alarm/getfeedbackdetail')({
           verifyID:item.ID
-        }));
-        this.props.dispatch(NavigationActions.navigate({
-          routeName: 'FeedbackDetail',params:{
-            verifyid:item.ID,
-          //   alarmdgimn:item.DGIMN,
-          // alarmenddate:item.DateNow.substring(0,10)+' 23:59:59'
-        },
         }));
       }} style={{flex:1,width:SCREEN_WIDTH-20,borderRadius:10,marginLeft:10,backgroundColor:'#fff',marginTop:5}}>
         <View style={{flex:1, flexDirection:'row', height: 30,alignItems: 'center'}}>
@@ -106,7 +98,7 @@ render() {
           onRefresh={()=>{
             this.props.dispatch(createAction('alarm/loadverifiedlist')({
               isfirst:true,
-                time:dateFormat(now,"yyyy-mm-dd")
+                time:moment().format('YYYY-MM-DD')
             }));
           }}
           onEndReached={(info)=>{

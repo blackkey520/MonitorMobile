@@ -62,9 +62,9 @@ class Search extends PureComponent {
               return;
           } else {
               if (text) {
-                this.props.dispatch(createAction('search/changeScene')({
-                  Scene:'associate'
-                }));
+                // this.props.dispatch(createAction('search/changeScene')({
+                //   Scene:'associate'
+                // }));
                 this.props.dispatch(createAction('search/associate')({
                   searchText:text
                 }));
@@ -84,10 +84,10 @@ class Search extends PureComponent {
             this.props.dispatch(NavigationActions.back())
           }} onChange={(text)=>{
             this._handleUpdateChange(text)
-          }} onSubmit={ async (text)=>{
-            this.props.dispatch(createAction('search/changeScene')({
-              Scene:'result'
-            }));
+          }} onSubmit={async(text)=>{
+            // this.props.dispatch(createAction('search/changeScene')({
+            //   Scene:'result'
+            // }));
             this.props.dispatch(createAction('search/search')({
               current:1,
               searchText:text

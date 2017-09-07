@@ -2,16 +2,15 @@ import { createAction, NavigationActions,ShowToast} from '../utils'
 import {ShowResult} from '../utils'
 import * as monitordataService from '../services/monitordataService'
 import { getNetConfig } from '../logics/rpc';
-  const now = new Date();
-  import dateFormat from 'dateformat'
+  import moment from 'moment'
 export default {
   namespace: 'monitordata',
   state: {
     datafetching:false,
     lastmonitorpoint:null,
     lastmonitordata:[],
-    startDate:dateFormat(now,"yyyy-mm-dd"),
-    endDate:dateFormat(now.setDate(now.getDate() + 1),"yyyy-mm-dd"),
+    startDate:moment().format('YYYY-MM-DD'),
+    endDate:moment().add(1, 'days').format('YYYY-MM-DD'),
     monitordata:[],
     pollutant:'',
     dataType:'realtime',

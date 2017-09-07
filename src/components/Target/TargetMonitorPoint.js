@@ -91,9 +91,6 @@ class TargetMonitorPoint extends PureComponent {
             this.props.dispatch(createAction('point/selectpoint')({
               dgimn:item.Dgimn
             }));
-            this.props.dispatch(NavigationActions.navigate({
-              routeName: 'MonitorPoint',params:{dgimn:item.Dgimn}
-            }));
           }} style={{flex:1,flexDirection:'row',alignItems: 'center',justifyContent: 'space-between',
           borderTopColor:'#5c89f3',borderTopWidth:5,borderRadius:10}}>
             <View style={{marginLeft:15,flexDirection:'row',marginTop:3}}>

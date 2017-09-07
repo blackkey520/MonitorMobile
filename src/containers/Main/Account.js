@@ -100,9 +100,6 @@ class Account extends PureComponent {
                  this.props.dispatch(createAction('app/loadcontactlist')({
                      user:null
                  }));
-                 this.props.dispatch(NavigationActions.navigate({
-                   routeName: 'ContactList'
-                 }));
             }}>
               <Text style={{color:'#313131',fontSize:16}}>{'通讯录'}</Text>
               {/* <Brief>点击开始个性化设置</Brief> */}
@@ -112,10 +109,7 @@ class Account extends PureComponent {
                onClick={() => {
                  this.props.dispatch(createAction('point/loadcollectpointlist')({
                      pollutantType:this.props.PollutantType
-                 }));
-                 this.props.dispatch(NavigationActions.navigate({
-                   routeName: 'CollectPointList'
-                 }));
+                 })); 
             }}>
               <Text style={{color:'#313131',fontSize:16}}>{'我的关注'}</Text>
             </Item>

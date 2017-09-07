@@ -3,13 +3,14 @@ import {ShowResult} from '../utils'
 import * as pointService from '../services/pointService'
 import { getNetConfig } from '../logics/rpc';
 
-  import dateFormat from 'dateformat'
+  import moment from 'moment'
 export default {
   namespace: 'point',
   state: {
     fetching: false,
     result:[],
     selectedpoint:null,
+    legend:[],
     pollutantType:'',
     monitordata:[],
     collectpointlist:[],
@@ -29,7 +30,7 @@ export default {
        *collectpoint({ payload: {dgimn,callback} }, { call, put ,select}){
         const state = yield select(state => state.point);
         result = yield call(pointService.collectpoint,
-           {dgimn:state.selectedpoint.Point.Dgimn,polutantType:state.pollutantType})
+           {dgimn:state.selectedpoint.Point.Dgimn})
         let newselectedpoint=state.selectedpoint;
         if(result.data!=null)
         {
@@ -56,7 +57,7 @@ export default {
         let now = new Date();
         let result=null;
         const state = yield select(state => state.point);
-        yield put(createAction('fetchStart')());
+        yield put(createAction('updateState')());
         result = yield call(pointService.selectsinglepoint,
            {dgimn:dgimn,fileLength:50000,width:300})
         let netconfig=getNetConfig();
@@ -78,9 +79,14 @@ export default {
         result.data.lowimg=lowimg;
         result.data.thumbimg=thumbimg;
         let pollutant=result.data.PollutantTypeInfo[0]
-        yield put(createAction('fetchEnd')({ selectedpoint:result.data}))
-        yield put({type: 'monitordata/searchdata',payload: {dgimn:dgimn,startDate:dateFormat(now,"yyyy-mm-dd"),
-        endDate:dateFormat(now.setDate(now.getDate() + 1),"yyyy-mm-dd"),pollutant:pollutant,dataType:'realtime'}})
+        yield put(createAction('updateState')({ selectedpoint:result.data}))
+        yield put(
+          NavigationActions.navigate({
+            routeName: 'MonitorPoint',params:{dgimn:dgimn}
+          })
+        )
+        yield put({type: 'monitordata/searchdata',payload: {dgimn:dgimn,startDate:moment().format('YYYY-MM-DD'),
+        endDate:moment().add(1, 'days').format('YYYY-MM-DD'),pollutant:pollutant,dataType:'realtime'}})
       },
       *fetchmore({ payload: {pollutantType} }, { call, put ,select}) {
         let result=null;
@@ -89,7 +95,9 @@ export default {
         result = yield call(pointService.fetchlist,
            {pollutantType:pollutantType,pageIndex:1,pageSize:10000})
         newresult=result.data;
-        yield put(createAction('fetchEnd')({ result:newresult}))
+        let legend=yield call(pointService.getlegend,{pollutantType:pollutantType})
+
+        yield put(createAction('fetchEnd')({ result:newresult,legend:legend.data}))
       },
       *loadcollectpointlist({ payload: {pollutantType} }, { call, put ,select}) {
         let result=null;
@@ -97,8 +105,14 @@ export default {
         yield put(createAction('fetchStart')({pollutantType:pollutantType}))
         result = yield call(pointService.getcollectpointlist,
            {pageIndex:1,pageSize:10000})
+
         newresult=result.data;
         yield put(createAction('fetchEnd')({ collectpointlist:newresult}))
+        yield put(
+          NavigationActions.navigate({
+            routeName: 'CollectPointList'
+          })
+        )
       },
   },
 }

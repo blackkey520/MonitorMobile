@@ -32,6 +32,7 @@ class MapCompontent extends PureComponent {
     }
     return rtnVal;
   }
+
   render() {
     return (
       <View style={{flex:1}}>
@@ -42,6 +43,7 @@ class MapCompontent extends PureComponent {
           style={StyleSheet.absoluteFill}>
           {this._renderPoint()}
         </MapView>
+
       </View>
     );
   }
@@ -154,9 +156,6 @@ class CustomMarker extends PureComponent{
            <TouchableOpacity onPress={()=>{
              this.props.dispatch(createAction('point/selectpoint')({
                dgimn:this.props.markerItem.dgimn
-             }));
-             this.props.dispatch(NavigationActions.navigate({
-               routeName: 'MonitorPoint',params:{dgimn:this.props.markerItem.dgimn}
              }));
            }} style={{justifyContent: 'center', height:25,marginBottom:5,
              backgroundColor:'#6996ff',borderRadius:7,alignItems: 'center',width:SCREEN_WIDTH/2-10}}>

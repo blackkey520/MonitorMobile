@@ -18,7 +18,8 @@ const api={
       singlepoint:'/rest/OutputAsPointApi/GetPointBaseInfo/',//单个监测点查询
       CollectPoint:'/rest/OutputAsPointApi/CollectPointInfo/',
       collectpointlist:'/rest/OutputAsPointApi/GetCollectInfo/',
-      uploadimage:'/rest/OutputAsPointApi/AddPointImg/'
+      uploadimage:'/rest/OutputAsPointApi/AddPointImg/',
+      legend:'/rest/OutputAsPointApi/GetWaterLevels/'
     },
     wholesearch:{
       fulltextsearch:'/rest/OutputAsPointApi/GetLxSearchResult/',//全文检索
