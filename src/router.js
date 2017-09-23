@@ -1,13 +1,12 @@
 import React, { PureComponent } from 'react'
-import { BackHandler, Animated, Easing } from 'react-native'
+import { BackHandler,Platform, Animated, Easing,NetInfo } from 'react-native'
 import {
   StackNavigator,
   TabNavigator,
   addNavigationHelpers,
-  NavigationActions,
 } from 'react-navigation'
-import { loadToken } from './logics/rpc';
-
+import { loadToken,saveNetConfig,loadNetConfig } from './logics/rpc';
+import JPushModule from 'jpush-react-native';
 
 import { connect } from 'dva'
 
@@ -24,6 +23,11 @@ import QRCodeScreen from './containers/Common/QRCodeScreen'
 import Target from './containers/Main/Target'
 import CollectPointList from './containers/Main/CollectPointList'
 import ContactList from './containers/Common/ContactList'
+import Error from './containers/Common/Error'
+import Loading from './containers/Common/Loading'
+import NetConfig from './config/NetConfig.json';
+import moment from 'moment'
+import { createAction, NavigationActions } from './utils'
 
 const MainNavigator = StackNavigator(
   {
@@ -57,7 +61,11 @@ const MainNavigator = StackNavigator(
     FeedbackDetail:{
       path:'alarmfeedback/:verifyid',
       screen:FeedbackDetail
-    }
+    },
+    Error: {
+      path:'error/:errormessage',
+      screen: Error
+    },
   },
   {
     initialRouteName:'Home',
@@ -70,6 +78,10 @@ const AppNavigator = StackNavigator(
   {
     Login: { screen: Login },
     Main: { screen: MainNavigator },
+    Error: {
+      path:'error/:errormessage',
+      screen: Error
+    },
   },
   {
     headerMode: 'none',
@@ -119,12 +131,286 @@ class Router extends PureComponent {
 
   async componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandle)
-
-    
   }
+  isCon(b){
+    this.props.dispatch(NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+    }))
+ }
 
+ changeCon(info){
+
+    if(Platform.OS === 'android')
+    {
+      if(info=='NONE')
+      {
+        this.props.dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+        }))
+      }else if(info=='WIFI')
+      {
+        let netconfig=NetConfig[0];
+        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+        saveNetConfig(netconfig);
+      }else if(info=='MOBILE')
+      {
+        let netconfig=NetConfig[1];
+        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+        saveNetConfig(netconfig);
+      }
+      // else if(info =='UNKNOWN')
+      // {
+      //   this.props.dispatch(NavigationActions.reset({
+      //     index: 0,
+      //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+      //   }))
+      // }
+    }else{
+      if(info=='none')
+      {
+        this.props.dispatch(NavigationActions.reset({
+          index: 0,
+          actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+        }))
+      }else if(info=='wifi')
+      {
+        let netconfig=NetConfig[0];
+        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+        saveNetConfig(netconfig);
+      }else if(info=='cell')
+      {
+        let netconfig=NetConfig[1];
+        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+        saveNetConfig(netconfig);
+      }
+      // else if(info =='unknown')
+      // {
+      //   this.props.dispatch(NavigationActions.reset({
+      //     index: 0,
+      //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+      //   }))
+      // }
+    }
+ }
+  async componentDidMount() {
+    //监听网络是否链接
+        NetInfo.isConnected.addEventListener('isCon',this.isCon.bind(this));
+        //监听网络变化
+        NetInfo.addEventListener('changeCon',this.changeCon.bind(this));
+
+
+        //检查网络是否链接 返回true/fase
+        NetInfo.isConnected.fetch().done((b) => {
+            if(!b)
+            {
+              this.props.dispatch(NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+              }))
+            }
+        });
+
+        //网络链接的信息
+        NetInfo.fetch().done((info) => {
+
+          if(Platform.OS === 'android')
+          {
+            if(info=='NONE')
+            {
+              this.props.dispatch(NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+              }))
+            }else if(info=='WIFI')
+            {
+              let netconfig=NetConfig[0];
+              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+              saveNetConfig(netconfig);
+            }else if(info=='MOBILE')
+            {
+              let netconfig=NetConfig[1];
+              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+              saveNetConfig(netconfig);
+            }
+            // else if(info =='UNKNOWN')
+            // {
+            //   this.props.dispatch(NavigationActions.reset({
+            //     index: 0,
+            //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+            //   }))
+            // }
+          }else{
+            if(info=='none')
+            {
+              this.props.dispatch(NavigationActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+              }))
+            }else if(info=='wifi')
+            {
+              let netconfig=NetConfig[0];
+              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+              saveNetConfig(netconfig);
+            }else if(info=='cell')
+            {
+              let netconfig=NetConfig[1];
+              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
+              saveNetConfig(netconfig);
+            }
+            // else if(info =='unknown')
+            // {
+            //   this.props.dispatch(NavigationActions.reset({
+            //     index: 0,
+            //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
+            //   }))
+            // }
+          }
+        });
+
+
+    let user=await loadToken();
+       // 在收到点击事件之前调用此接口
+       if(Platform.OS === 'android')
+       {
+         JPushModule.notifyJSDidLoad((resultCode) => {
+             if (resultCode === 0) {
+             }
+         });
+       }
+       if(user)
+       {
+         if(Platform.OS === 'android')
+         {
+           JPushModule.setAlias(user.User_Account, (map) => {
+             if (map.errorCode === 0) {
+               console.log("set alias succeed");
+             } else {
+               console.log("set alias failed, errorCode: " + map.errorCode);
+             }
+           });
+         }else{
+           JPushModule.setAlias(user.User_Account, () => {
+           				console.log("set alias succeed");
+           			},() => {
+           				console.log("set alias failed, errorCode: " + map.errorCode);
+           			});
+         }
+       }
+        JPushModule.addOpenNotificationLaunchAppListener((result) => {
+          console.log('notification open');
+        })
+
+        JPushModule.addReceiveOpenNotificationListener((result) => {
+          this.props.dispatch(createAction('app/changebadge')({
+            badge:-1
+          }));
+          this.props.dispatch(NavigationActions.navigate({
+            routeName: 'AlarmDetail',params:{pointname:result.PointName,
+            alarmbegindate:moment(result.FirstTime).format('YYYY-MM-DD HH:mm:ss'),
+            alarmdgimn:result.DGIMN,
+            alarmenddate:moment(result.LastTime).format('YYYY-MM-DD HH:mm:ss')
+          },
+          }));
+        })
+
+        JPushModule.addReceiveNotificationListener((result) => {
+          // alert('addReceiveNotificationListener','addReceiveNotificationListener')
+        })
+       JPushModule.addReceiveCustomMsgListener((map) => {
+         let Message=null;
+          if(Platform.OS=='ios'){
+            Message=JSON.parse(map.content);
+          }else{
+            Message=JSON.parse(map.message);
+          }
+          let title=Message.EntName+'-'+Message.OutputName;
+          let message='';
+          let subText=''
+          if(Message.AlarmType=='2')
+          {
+            datatype=Message.DataType=='RealTimeData'?'实时数据':Message=='MinuteData'?'分钟数据':Message=='HourData'?'小时数据':'日数据';
+            message=Message.FirstOverTime+'-'
+            +Message.AlarmTime+' '
+            +Message.PolluntantName+' '
+            +datatype+' 监测浓度 '
+            +Message.AlarmValue +' 超标 '
+            +Message.Level+' 标准:'
+            +Message.StandardValue+' 超标倍数: '
+            +Message.Multiple
+            subText=Message.PolluntantName+' 检测值 '+Message.AlarmValue+' 超标 '+Message.Level;
+          }
+          else{
+            datatype=Message.DataType=='RealTimeData'?'实时数据':Message=='MinuteData'?'分钟数据':Message=='HourData'?'小时数据':'日数据';
+            message=Message.FirstOverTime+'-'
+            +Message.AlarmTime+' '
+            +Message.PolluntantName+' '
+            +datatype+' 监测浓度 '
+            +Message.ExceptionType + ' '
+            +Message.AlarmCount+' 次 '
+            subText=Message.PolluntantName+' 检测值 '+Message.ExceptionType+' '+Message.AlarmCount+' 次 ';
+          }
+          // PushNotification.localNotification({
+          //     /* Android Only Properties */
+          //     id: '0', // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
+          //     ticker: title+message, // (optional)
+          //     autoCancel: true, // (optional) default: true
+          //     largeIcon: "desk_logo1.png", // (optional) default: "ic_launcher"
+          //     smallIcon: "desk_logo1.png", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+          //     // bigText: message, // (optional) default: "message" prop
+          //     tag:Message.DGIMN+'|'+Message.PolluntantCode,
+          //     subText: subText , // (optional) default: none
+          //     color: "red", // (optional) default: system default
+          //     vibrate: true, // (optional) default: true
+          //     vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+          //     group: Message.OutputName, // (optional) add group to message
+          //     ongoing: false, // (optional) set whether this is an "ongoing" notification
+          //     /* iOS only properties */
+          //     // alertAction: // (optional) default: view
+          //     // category: // (optional) default: null
+          //     // userInfo: // (optional) default: null (object containing additional notification data)
+          //
+          //     /* iOS and Android properties */
+          //     title: title, // (optional, for iOS this is only used in apple watch, the title will be the app name on other iOS devices)
+          //     message: message, // (required)
+          //     playSound: true, // (optional) default: true
+          //     soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+          //     number: 1, // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+          // });
+          // console.log(message);
+          if(Platform.OS === 'ios')
+          {
+            JPushModule.setLocalNotification(moment().add(5,'second'),message,0, 'Action', Message.DGIMN,
+            {DGIMN: Message.DGIMN,FirstTime:Message.FirstOverTime,LastTime:Message.AlarmTime,
+            PointName:Message.OutputName}, null);
+          }
+          this.props.dispatch(createAction('app/changebadge')({
+            badge:1
+          }));
+       });
+      //  JPushModule.setStyleCustom();
+
+
+     }
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this.backHandle)
+    //移除监听
+        NetInfo.isConnected.removeEventListener('isCon',this.isCon);
+
+        NetInfo.removeEventListener('changeCon',this.changeCon);
+    if(Platform.OS === 'android')
+    {
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandle)
+      JPushModule.removeReceiveCustomMsgListener(receiveCustomMsgEvent);
+      JPushModule.removeReceiveNotificationListener(receiveNotificationEvent);
+      JPushModule.removeReceiveOpenNotificationListener(openNotificationEvent);
+      JPushModule.removeGetRegistrationIdListener(getRegistrationIdEvent);
+       JPushModule.clearAllNotifications();
+    }else{
+      DeviceEventEmitter.removeAllListeners();
+      NativeAppEventEmitter.removeAllListeners();
+    }
+
   }
 
   backHandle = () => {

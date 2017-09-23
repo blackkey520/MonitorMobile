@@ -147,7 +147,7 @@ export async function upload(url,body) {
     options.headers['x-accesstoken'] = token.get();
   }
 
-  const resp = await fetch(uri.toString(), options); 
+  const resp = await fetch(uri.toString(), options);
     console.log('status'+resp.status);
 
   const text = await resp.text();

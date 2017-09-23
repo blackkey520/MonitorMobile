@@ -21,7 +21,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import { Button } from 'antd-mobile';
 import moment from 'moment'
-@connect(({ alarm }) => ({ alarmtotal:alarm.alarmtotal,alarmcurrent:alarm.alarmcurrent,alarmlistfetching:alarm.alarmlistfetching,alarmlist:alarm.alarmlist}))
+@connect(({ alarm }) => ({ alarmtotal:alarm.alarmtotal,alarmcurrent:alarm.alarmcurrent,fetching:alarm.fetching,alarmlist:alarm.alarmlist}))
 class AlarmDetail extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => ({
       headerTitle: navigation.state.params.pointname,
@@ -36,6 +36,11 @@ class AlarmDetail extends PureComponent {
        endtime:this.props.navigation.state.params.alarmenddate,
        selected: (new Map(): Map<string, boolean>)
     };
+    this.props.dispatch(createAction('alarm/loadalarmlist')({
+      alarmdgimn:this.props.navigation.state.params.DGIMN,
+      alarmbegindate:this.props.navigation.state.params.alarmbegindate,
+      alarmenddate:this.props.navigation.state.params.alarmenddate
+    }));
   }
   _renderItem=({item})=>{
 
@@ -79,7 +84,7 @@ class AlarmDetail extends PureComponent {
   return "index"+index+item;
   }
   _footer=()=>{
-    if(this.props.alarmlistfetching)
+    if(this.props.fetching)
     {
       return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
         <LoadingComponent   Message={'正在加载数据'}/></View>);
@@ -119,7 +124,7 @@ class AlarmDetail extends PureComponent {
         <View style={{flex:1}}>
           <FlatList
               ListFooterComponent={this._footer}
-              ListEmptyComponent={()=>this.props.alarmlistfetching?null:<NoDataComponent Message={'没有查询到数据'}/>}
+              ListEmptyComponent={()=>this.props.fetching?null:<View style={{height:SCREEN_HEIGHT-200}}><NoDataComponent  Message={'没有查询到数据'}/></View>}
               keyExtractor = {this._extraUniqueKey}
              data={this.props.alarmlist}
              renderItem={this._renderItem}
@@ -135,7 +140,7 @@ class AlarmDetail extends PureComponent {
                }));
              }}
              onEndReached={(info)=>{
-               if(this.props.alarmtotal!=0&&!this.props.alarmlistfetching&&this.props.alarmtotal>this.props.alarmcurrent)
+               if(this.props.alarmtotal!=0&&!this.props.fetching&&this.props.alarmtotal>this.props.alarmcurrent)
                {
                  this.props.dispatch(createAction('alarm/loadmorealarmlist')({
                    current:this.props.alarmcurrent+1

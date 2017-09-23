@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   ListView
 } from 'react-native';
-import { loadStorage,saveStorage} from '../../logics/rpc';
 
 import { connect } from 'dva'
 import { createAction, NavigationActions } from '../../utils'

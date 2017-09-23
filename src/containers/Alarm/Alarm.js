@@ -11,8 +11,8 @@ import {
 import { connect } from 'dva'
 import { NavigationActions,createAction} from '../../utils'
 import ScrollableTabView from 'react-native-scrollable-tab-view';
-import UnVerifiedList from '../../components/Alarm/UnVerifiedList'
-import VerifiedHistory from '../../components/Alarm/VerifiedHistory'
+import WarnList from '../../components/Alarm/WarnList'
+import VerifiedList from '../../components/Alarm/VerifiedList'
 import CustomTabBar from '../../components/Common/CustomTabBar'
 
 import moment from 'moment'
@@ -28,12 +28,12 @@ class Alarm extends PureComponent {
   _handleChangeTab=({i, ref, from })=>{
     if(i==0)
     {
-      this.props.dispatch(createAction('alarm/loadawaitchecklist')({
+      this.props.dispatch(createAction('warn/loadwarnlist')({
         isfirst:true,
           time:moment().format('YYYY-MM-DD')
       }));
     }else{
-      this.props.dispatch(createAction('alarm/loadverifiedlist')({
+      this.props.dispatch(createAction('verified/loadverifiedlist')({
         isfirst:true,
           time:moment().format('YYYY-MM-DD')
       }));
@@ -49,8 +49,8 @@ class Alarm extends PureComponent {
               onChangeTab={this._handleChangeTab}
               prerenderingSiblingsNumber={1}
           >
-        <UnVerifiedList tabLabel="待核实"/>
-        <VerifiedHistory tabLabel="核实记录"/>
+        <WarnList tabLabel="待核实"/>
+        <VerifiedList tabLabel="核实记录"/>
       </ScrollableTabView>
       </View>
     );

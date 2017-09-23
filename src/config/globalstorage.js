@@ -18,16 +18,6 @@ storage.sync = {
       saveNetConfig(netconfig);
       resolve && resolve(NetConfig[0]);
     },
-    async PollutantType(params){
-      let { id, resolve, reject } = params;
-      let PollutantType= await systemConfig.loadpollutanttype();
-
-      storage.save({
-            key: 'PollutantType',
-            data: PollutantType
-          });
-      resolve && resolve(PollutantType);
-    }
   }
 
 global.storage = storage;

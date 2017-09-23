@@ -16,6 +16,7 @@ import com.cboy.rn.splashscreen.SplashScreenReactPackage;
 import java.util.Arrays;
 import java.util.List;
 
+
 public class MainApplication extends Application implements ReactApplication {
   private boolean SHUTDOWN_TOAST = false;
   private boolean SHUTDOWN_LOG = false;

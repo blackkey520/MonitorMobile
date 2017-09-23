@@ -1,9 +1,9 @@
 import { createAction, NavigationActions,ShowToast} from '../utils'
 import {ShowResult} from '../utils'
 import * as pointService from '../services/pointService'
-import { getNetConfig } from '../logics/rpc';
+import { getNetConfig } from '../logics/rpc'
+import moment from 'moment'
 
-  import moment from 'moment'
 export default {
   namespace: 'point',
   state: {
@@ -49,9 +49,32 @@ export default {
       *uploadimage({ payload: {image,dgimn,callback} }, { call, put ,select}){
         let result=null;
         const state = yield select(state => state.alarm);
+        if(!image.fileName)
+        {
+          image.fileName=image.uri.split('/')[image.uri.split('/').length-1];
+        }
         result = yield call(pointService.uploadimage,{img:image.data,FileType:'.'+image.fileName.split('.')[1].toLowerCase(),code:dgimn})
-         yield put({ type: 'selectpoint', payload: { dgimn: dgimn } });
-         callback();
+
+        let newImageresult = yield call(pointService.selectsinglepoint,
+           {dgimn:dgimn,fileLength:50000,width:300})
+        let netconfig=getNetConfig();
+        let img=[],lowimg=[],thumbimg=[];
+        if(newImageresult.data.ImgList!='')
+        {
+          let imgList=newImageresult.data.ImgList.split(',');
+          let lowimgList=newImageresult.data.LowimgList.split(',');
+          let thumbimgList=newImageresult.data.ThumbimgList.split(',');
+          imgList.map((item,key)=>{
+            img.push(netconfig.neturl+'/upload/'+imgList[key]);
+            lowimg.push(netconfig.neturl+'/upload/'+lowimgList[key]);
+            thumbimg.push(netconfig.neturl+'/upload/'+thumbimgList[key]);
+          });
+        }
+        newImageresult.data.img=img;
+        newImageresult.data.lowimg=lowimg;
+        newImageresult.data.thumbimg=thumbimg;
+        yield put(createAction('updateState')({ selectedpoint:newImageresult.data}))
+       callback();
       },
       *selectpoint({ payload: {dgimn} }, { call, put ,select}){
         let now = new Date();
@@ -63,7 +86,7 @@ export default {
         let netconfig=getNetConfig();
 
         let img=[],lowimg=[],thumbimg=[];
-        let newresult=state.result;
+
         if(result.data.ImgList!='')
         {
           let imgList=result.data.ImgList.split(',');
@@ -91,6 +114,7 @@ export default {
       *fetchmore({ payload: {pollutantType} }, { call, put ,select}) {
         let result=null;
         const state = yield select(state => state.point);
+        let newresult=state.result;
         yield put(createAction('fetchStart')({pollutantType:pollutantType,result:[]}))
         result = yield call(pointService.fetchlist,
            {pollutantType:pollutantType,pageIndex:1,pageSize:10000})
@@ -105,9 +129,7 @@ export default {
         yield put(createAction('fetchStart')({pollutantType:pollutantType}))
         result = yield call(pointService.getcollectpointlist,
            {pageIndex:1,pageSize:10000})
-
-        newresult=result.data;
-        yield put(createAction('fetchEnd')({ collectpointlist:newresult}))
+        yield put(createAction('fetchEnd')({collectpointlist:result.data!=null?result.data:[]}))
         yield put(
           NavigationActions.navigate({
             routeName: 'CollectPointList'

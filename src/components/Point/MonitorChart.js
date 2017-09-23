@@ -14,7 +14,7 @@ import { connect } from 'dva'
 import { createAction, NavigationActions } from '../../utils'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-import Echarts from 'native-echarts';
+import Echarts from '../Common/native-echarts/src';
 @connect(({ point,monitordata }) => ({ dataType:monitordata.dataType,pollutant:monitordata.pollutant,selectedpoint:point.selectedpoint }))
 class MonitorChart extends PureComponent {
   render() {

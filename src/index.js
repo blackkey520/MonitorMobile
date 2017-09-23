@@ -24,9 +24,17 @@ if (!__DEV__) {
 const app = dva({
   initialState: {},
   // extraEnhancers: [autoRehydrate()],
-  onError(e) {
-    console.log('onError', e)
+  onError(e,dispatch) {
+    debugger;
+    // console.log('onError', e)
+    dispatch(NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'程序出现错误'} })],
+    }))
   },
+  // onEffect(effect, sagaEffects, model){
+  //
+  // }
 })
 app.use({
   onAction: logger,

@@ -14,6 +14,7 @@ export const loadpollutanttype=async ()=>{
         // NOTE: 获取网络配置信息
         const netconfig = getNetConfig();
         let url = netconfig.neturl + api.monitorpoint.monitortype;
+        console.log(url);
         await get(url,body).then(async(data) => {
 
             //处理 请求success

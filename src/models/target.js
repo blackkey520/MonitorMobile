@@ -25,6 +25,10 @@ export default {
       *uploadimage({ payload: {image,code,callback,baseType} }, { call, put ,select}){
         let result=null;
         const state = yield select(state => state.target);
+        if(!image.fileName)
+        {
+          image.fileName=image.uri.split('/')[image.uri.split('/').length-1];
+        }
         result = yield call(targetService.uploadimage,{img:image.data,FileType:'.'+image.fileName.split('.')[1].toLowerCase(),
         code:code,baseType:baseType})
         // yield put({ type: 'selecttarget', payload: { targetCode: code,baseType:baseType} });

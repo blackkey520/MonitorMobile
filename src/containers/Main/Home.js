@@ -35,6 +35,7 @@ class Home extends Component {
       headerLeft: (
         <TouchableOpacity onPress ={()=>{
           navigation.dispatch(NavigationActions.navigate({ routeName: 'Account' }))
+
         }}>
           {/* <Icon name="ios-person-outline" style={{marginLeft:10}} size={30} color="#fff" /> */}
           <Image source={require('../../images/minehead.png')} style={{marginLeft:10,height:20,width:20}}/>
@@ -43,7 +44,7 @@ class Home extends Component {
       headerRight: (
         <View style={{flexDirection:'row',alignItems: 'center',justifyContent: 'space-around',width:110}}>
           <TouchableOpacity style={{width:27}} onPress ={()=>{
-            navigation.dispatch(createAction('alarm/loadawaitchecklist')({
+            navigation.dispatch(createAction('warn/loadwarnlist')({
               isfirst:true,
               time:moment().format('YYYY-MM-DD')
             }));
@@ -98,10 +99,8 @@ class Home extends Component {
         tabnames.push(item.Name)
       });
     }
-
     return (
       <View style={{height:SCREEN_HEIGHT,width:SCREEN_WIDTH}}>
-
         <View style={styles.layout}>
             <ScrollableTabView
               tabBarBackgroundColor={'#fff'}

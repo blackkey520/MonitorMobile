@@ -19,7 +19,7 @@ import {MapView, Marker,Polygon} from 'react-native-amap3d';
 import Swiper from 'react-native-swiper';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-@connect(({ alarm }) => ({ feedbackdetailfetching:alarm.feedbackdetailfetching,feedbackdetail:alarm.feedbackdetail}))
+@connect(({ feedback }) => ({ fetching:feedback.fetching,feedbackdetail:feedback.feedbackdetail}))
 class FeedbackDetailInfo extends PureComponent {
   constructor(props) {
     super(props);
@@ -58,7 +58,7 @@ class FeedbackDetailInfo extends PureComponent {
       <View style={{flex:1,backgroundColor:'#fff'}}>
 
         {
-          this.props.feedbackdetailfetching||this.props.feedbackdetail==null?
+          this.props.fetching||this.props.feedbackdetail==null?
             <LoadingComponent Message={'正在加载数据'}/>
           :<View>
             <Modal
@@ -150,11 +150,8 @@ const styles = StyleSheet.create({
    flex:1,
    alignItems:'center',
    justifyContent:'center',
-   width:null, 
-   //不加这句，就是按照屏幕高度自适应
-   //加上这几，就是按照屏幕自适应
+   width:null,
    resizeMode:Image.resizeMode.contain,
-   //祛除内部元素的白色背景
    backgroundColor:'rgba(0,0,0,0.5)',
  }
 });

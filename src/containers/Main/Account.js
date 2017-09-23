@@ -17,6 +17,7 @@ import { Toast,List,Button } from 'antd-mobile';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CommonMenu from '../../components/Menu/CommonMenu'
 import { clearToken } from '../../logics/rpc';
+import JPushModule from 'jpush-react-native';
 import CodePush from "react-native-code-push";
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
@@ -109,7 +110,7 @@ class Account extends PureComponent {
                onClick={() => {
                  this.props.dispatch(createAction('point/loadcollectpointlist')({
                      pollutantType:this.props.PollutantType
-                 })); 
+                 }));
             }}>
               <Text style={{color:'#313131',fontSize:16}}>{'我的关注'}</Text>
             </Item>
@@ -127,8 +128,10 @@ class Account extends PureComponent {
              thumb={<Image source={require('../../images/clearcache.png')} style={{width:15,height:15,marginRight:10}}/>}
              onClick={async() => {
                await global.storage.remove({key: 'PollutantType'});
-               Toast.loading('清除中...', 2, () => {
-             });
+               await global.storage.remove({key: 'netConfig'});
+               await global.storage.remove({key: 'loginmsg'});
+               await global.storage.remove({key: 'accessToken'});
+               ShowToast('清理完成');
           }}>
              <Text style={{color:'#313131',fontSize:16}}>{'清除缓存'}</Text>
           </Item>
@@ -153,6 +156,10 @@ class Account extends PureComponent {
         <View style={{width:SCREEN_WIDTH,alignItems: 'center',marginTop:15}}>
           <Button   onClick={()=>{
             clearToken();
+            JPushModule.deleteAlias((result)=> {
+
+          		})
+
             this.props.dispatch(NavigationActions.navigate({ routeName: 'Login' }))
           }} className="btn" type="primary"  style={{width:280,backgroundColor:'#eb2f2d',borderColor:'#eb2f2d'}} >退出系统</Button>
         </View>

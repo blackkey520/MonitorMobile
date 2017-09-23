@@ -18,8 +18,8 @@ import NoDataComponent from '../../components/Common/NoDataComponent'
 import WarningReason from '../../config/configjson/WarningReason.json';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
-@connect(({ alarm }) => ({ feedbackdetailfetching:alarm.feedbackdetailfetching,
-  feedbackalarmdetail:alarm.feedbackalarmdetail}))
+@connect(({ feedback }) => ({ fetching:feedback.fetching,
+  alarmdetail:feedback.alarmdetail}))
 class FeedbackAlarmDetail extends PureComponent {
   _extraUniqueKey=(item ,index)=>{
   return "index"+index+item;
@@ -53,9 +53,9 @@ class FeedbackAlarmDetail extends PureComponent {
     return (
       <View style={{flex:1,backgroundColor:'#f0f0f0'}}>
         <FlatList
-                ListEmptyComponent={()=>this.props.alarmlistfetching?null:<NoDataComponent Message={'没有查询到数据'}/>}
+                ListEmptyComponent={()=>this.props.fetching?null:<NoDataComponent Message={'没有查询到数据'}/>}
                 keyExtractor = {this._extraUniqueKey}
-               data={this.props.feedbackalarmdetail}
+               data={this.props.alarmdetail}
                renderItem={this._renderItem}
            />
       </View>

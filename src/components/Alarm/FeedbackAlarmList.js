@@ -52,7 +52,7 @@ class FeedbackAlarmList extends PureComponent {
     return (
       <View style={{flex:1,backgroundColor:'#f0f0f0'}}>
         <FlatList
-                ListEmptyComponent={()=>this.props.alarmlistfetching?null:<NoDataComponent Message={'没有查询到数据'}/>}
+                ListEmptyComponent={()=>this.props.alarmlistfetching?null:<View style={{height:SCREEN_HEIGHT-200}}><NoDataComponent  Message={'没有查询到数据'}/></View>}
                 keyExtractor = {this._extraUniqueKey}
                data={this.props.alarmlist}
                renderItem={this._renderItem}

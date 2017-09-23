@@ -13,8 +13,6 @@ import {
 import { connect } from 'dva'
 import { NavigationActions } from '../../utils'
 import ScrollableTabView from 'react-native-scrollable-tab-view';
-import UnVerifiedList from '../../components/Alarm/UnVerifiedList'
-import VerifiedHistory from '../../components/Alarm/VerifiedHistory'
 import { Badge } from 'antd-mobile';
 import pinyin from 'pinyin';
 import py from '../../components/Common/alphabetaList/py';

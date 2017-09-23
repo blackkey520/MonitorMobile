@@ -1,16 +1,18 @@
 import { createAction, NavigationActions,ShowToast} from '../utils'
 import * as authService from '../services/authService'
 import * as AlarmService from '../services/alarmService'
+import * as systemConfig from '../services/systemService';
 import { loadStorage} from '../logics/rpc';
-import JPushModule from 'jpush-react-native';
 import moment from 'moment'
+import JPushModule from 'jpush-react-native';
 export default {
   namespace: 'app',
   state: {
     fetching: false,
     user: null,
     contactlist:[],
-    ismaintenance:false
+    ismaintenance:false,
+    badge:0
   },
   reducers: {
     loginStart(state, { payload }) {
@@ -24,6 +26,14 @@ export default {
     }
   },
   effects: {
+      *changebadge({payload:{badge}},{call,put,select}){
+        const state = yield select(state => state.app);
+        let newbadge=  state.badge+badge;
+          JPushModule.setBadge(newbadge, (success) => {
+            console.log(success)
+          });
+        yield put(createAction('changeState')({ badge:newbadge}))
+      },
       *loadcontactlist({ payload: {dgimn} }, { call, put ,select}){
         let result=null;
         yield put(createAction('loginStart')({}));
@@ -35,12 +45,10 @@ export default {
           })
         )
       },
-      *loaduser({ payload: { user } }, { call, put }) {
-        yield put(createAction('changeState')({ user:user }))
-      },
-      *login({ payload: { username,password,pollutanttype} }, { call, put }) {
+      *login({ payload: { username,password} }, { call, put }) {
         let result=null;
         let ismaintenance=false;
+
         if(username==''|| password=='')
         {
             ShowToast('用户名，密码不能为空')
@@ -48,15 +56,13 @@ export default {
           yield put(createAction('loginStart')())
           result = yield call(authService.login, {username,password})
           if (result.message=='') {
-            JPushModule.setAlias(result.User_Account, (map) => {
-      				if (map.errorCode === 0) {
-      					console.log("set alias succeed");
-      				} else {
-      					console.log("set alias failed, errorCode: " + map.errorCode);
-      				}
-      			});
+
             let alarmCount = yield call(AlarmService.loadawaitcheck,
                {time:moment().format('YYYY-MM-DD')})
+               let pollutanttype=yield call(systemConfig.loadpollutanttype, {});
+               saveStorage('pollutantType',pollutanttype);
+               saveStorage('alarmCount',alarmCount.data.length);
+             yield put({type: 'changebadge',payload: {badge:alarmCount.data.length}})
              yield put({type: 'point/fetchmore',payload: {pollutantType:pollutanttype[0].ID}})
             yield put(
               NavigationActions.reset({
