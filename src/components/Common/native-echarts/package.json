@@ -1,0 +1,59 @@
+{
+  "_args": [
+    [
+      "native-echarts@0.3.0",
+      "/Users/lee/P_Product/MonitorPro/MonitorMobile"
+    ]
+  ],
+  "_from": "native-echarts@0.3.0",
+  "_id": "native-echarts@0.3.0",
+  "_inBundle": false,
+  "_integrity": "sha1-7EDmbe8nMNVE1KoSMQjTbFiJmDA=",
+  "_location": "/native-echarts",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "native-echarts@0.3.0",
+    "name": "native-echarts",
+    "escapedName": "native-echarts",
+    "rawSpec": "0.3.0",
+    "saveSpec": null,
+    "fetchSpec": "0.3.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "http://registry.npm.taobao.org/native-echarts/download/native-echarts-0.3.0.tgz",
+  "_spec": "0.3.0",
+  "_where": "/Users/lee/P_Product/MonitorPro/MonitorMobile",
+  "author": {
+    "name": "somonus"
+  },
+  "bugs": {
+    "url": "https://github.com/somonus/react-native-echarts/issues"
+  },
+  "dependencies": {
+    "echarts": "3.2.3"
+  },
+  "description": "echarts for react-native",
+  "directories": {
+    "example": "example"
+  },
+  "homepage": "https://github.com/somonus/react-native-echarts#readme",
+  "keywords": [
+    "react-native",
+    "echarts"
+  ],
+  "license": "MIT",
+  "main": "src/index.js",
+  "name": "native-echarts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somonus/react-native-echarts.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.3.0"
+}
