@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { BackHandler,Platform, Animated, Easing,NetInfo } from 'react-native'
+import { BackHandler,Platform, Animated, Easing,NetInfo,View,TouchableOpacity,Text,Modal,Dimensions } from 'react-native'
 import {
   StackNavigator,
   TabNavigator,
@@ -23,12 +23,11 @@ import QRCodeScreen from './containers/Common/QRCodeScreen'
 import Target from './containers/Main/Target'
 import CollectPointList from './containers/Main/CollectPointList'
 import ContactList from './containers/Common/ContactList'
-import Error from './containers/Common/Error'
-import Loading from './containers/Common/Loading'
 import NetConfig from './config/NetConfig.json';
 import moment from 'moment'
 import { createAction, NavigationActions } from './utils'
-
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+const SCREEN_WIDTH=Dimensions.get('window').width;
 const MainNavigator = StackNavigator(
   {
     Home: {
@@ -62,10 +61,6 @@ const MainNavigator = StackNavigator(
       path:'alarmfeedback/:verifyid',
       screen:FeedbackDetail
     },
-    Error: {
-      path:'error/:errormessage',
-      screen: Error
-    },
   },
   {
     initialRouteName:'Home',
@@ -77,11 +72,7 @@ const MainNavigator = StackNavigator(
 const AppNavigator = StackNavigator(
   {
     Login: { screen: Login },
-    Main: { screen: MainNavigator },
-    Error: {
-      path:'error/:errormessage',
-      screen: Error
-    },
+    Main: { screen: MainNavigator }
   },
   {
     headerMode: 'none',
@@ -128,15 +119,23 @@ function getCurrentScreen(navigationState) {
 
 @connect(({ router }) => ({ router }))
 class Router extends PureComponent {
+  constructor(props) {
+    super(props);
 
+    this.state = {
+      modalVisible:false
+    };
+  }
   async componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandle)
   }
   isCon(b){
-    this.props.dispatch(NavigationActions.reset({
-      index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-    }))
+    if(!b)
+    {
+      this.setState({
+        modalVisible:true
+      });
+    }
  }
 
  changeCon(info){
@@ -145,10 +144,9 @@ class Router extends PureComponent {
     {
       if(info=='NONE')
       {
-        this.props.dispatch(NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-        }))
+        this.setState({
+          modalVisible:true
+        });
       }else if(info=='WIFI')
       {
         let netconfig=NetConfig[0];
@@ -160,20 +158,13 @@ class Router extends PureComponent {
         netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
         saveNetConfig(netconfig);
       }
-      // else if(info =='UNKNOWN')
-      // {
-      //   this.props.dispatch(NavigationActions.reset({
-      //     index: 0,
-      //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-      //   }))
-      // }
+
     }else{
       if(info=='none')
       {
-        this.props.dispatch(NavigationActions.reset({
-          index: 0,
-          actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-        }))
+        this.setState({
+          modalVisible:true
+        });
       }else if(info=='wifi')
       {
         let netconfig=NetConfig[0];
@@ -185,13 +176,7 @@ class Router extends PureComponent {
         netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
         saveNetConfig(netconfig);
       }
-      // else if(info =='unknown')
-      // {
-      //   this.props.dispatch(NavigationActions.reset({
-      //     index: 0,
-      //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-      //   }))
-      // }
+
     }
  }
   async componentDidMount() {
@@ -201,16 +186,7 @@ class Router extends PureComponent {
         NetInfo.addEventListener('changeCon',this.changeCon.bind(this));
 
 
-        //检查网络是否链接 返回true/fase
-        NetInfo.isConnected.fetch().done((b) => {
-            if(!b)
-            {
-              this.props.dispatch(NavigationActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-              }))
-            }
-        });
+
 
         //网络链接的信息
         NetInfo.fetch().done((info) => {
@@ -219,10 +195,9 @@ class Router extends PureComponent {
           {
             if(info=='NONE')
             {
-              this.props.dispatch(NavigationActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-              }))
+              this.setState({
+                modalVisible:true
+              });
             }else if(info=='WIFI')
             {
               let netconfig=NetConfig[0];
@@ -234,20 +209,13 @@ class Router extends PureComponent {
               netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
               saveNetConfig(netconfig);
             }
-            // else if(info =='UNKNOWN')
-            // {
-            //   this.props.dispatch(NavigationActions.reset({
-            //     index: 0,
-            //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-            //   }))
-            // }
+
           }else{
             if(info=='none')
             {
-              this.props.dispatch(NavigationActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-              }))
+              this.setState({
+                modalVisible:true
+              });
             }else if(info=='wifi')
             {
               let netconfig=NetConfig[0];
@@ -259,13 +227,7 @@ class Router extends PureComponent {
               netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
               saveNetConfig(netconfig);
             }
-            // else if(info =='unknown')
-            // {
-            //   this.props.dispatch(NavigationActions.reset({
-            //     index: 0,
-            //     actions: [NavigationActions.navigate({ routeName: 'Error',params:{errormessage:'失去网络连接'} })],
-            //   }))
-            // }
+
           }
         });
 
@@ -429,7 +391,45 @@ class Router extends PureComponent {
 
     const { dispatch, router } = this.props
     const navigation = addNavigationHelpers({ dispatch, state: router })
-    return <AppNavigator navigation={navigation} />
+    return (
+      <View style={{flex:1}}>
+        <AppNavigator navigation={navigation} />
+        {/* <TouchableOpacity onPress={()=>{
+          this.setState({
+            modalVisible:true
+          });
+        }}>
+          <Text>{'fdsadas'}</Text>
+        </TouchableOpacity> */}
+        <Modal
+          animationType={"none"}
+          transparent={false}
+          visible={this.state.modalVisible}
+          >
+            <View style={{flex:1,alignItems: 'center',justifyContent: 'center'}}>
+              <TouchableOpacity onPress={()=>{
+                let aaa=this.props;
+                //获取最新路由中请求数据的action，重新请求，今天疲了，下次再战
+                //检查网络是否链接 返回true/fase
+                NetInfo.isConnected.fetch().done((b) => {
+                    if(b)
+                    {
+                      this.setState({
+                        modalVisible:false
+                      });
+                    }else{
+
+                    }
+                });
+
+              }} style={{marginTop: 22}}>
+                <Text>{'程序出错点击重试'}</Text>
+              </TouchableOpacity>
+            </View>
+
+        </Modal>
+      </View>
+    )
   }
 }
 

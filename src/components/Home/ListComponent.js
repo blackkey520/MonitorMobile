@@ -17,7 +17,7 @@ import { connect } from 'dva'
 import { createAction, NavigationActions } from '../../utils'
 import LoadingComponent from '../Common/LoadingComponent'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH=Dimensions.get('window').width; 
+const SCREEN_WIDTH=Dimensions.get('window').width;
 
 @connect(({ point }) => ({ fetching:point.fetching,result:point.result }))
 class ListCompontent extends PureComponent {
