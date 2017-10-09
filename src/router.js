@@ -405,6 +405,7 @@ class Router extends PureComponent {
           animationType={"none"}
           transparent={false}
           visible={this.state.modalVisible}
+          onRequestClose={() => {}}
           >
             <View style={{flex:1,alignItems: 'center',justifyContent: 'center'}}>
               <TouchableOpacity onPress={()=>{

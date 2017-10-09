@@ -76,8 +76,8 @@ class Login extends PureComponent {
           pollutantType:pollutanttype[0].ID
       }));
       let alarmCount = await loadawaitcheck({time:moment().format('YYYY-MM-DD')});
-      saveStorage('pollutantType',pollutanttype);
-      saveStorage('alarmCount',alarmCount.data.length);
+      // saveStorage('pollutantType',pollutanttype);
+      // saveStorage('alarmCount',alarmCount.data.length);
       const currentScreen = getCurrentScreen(this.props.router)
       this.props.dispatch(createAction('app/changebadge')({
         badge:alarmCount.data.length
