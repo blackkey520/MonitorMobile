@@ -25,7 +25,11 @@ const app = dva({
   initialState: {},
   // extraEnhancers: [autoRehydrate()],
   onError(e,dispatch) {
+<<<<<<< HEAD
     
+=======
+     
+>>>>>>> d7080949aec18dde61d94211ebf587d4c177d173
   },
   // onEffect(effect, sagaEffects, model){
   //
