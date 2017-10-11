@@ -29,6 +29,7 @@ class Account extends PureComponent {
   static navigationOptions = {
     title: '我',
     header:null,
+    headerBackTitle: null,
     headerTintColor:'#fff',
     headerStyle:{backgroundColor:'#4f6aea'},
   }
