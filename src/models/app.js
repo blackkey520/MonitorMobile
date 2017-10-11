@@ -61,10 +61,11 @@ export default {
             let alarmCount = yield call(AlarmService.loadawaitcheck,
                {time:moment().format('YYYY-MM-DD')})
                let pollutanttype=yield call(systemConfig.loadpollutanttype, {});
-               saveStorage('pollutantType',pollutanttype);
-               saveStorage('alarmCount',alarmCount.data.length);
+              //  saveStorage('pollutantType',pollutanttype);
+              //  saveStorage('alarmCount',alarmCount.data.length);
+              //  debugger;
              yield put({type: 'changebadge',payload: {badge:alarmCount.data.length}})
-             yield put({type: 'point/fetchmore',payload: {pollutantType:pollutanttype[0].ID}})
+             yield put({type: 'point/fetchmore',payload: {pollutantType:pollutanttype[0].ID}}) 
             yield put(
               NavigationActions.reset({
                 index: 0,
