@@ -122,7 +122,7 @@ class Account extends PureComponent {
               this.props.dispatch(NavigationActions.navigate({
                   routeName: 'ChangePassword'}));
           }}>
-            <Text style={{color:'#313131',fontSize:16}}>{'系统设置'}</Text>
+            <Text style={{color:'#313131',fontSize:16}}>{'修改密码'}</Text>
           </Item>
 
 
