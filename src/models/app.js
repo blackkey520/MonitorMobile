@@ -1,8 +1,8 @@
 import { createAction, NavigationActions,ShowToast} from '../utils'
 import * as authService from '../services/authService'
 import * as AlarmService from '../services/alarmService'
-import * as systemConfig from '../services/systemService';
-import { loadStorage} from '../logics/rpc';
+import * as systemConfig from '../services/systemService'; 
+import { loadStorage,loadLoginMsg,saveLoginMsg,loadToken,saveStorage,clearToken} from '../logics/rpc';
 import moment from 'moment'
 import JPushModule from 'jpush-react-native';
 export default {
@@ -12,7 +12,8 @@ export default {
     user: null,
     contactlist:[],
     ismaintenance:false,
-    badge:0
+    badge:0,
+    errorMsg:''
   },
   reducers: {
     loginStart(state, { payload }) {
@@ -82,5 +83,18 @@ export default {
 
         yield put(createAction('loginEnd')({ user:result,ismaintenance:ismaintenance }))
       },
+      *ModifyPassword({ payload: {authorCode,userPwdOld,userPwdNew,userPwdTwo}}, { call, put ,select}){
+        let result=null;
+        // yield put(createAction('loginStart')({}));
+        result = yield call(authService.resetPwd,{authorCode,userPwdOld,userPwdNew,userPwdTwo})
+        if(result.substring(0,4)!="修改成功")
+        {
+          ShowToast(result);
+        }else{
+          clearToken();
+          JPushModule.deleteAlias((result)=> {})
+          yield put(NavigationActions.navigate({ routeName: 'Login' }));
+        } 
+      },      
   },
 }

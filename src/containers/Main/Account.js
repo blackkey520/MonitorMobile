@@ -119,6 +119,8 @@ class Account extends PureComponent {
           <Item arrow="horizontal" multipleLine
             thumb={<Image source={require('../../images/setting.png')} style={{width:15,height:15,marginRight:10}}/>}
              onClick={() => {
+              this.props.dispatch(NavigationActions.navigate({
+                  routeName: 'ChangePassword'}));
           }}>
             <Text style={{color:'#313131',fontSize:16}}>{'系统设置'}</Text>
           </Item>

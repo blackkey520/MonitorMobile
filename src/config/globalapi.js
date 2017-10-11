@@ -9,6 +9,7 @@ const api={
     // NOTE：用户相关api
     system:{
         login:'/rest/Author/IsLogins',//登陆
+        resetpwd:'/rest/Author/ResetPwd',//修改密码
         contactlist:'/rest/DirectoriesApi/getDirectories/'
     },
     // NOTE: 全文检索相关api

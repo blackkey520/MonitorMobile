@@ -16,6 +16,7 @@
 		"mobx": "^2.7.0",
 		"moment": "^2.18.1",
 		"pinyin": "^2.8.3",
+		"rc-form": "^1.4.8",
 		"react": "^16.0.0-alpha.12",
 		"react-native": "^0.47.2",
 		"react-native-amap3d": "^0.3.0",

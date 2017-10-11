@@ -25,6 +25,7 @@ import CollectPointList from './containers/Main/CollectPointList'
 import ContactList from './containers/Common/ContactList'
 import NetConfig from './config/NetConfig.json';
 import moment from 'moment'
+import ChangePassword from './containers/Common/ChangePassword'
 import { createAction, NavigationActions } from './utils'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
@@ -60,6 +61,9 @@ const MainNavigator = StackNavigator(
     FeedbackDetail:{
       path:'alarmfeedback/:verifyid',
       screen:FeedbackDetail
+    },
+    ChangePassword:{
+      screen:ChangePassword
     },
   },
   {
