@@ -42,7 +42,7 @@
 
   
 #ifdef DEBUG
-//    [[RCTBundleURLProvider sharedSettings] setJsLocation:@"192.168.31.73"];
+    [[RCTBundleURLProvider sharedSettings] setJsLocation:@"172.16.9.45"];
     jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
 #else
     jsCodeLocation = [CodePush bundleURL];
