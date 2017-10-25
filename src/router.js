@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
-import { BackHandler,Platform, Animated, Easing,NetInfo,View,TouchableOpacity,Text,Modal,Dimensions } from 'react-native'
+import { BackHandler,Platform, Animated, Easing,View,TouchableOpacity,Text,Dimensions } from 'react-native'
 import {
   StackNavigator,
   TabNavigator,
   addNavigationHelpers,
 } from 'react-navigation'
-import { loadToken,saveNetConfig,loadNetConfig } from './logics/rpc';
+import { loadToken,saveNetConfig } from './logics/rpc';
 import JPushModule from 'jpush-react-native';
 
 import { connect } from 'dva'
@@ -22,8 +22,7 @@ import MonitorPoint from './containers/Main/MonitorPoint'
 import QRCodeScreen from './containers/Common/QRCodeScreen'
 import Target from './containers/Main/Target'
 import CollectPointList from './containers/Main/CollectPointList'
-import ContactList from './containers/Common/ContactList'
-import NetConfig from './config/NetConfig.json';
+import ContactList from './containers/Common/ContactList' 
 import moment from 'moment'
 import ChangePassword from './containers/Common/ChangePassword'
 import { createAction, NavigationActions } from './utils'
@@ -122,118 +121,13 @@ function getCurrentScreen(navigationState) {
 }
 
 @connect(({ router }) => ({ router }))
-class Router extends PureComponent {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      modalVisible:false
-    };
-  }
+class Router extends PureComponent { 
   async componentWillMount() {
     BackHandler.addEventListener('hardwareBackPress', this.backHandle)
-  }
-  isCon(b){
-    if(!b)
-    {
-      this.setState({
-        modalVisible:true
-      });
-    }
- }
-
- changeCon(info){
-
-    if(Platform.OS === 'android')
-    {
-      if(info=='NONE')
-      {
-        this.setState({
-          modalVisible:true
-        });
-      }else if(info=='WIFI')
-      {
-        let netconfig=NetConfig[0];
-        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-        saveNetConfig(netconfig);
-      }else if(info=='MOBILE')
-      {
-        let netconfig=NetConfig[1];
-        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-        saveNetConfig(netconfig);
-      }
-
-    }else{
-      if(info=='none')
-      {
-        this.setState({
-          modalVisible:true
-        });
-      }else if(info=='wifi')
-      {
-        let netconfig=NetConfig[0];
-        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-        saveNetConfig(netconfig);
-      }else if(info=='cell')
-      {
-        let netconfig=NetConfig[1];
-        netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-        saveNetConfig(netconfig);
-      }
-
-    }
- }
+  } 
+ 
   async componentDidMount() {
-    //监听网络是否链接
-        NetInfo.isConnected.addEventListener('isCon',this.isCon.bind(this));
-        //监听网络变化
-        NetInfo.addEventListener('changeCon',this.changeCon.bind(this));
-
-
-
-
-        //网络链接的信息
-        NetInfo.fetch().done((info) => {
-
-          if(Platform.OS === 'android')
-          {
-            if(info=='NONE')
-            {
-              this.setState({
-                modalVisible:true
-              });
-            }else if(info=='WIFI')
-            {
-              let netconfig=NetConfig[0];
-              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-              saveNetConfig(netconfig);
-            }else if(info=='MOBILE')
-            {
-              let netconfig=NetConfig[1];
-              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-              saveNetConfig(netconfig);
-            }
-
-          }else{
-            if(info=='none')
-            {
-              this.setState({
-                modalVisible:true
-              });
-            }else if(info=='wifi')
-            {
-              let netconfig=NetConfig[0];
-              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-              saveNetConfig(netconfig);
-            }else if(info=='cell')
-            {
-              let netconfig=NetConfig[1];
-              netconfig.neturl="http://"+netconfig.configIp+":"+netconfig.configPort;
-              saveNetConfig(netconfig);
-            }
-
-          }
-        }); 
+     
     let user=await loadToken();
        // 在收到点击事件之前调用此接口
        if(Platform.OS === 'android')
@@ -355,10 +249,7 @@ class Router extends PureComponent {
 
      }
   componentWillUnmount() {
-    //移除监听
-        NetInfo.isConnected.removeEventListener('isCon',this.isCon);
-
-        NetInfo.removeEventListener('changeCon',this.changeCon);
+    
     if(Platform.OS === 'android')
     {
         BackHandler.removeEventListener('hardwareBackPress', this.backHandle)
@@ -392,35 +283,7 @@ class Router extends PureComponent {
     const navigation = addNavigationHelpers({ dispatch, state: router })
     return (
       <View style={{flex:1}}>
-        <AppNavigator navigation={navigation} /> 
-        <Modal
-          animationType={"none"}
-          transparent={false}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {}}
-          >
-            <View style={{flex:1,alignItems: 'center',justifyContent: 'center'}}>
-              <TouchableOpacity onPress={()=>{
-                let aaa=this.props;
-                //获取最新路由中请求数据的action，重新请求，今天疲了，下次再战
-                //检查网络是否链接 返回true/fase
-                NetInfo.isConnected.fetch().done((b) => {
-                    if(b)
-                    {
-                      this.setState({
-                        modalVisible:false
-                      });
-                    }else{
-
-                    }
-                });
-
-              }} style={{marginTop: 22}}>
-                <Text>{'程序出错点击重试'}</Text>
-              </TouchableOpacity>
-            </View>
-
-        </Modal>
+        <AppNavigator navigation={navigation} />
       </View>
     )
   }

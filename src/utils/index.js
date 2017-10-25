@@ -2,54 +2,53 @@
 import { Toast } from 'antd-mobile';
 
 
+export { NavigationActions } from 'react-navigation';
 
+export const delay = time => new Promise(resolve => setTimeout(resolve, time));
 
-export { NavigationActions } from 'react-navigation'
+export const createAction = type => payload => ({ type, payload });
 
-export const delay = time => new Promise(resolve => setTimeout(resolve, time))
-
-export const createAction = type => payload => ({ type, payload })
-
-export const ShowToast = (msg) =>{
+export const ShowToast = (msg) => {
   Toast.info(msg, 1);
-}
-export const ShowResult = (type,msg) =>{
-  if(type){
+};
+export const ShowResult = (type, msg) => {
+  if (type) {
     Toast.success(msg, 1);
-  }else{
+  } else {
     Toast.fail(msg, 1);
   }
-}
-export const ShowLoadingToast=(msg)=>{
+};
+export const ShowLoadingToast = (msg) => {
   Toast.loading(msg, 10000, () => {
 
   });
-}
-export const CloseToast=()=>{
-  Toast.hide()
-}
-export const GetPointsCenter=(corrdinateset)=>{
-  if(corrdinateset.length!=0)
-  {
-    let maxX=corrdinateset[0].longitude,maxY=corrdinateset[0].latitude,minX=corrdinateset[0].longitude,minY=corrdinateset[0].latitude;
-    corrdinateset.map((item,key)=>{
-      minY=minY>item.latitude?item.latitude:minY;
-      maxY=maxY<item.latitude?item.latitude:maxY;
-      minX=minX>item.longitude?item.longitude:minX;
-      maxX=maxX>item.longitude?item.longitude:maxX;
+};
+export const CloseToast = () => {
+  Toast.hide();
+};
+export const GetPointsCenter = (corrdinateset) => {
+  if (corrdinateset.length != 0) {
+    let maxX = corrdinateset[0].longitude,
+      maxY = corrdinateset[0].latitude,
+      minX = corrdinateset[0].longitude,
+      minY = corrdinateset[0].latitude;
+    corrdinateset.map((item, key) => {
+      minY = minY > item.latitude ? item.latitude : minY;
+      maxY = maxY < item.latitude ? item.latitude : maxY;
+      minX = minX > item.longitude ? item.longitude : minX;
+      maxX = maxX > item.longitude ? item.longitude : maxX;
     });
-    let centerX=(minX+maxX)/2;
-    let centerY=(minY+maxY)/2;
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
     return {
-      latitude:centerY,
-      longitude:centerX
+      latitude: centerY,
+      longitude: centerX,
     };
   }
-  else{
-    return null;
-  }
-}
-export const FindMapImg=(imgName)=>{
+
+  return null;
+};
+export const FindMapImg = (imgName) => {
   switch (imgName) {
     case 'WasteWater_unOnLine.png':
       return require('../images/WasteWater_unOnLine.png');
@@ -222,19 +221,20 @@ export const FindMapImg=(imgName)=>{
     default:
 
   }
-}
-export const parseDate=(date)=>{
-  var isoExp, parts;
-    isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s(\d\d):(\d\d):(\d\d)\s*$/;
-    try {
-        parts = isoExp.exec(date);
-    } catch(e) {
-        return null;
-    }
-    if (parts) {
-        date = new Date(parts[1], parts[2] - 1, parts[3], parts[4], parts[5], parts[6]);
-    } else {
-        return null;
-    }
-    return date;
-}
+};
+export const parseDate = (date) => {
+  let isoExp,
+    parts;
+  isoExp = /^\s*(\d{4})-(\d\d)-(\d\d)\s(\d\d):(\d\d):(\d\d)\s*$/;
+  try {
+    parts = isoExp.exec(date);
+  } catch (e) {
+    return null;
+  }
+  if (parts) {
+    date = new Date(parts[1], parts[2] - 1, parts[3], parts[4], parts[5], parts[6]);
+  } else {
+    return null;
+  }
+  return date;
+};

@@ -35,11 +35,12 @@ class MonitorData extends PureComponent {
      );
    }
      _renderItem=({item})=>{
+       let monitorVal=this.props.dataType=='realtime'?item.MonitorValue:item.AvgValue
        return(
              <View style={{flexDirection:'row',alignItems: 'center',justifyContent: 'space-around',
                 backgroundColor:'#fff',height:45,borderBottomWidth:1,borderBottomColor:'#dbd8d8'}}>
                <Text style={{fontSize:13,color:'#4a4848',width:60}}>{this.props.pollutant.PolluntName}</Text>
-               <Text style={{fontSize:13,color:item.IsOver==-1?'#4a4848':item.color!=''?item.color:'#4a4848',width:60}}>{this.props.dataType=='realtime'?item.MonitorValue:item.AvgValue}</Text>
+               <Text style={{fontSize:13,color:item.IsOver==-1?'#4a4848':item.color!=''?item.color:'#4a4848',width:60}}>{monitorVal==null?'-':monitorVal}</Text>
                <Text style={{fontSize:13,color:'#4a4848',width:70}}>{item.StandardValue==''?'-':item.StandardValue}</Text>
                <Text style={{fontSize:13,color:'#4a4848',width:80}}>{item.MonitorTime}</Text>
              </View>

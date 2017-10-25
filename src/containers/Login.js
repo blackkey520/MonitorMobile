@@ -153,7 +153,7 @@ class Login extends PureComponent {
                         }}
                         value={this.state.password}
                         style={{width: SCREEN_WIDTH - 120,marginLeft: 10,
-                          paddingTop: 1,paddingBottom: 1,marginBottom: 8,height: 20,color: 'white',}}/>
+                          paddingTop: 1,paddingBottom: 1,marginBottom: 8,height: 21,color: 'white',}}/>
                   </View>
                   <View style={styles.checkStyle}>
                       <TouchableOpacity style={styles.checkStyleDetail} onPress={() => {
