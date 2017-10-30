@@ -57,7 +57,7 @@ class TargetMonitorPoint extends PureComponent {
     if(rtnDataVal.length==0)
     {
       rtnDataVal=(
-        <View style={{flex:1,alignItems: 'center',justifyContent: 'center',}}>
+        <View style={{flex:1,marginTop:20,alignItems: 'center',justifyContent: 'center',}}>
           <Text style={{color:'#585757',fontSize:15}}>
             {'无监控数据'}
           </Text>

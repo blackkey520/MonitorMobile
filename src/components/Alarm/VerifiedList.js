@@ -79,7 +79,7 @@ class VerifiedList extends PureComponent {
     {
       return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
         <LoadingComponent   Message={'正在加载数据'}/></View>);
-    }else if(!this.props.getmoreverified){
+    }else if(!this.props.getmoreverified&&this.props.verifiedlist.length!=0){
 
       return (<TouchableOpacity onPress={()=>{
         this.props.dispatch(createAction('verified/loadverifiedlist')({

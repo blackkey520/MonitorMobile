@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
-  Platform
+  Platform,
+  StatusBar
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ScrollableTabView, { ScrollableTabBar, } from 'react-native-scrollable-tab-view';
@@ -24,7 +25,7 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import moment from 'moment'
 
-@connect(({ point,alarm }) => ({ fetching:point.fetching,unverifiedCount:alarm.unverifiedCount,legend:point.legend}))
+@connect(({point, alarm, app}) => ({pollutanttype: app.pollutanttype, fetching: point.fetching, unverifiedCount: alarm.unverifiedCount, legend: point.legend}))
 class Home extends Component {
 
   static navigationOptions = ({ navigation, screenProps }) => ({
@@ -79,7 +80,7 @@ class Home extends Component {
 
   _handleChangeTab=({i, ref, from })=>{
     this.props.dispatch(createAction('point/fetchmore')({
-        pollutantType:this.props.navigation.state.params.pollutanttype[i].ID
+        pollutantType:this.props.pollutanttype[i].ID
     }));
   }
   _renderlegend=()=>{
@@ -93,14 +94,17 @@ class Home extends Component {
   }
   render() {
     let tabnames=[];
-    if(this.props.navigation.state.params.pollutanttype!=null)
+    if(this.props.pollutanttype!=null)
     {
-      this.props.navigation.state.params.pollutanttype.map((item,key)=>{
+      this.props.pollutanttype.map((item,key)=>{
         tabnames.push(item.Name)
       });
     }
     return (
       <View style={{height:SCREEN_HEIGHT,width:SCREEN_WIDTH}}>
+       <StatusBar 
+     barStyle="light-content"
+   />
         <View style={styles.layout}>
             <ScrollableTabView
               tabBarBackgroundColor={'#fff'}
@@ -112,7 +116,7 @@ class Home extends Component {
                 prerenderingSiblingsNumber={1}
                >
                  {
-                   this.props.navigation.state.params.pollutanttype.map((item,key)=>{
+                   this.props.pollutanttype.map((item,key)=>{
                      return(<MainContent key={key} arraykey={key} tabLabel={item.Name} PollutantType={item.ID}  />);
                    })
                  }

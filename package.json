@@ -5,11 +5,12 @@
 	"scripts": {
 		"configureJPush": "node node_modules/jpush-react-native/JPushConfiguration.js",
 		"start": "node node_modules/react-native/local-cli/cli.js start",
-		"test": "jest"
+		"test": "jest",
+		"lint": "eslint . --fix --format=node_modules/eslint-formatter-pretty --quiet"
 	},
 	"dependencies": {
 		"ac-qrcode": "^1.0.1",
-		"antd-mobile": "^1.6.3",
+		"antd-mobile": "^2.0.0",
 		"dva": "^1.3.0-beta.3",
 		"jcore-react-native": "^1.1.8-beta2",
 		"jpush-react-native": "^2.0.9",
@@ -18,6 +19,7 @@
 		"pinyin": "^2.8.3",
 		"rc-form": "^1.4.8",
 		"react": "^16.0.0-alpha.12",
+		"react-dom": "^16.0.0",
 		"react-native": "^0.47.2",
 		"react-native-amap3d": "^0.7.3",
 		"react-native-calendar-select": "^0.1.1",
@@ -43,14 +45,16 @@
 		"babel-plugin-import": "^1.4.0",
 		"babel-plugin-transform-decorators-legacy": "^1.3.4",
 		"babel-preset-react-native": "1.9.2",
-		"eslint": "^3.19.0",
+		"eslint": "^4.9.0",
 		"eslint-config-airbnb": "^15.0.1",
 		"eslint-config-prettier": "^2.1.1",
+		"eslint-formatter-pretty": "^1.3.0",
 		"eslint-plugin-babel": "^4.1.1",
 		"eslint-plugin-import": "^2.3.0",
 		"eslint-plugin-jsx-a11y": "^5.0.3",
 		"eslint-plugin-prettier": "^2.1.1",
 		"eslint-plugin-react": "^7.0.1",
+		"eslint-plugin-react-native": "^3.1.0",
 		"jest": "20.0.4",
 		"prettier": "^1.4.4",
 		"react-test-renderer": "16.0.0-alpha.12"

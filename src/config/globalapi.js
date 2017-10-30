@@ -13,6 +13,7 @@ const api = {
     resetpwd: '/rest/Author/ResetPwd', // 修改密码
     contactlist: '/rest/DirectoriesApi/getDirectories/',
     nettest: '/rest/Author/SwitchNewWork/',
+    systemconfig: '/rest/SysConfig/GetAppSettings/'
   },
     // NOTE: 全文检索相关api
   monitorpoint: {

@@ -21,13 +21,7 @@ import JPushModule from 'jpush-react-native';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-@connect(({
-    app
-}) => ({
-        fetching: app.fetching,
-        contactlist: app.contactlist,
-        errorMsg:app.errorMsg
-    }))
+@connect(({app}) => ({fetching: app.fetching,contactlist: app.contactlist,errorMsg:app.errorMsg}))
 // create a component
 class ChangePassword extends Component {
     static navigationOptions = ({

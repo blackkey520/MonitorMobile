@@ -37,11 +37,7 @@ export default {
     * selecttarget({ payload: { targetCode, baseType } }, { call, put, select }) {
       let result = null;
       const state = yield select(state => state.point);
-      yield put(
-          NavigationActions.navigate({
-            routeName: 'Target', params: { targettype: targetCode, targetcode: baseType },
-          }),
-        );
+      
       yield put(createAction('fetchStart')());
       result = yield call(targetService.selecttarget,
            { targetCode, baseType, fileLength: 50000, width: 300 });
@@ -56,9 +52,9 @@ export default {
         result.data.TargetInfo.CoordinateJson = [];
       }
       const netconfig = getUseNetConfig();
-      let img = [],
-        lowimg = [],
-        thumbimg = [];
+      const img = [];
+      const lowimg = [];
+      const thumbimg = [];
       const newresult = state.result;
       if (result.data.ImgList != '') {
         const imgList = result.data.ImgList.split(',');
@@ -74,6 +70,11 @@ export default {
       result.data.lowimg = lowimg;
       result.data.thumbimg = thumbimg;
       yield put(createAction('fetchEnd')({ newImageList: [], targetBase: result.data }));
+      yield put(
+          NavigationActions.navigate({
+            routeName: 'Target', params: { targettype: targetCode, targetcode: baseType },
+          }),
+        );
     },
   },
 };

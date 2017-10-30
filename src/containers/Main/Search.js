@@ -30,6 +30,7 @@ class Search extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => ({
     title: '搜索',
     headerTintColor:'#fff',
+    headerBackTitle:null,
     headerStyle:{backgroundColor:'#4f6aea'},
     headerRight: (
         <TouchableOpacity onPress ={()=>{

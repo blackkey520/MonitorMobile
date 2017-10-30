@@ -15,10 +15,11 @@ import { createAction, NavigationActions } from '../../utils'
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH=Dimensions.get('window').width;
 import Echarts from '../Common/native-echarts/src';
-@connect(({ point,monitordata }) => ({ dataType:monitordata.dataType,pollutant:monitordata.pollutant,selectedpoint:point.selectedpoint }))
+@connect(({ point,monitordata }) => ({ dataType:monitordata.dataType,
+    pollutant:monitordata.pollutant,selectedpoint:point.selectedpoint,xAxis:monitordata.xAxis,yAxis:monitordata.yAxis}))
 class MonitorChart extends PureComponent {
   render() {
-    let { xAxis, data} = this.props;
+    let { xAxis, yAxis} = this.props;
         let option = {
             title: {
                 text: 'So2浓度趋势图',
@@ -30,20 +31,28 @@ class MonitorChart extends PureComponent {
             },
             toolbox: {},
             grid: {
-                left: '1%',
-                right: '5%',
+                left: '0%',
+                right: '10%',
                 bottom: '0%',
                 top: '2%',
-                width:SCREEN_WIDTH-30,
+                width:SCREEN_WIDTH-10,
                 height:SCREEN_HEIGHT/2-150,
                 containLabel: true
             },
             xAxis: [
                 {
-                    name: '时间',
+                    name: '',
                     type: 'category',
                     boundaryGap: false,
-                    data: xAxis
+                    data: xAxis,
+                    	splitLine:{//网格线
+			                show: true,
+			                lineStyle:{
+                                color:['#989797'],
+                                width:0.5,
+			                    type:'dashed'
+			                }
+			            },
                 }
             ],
             yAxis: [
@@ -51,28 +60,41 @@ class MonitorChart extends PureComponent {
                     name: this.props.pollutant.Unit,
                     type: 'value',
                     scale: false,
-                    boundaryGap: ['50%', '50%']
+                    boundaryGap: ['70%', '70%'],
+                    axisLabel : {
+                        formatter: function (value, index) {
+                            return value.toFixed(1); 
+                        } 
+                    },
+                    	splitLine:{//网格线
+			                show: true,
+			                lineStyle:{
+                                color:['#989797'],
+                                width:0.5,
+			                    type:'dashed'
+			                }
+			            },
                 }
             ],
-            dataZoom: [
-                // {
-                //
-                //     show: true,
-                //     "height": 20,
-                //     "xAxisIndex": [0],
-                //     bottom: 20,
-                //     "start": 0,
-                //     "end": 50
-                // },
-                {
-                    "type": "inside",
-                    "show": true,
-                    "height": 10,
-                    "xAxisIndex": [0],
-                    "start": 1,
-                    "end": 35
-                }
-            ],
+            // dataZoom: [
+            //     // {
+            //     //
+            //     //     show: true,
+            //     //     "height": 20,
+            //     //     "xAxisIndex": [0],
+            //     //     bottom: 20,
+            //     //     "start": 0,
+            //     //     "end": 50
+            //     // },
+            //     {
+            //         "type": "inside",
+            //         "show": true,
+            //         "height": 10,
+            //         "xAxisIndex": [0],
+            //         "start": 1,
+            //         "end": 35
+            //     }
+            // ],
             series: [
                 {
                     name: this.props.pollutant.Unit,
@@ -115,7 +137,7 @@ class MonitorChart extends PureComponent {
                             }
                         }
                     },
-                    data: data
+                    data: yAxis
                 }
             ]
         };

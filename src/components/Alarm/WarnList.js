@@ -72,8 +72,7 @@ class WarnList extends PureComponent {
       {
         return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
           <LoadingComponent   Message={'正在加载数据'}/></View>);
-      }else if(!this.props.getmorewarn){
-
+      }else if(!this.props.getmorewarn&&this.props.warnlist.length!=0){
         return (<TouchableOpacity onPress={()=>{
           this.props.dispatch(createAction('warn/loadwarnlist')({
             isfirst:false,
@@ -83,7 +82,6 @@ class WarnList extends PureComponent {
       }else{
         return (<View></View>);
       }
-
     }
   render() {
     return (
@@ -101,7 +99,7 @@ class WarnList extends PureComponent {
                 time:moment().format('YYYY-MM-DD')
               }));
             }}
-            onEndReached={(info)=>{
+            onEndReached={(info)=>{ 
               if(this.props.fetchtime!=null&&this.props.getmorewarn)
               {
                 this.props.dispatch(createAction('warn/loadwarnlist')({
@@ -111,8 +109,8 @@ class WarnList extends PureComponent {
               }
             }}
             onEndReachedThreshold={Platform.OS === 'ios'?0:1}
-             renderItem={this._renderItem}
-          sections={this.props.warnlist}
+            renderItem={this._renderItem}
+            sections={this.props.warnlist}
           />
       </View>
     );

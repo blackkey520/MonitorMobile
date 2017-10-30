@@ -48,14 +48,17 @@ export function getUseNetConfig() {
   const config = netconfig.get().find((value, index, arr) => value.isuse === true);
   return config;
 }
-export function saveNetConfig(_netconfig) {
+export async function saveNetConfig(_netconfig) {
   netconfig.set(_netconfig);
   return global.storage.save({ key: 'netConfig', data: JSON.stringify(_netconfig) });
 }
 export async function loadNetConfig() {
   const storagenetconfig = await storageload('netConfig');
-  const storagenetobj = storagenetconfig ? JSON.parse(storagenetconfig) : null;
+  const storagenetobj = storagenetconfig
+    ? JSON.parse(storagenetconfig)
+    : null;
   netconfig.set(storagenetobj);
+  return netconfig.get();
 }
 export function getToken() {
   return token.get();

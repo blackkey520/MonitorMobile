@@ -21,28 +21,27 @@ const SCREEN_WIDTH=Dimensions.get('window').width;
 @connect(({ point,monitordata }) => ({ selectedpoint:point.selectedpoint,
   datafetching:monitordata.datafetching,current:monitordata.current,total:monitordata.total,
   pollutant:monitordata.pollutant,dataType:monitordata.dataType
-  ,startDate:monitordata.startDate,endDate:monitordata.endDate,monitordata:monitordata.monitordata}))
+  ,startDate:monitordata.startDate,endDate:monitordata.endDate,monitordata:monitordata.monitordata,pageSize : monitordata.pageSize}))
 class MonitorData extends PureComponent {
    _header=()=>{
      return (
        <View style={{flexDirection:'row',alignItems: 'center',justifyContent: 'space-around',
           backgroundColor:'#fff',height:30}}>
-         <Text style={{fontSize:13,color:'#787777',width:60}}>污染物</Text>
-         <Text style={{fontSize:13,color:'#787777',width:60}}>监测值</Text>
-         <Text style={{fontSize:13,color:'#787777',width:70}}>标准值</Text>
-         <Text style={{fontSize:13,color:'#787777',width:80}}>监测时间</Text>
+         <Text style={{fontSize:13,color:'#787777',width:60,textAlign:'center'}}>污染物</Text>
+         <Text style={{fontSize:13,color:'#787777',width:60,textAlign:'center'}}>监测值</Text>
+         <Text style={{fontSize:13,color:'#787777',width:70,textAlign:'center'}}>标准值</Text>
+         <Text style={{fontSize:13,color:'#787777',width:80,textAlign:'center'}}>监测时间</Text>
        </View>
      );
    }
-     _renderItem=({item})=>{
-       let monitorVal=this.props.dataType=='realtime'?item.MonitorValue:item.AvgValue
+     _renderItem=({item})=>{ 
        return(
              <View style={{flexDirection:'row',alignItems: 'center',justifyContent: 'space-around',
                 backgroundColor:'#fff',height:45,borderBottomWidth:1,borderBottomColor:'#dbd8d8'}}>
-               <Text style={{fontSize:13,color:'#4a4848',width:60}}>{this.props.pollutant.PolluntName}</Text>
-               <Text style={{fontSize:13,color:item.IsOver==-1?'#4a4848':item.color!=''?item.color:'#4a4848',width:60}}>{monitorVal==null?'-':monitorVal}</Text>
-               <Text style={{fontSize:13,color:'#4a4848',width:70}}>{item.StandardValue==''?'-':item.StandardValue}</Text>
-               <Text style={{fontSize:13,color:'#4a4848',width:80}}>{item.MonitorTime}</Text>
+               <Text style={{fontSize:13,color:'#4a4848',width:60,textAlign:'center'}}>{this.props.pollutant.PolluntName}</Text>
+               <Text style={{fontSize:13,color:item.IsOver==-1?'#4a4848':item.color!=''?item.color:'#4a4848',width:60,textAlign:'center'}}>{item.formatValue}</Text>
+               <Text style={{fontSize:13,color:'#4a4848',width:70,textAlign:'center'}}>{item.StandardValue==''?'-':item.StandardValue}</Text>
+               <Text style={{fontSize:13,color:'#4a4848',width:80,textAlign:'center'}}>{item.formatTime}</Text>
              </View>
        );
    }
@@ -51,21 +50,19 @@ class MonitorData extends PureComponent {
     return "index"+index+item;
     }
     _footer=()=>{
-
-      if(this.props.datafetching)
-      {
-        if(this.props.current>this.props.total)
+        if(this.props.current>this.props.total/this.props.pageSize)
         {
           return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
             <Text>{'没有更多数据了'}</Text></View>);
+        }else{
+          if(this.props.datafetching)
+          {
+              return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
+                <LoadingComponent   Message={'正在加载数据'}/></View>);
+          }else{
+            return (<View></View>);
+          }
         }
-        else{
-          return (<View style={{height:50,width:SCREEN_WIDTH,alignItems: 'center',justifyContent: 'center',}}>
-            <LoadingComponent   Message={'正在加载数据'}/></View>);
-        }
-      }else{
-        return (<View></View>);
-      }
     }
    render() {
      return (
@@ -90,7 +87,8 @@ class MonitorData extends PureComponent {
               }));
             }}
             onEndReached={(info)=>{
-              if(this.props.current<=this.props.total&&!this.props.datafetching)
+              
+              if(this.props.current<=this.props.total/this.props.pageSize&&!this.props.datafetching)
               {
                 // NOTE: 调用查询方法
                //  monitorStore.fetchMore();

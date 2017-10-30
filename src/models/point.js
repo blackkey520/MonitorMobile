@@ -101,18 +101,22 @@ export default {
       result.data.lowimg = lowimg;
       result.data.thumbimg = thumbimg;
       const pollutant = result.data.PollutantTypeInfo[0];
-      yield put(createAction('updateState')({ selectedpoint: result.data }));
-      yield put(
+      if (result.data.MonitorPointPollutant.length != 0) {
+        yield put(createAction('updateState')({ selectedpoint: result.data }));
+        yield put(
           NavigationActions.navigate({
             routeName: 'MonitorPoint', params: { dgimn },
           }),
         );
-      yield put({ type: 'monitordata/searchdata',
-        payload: { dgimn,
-          startDate: moment().format('YYYY-MM-DD'),
-          endDate: moment().add(1, 'days').format('YYYY-MM-DD'),
-          pollutant,
-          dataType: 'realtime' } });
+        yield put({ type: 'monitordata/searchdata',
+          payload: { dgimn,
+            startDate: moment().add(-10, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+            endDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+            pollutant,
+            dataType: 'realtime' } });
+      } else {
+        ShowToast('该监测点没有绑定污染物');
+      }
     },
     * fetchmore({ payload: { pollutantType } }, { call, put, select }) {
       let result = null;

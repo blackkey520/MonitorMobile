@@ -1,4 +1,6 @@
-[
+{
+  "isAutoLoad":true,
+  "Config":[
   {
     "configName":"内网",
     "configIp":"172.16.9.40",
@@ -10,3 +12,4 @@
     "configPort":"8013"
   }
 ]
+}

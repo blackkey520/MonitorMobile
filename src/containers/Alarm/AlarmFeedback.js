@@ -33,7 +33,7 @@ class AlarmFeedback extends PureComponent {
               prerenderingSiblingsNumber={1}
           >
         <AlarmFeedbackEdit clearselected={this.props.navigation.state.params.clearselect} selected={this.props.navigation.state.params.selected} alarmdgimn={this.props.navigation.state.params.alarmdgimn} tabLabel="报警反馈"/>
-        <FeedbackAlarmList selected={this.props.navigation.state.params.selected} alarmdgimn={this.props.navigation.state.params.alarmdgimn} tabLabel="报警信息"/>
+        {<FeedbackAlarmList selected={this.props.navigation.state.params.selected} alarmdgimn={this.props.navigation.state.params.alarmdgimn} tabLabel="报警信息"/>}
       </ScrollableTabView>
       </View>
     );

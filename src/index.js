@@ -12,33 +12,32 @@
  import { createLogger } from 'redux-logger';
  const logger = createLogger();
  import { test, getNetConfig, saveNetConfig, getUseNetConfig } from './logics/rpc';
- import NetConfig from './config/NetConfig.json';
  import api from './config/globalapi';
  if (!__DEV__) {
    global.console = {
      info: () => {},
      log: () => {},
      warn: () => {},
-     error: () => {},
+     error: () => {}
    };
  }
  const app = dva({
    initialState: {},
-   onError(e, dispatch) {
-     ShowToast('程序发生错误');
-   },
+  //  onError(e, dispatch) {
+  //    ShowToast('程序发生错误');
+  //  },
    onEffect(effect, sagaEffects, model) {
      return function* (...args) {
-       const netconfig = getUseNetConfig();
-       const url = `${netconfig.neturl + api.system.nettest}`;
+       const config = getUseNetConfig();
+       const url = `${config.neturl + api.system.nettest}`;
        const result = yield test(url, {}).then(async data => true, json => false);
        const CNConfig = [];
+       const NetConfig = getNetConfig();
        if (result) {
          yield effect(...args);
        } else {
          NetConfig.map((item, key) => {
-           item.neturl = `http://${item.configIp}:${item.configPort}`;
-           if (netconfig.neturl === item.neturl) {
+           if (config.neturl === item.neturl) {
              item.isuse = false;
            } else {
              item.isuse = true;
@@ -49,10 +48,10 @@
          ShowToast('网络断开');
        }
      };
-   },
+   }
  });
  app.use({
-   onAction: logger,
+   onAction: logger
  });
  registerModels(app);
  app.router(() => <Router />);

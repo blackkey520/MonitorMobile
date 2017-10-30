@@ -22,7 +22,7 @@ export const getcontactlist = async (param) => {
     const url = netconfig.neturl + api.system.contactlist;
     await get(url, body).then(async (data) => {
       // 处理 请求success
-      if (data && data.requstresult === 1) {
+      if (data && data.requstresult === '1') {
         result = data.data;
         result.message = '';
       } else {

@@ -67,7 +67,7 @@ class AlarmFeedbackEdit extends PureComponent {
   }
   _onDateChange=(date)=>{
     this.setState({
-      RecoveryTime:date
+      RecoveryTime:moment(date)
     });
   }
 
@@ -154,7 +154,7 @@ class AlarmFeedbackEdit extends PureComponent {
               extra="请选择(可选)"
               title={<Text>{''}</Text>}
               onChange={this._onDateChange}
-              value={this.state.RecoveryTime}
+              value={this.state.RecoveryTime.toDate()}
             >
               <TimeComponent/>
             </DatePicker>

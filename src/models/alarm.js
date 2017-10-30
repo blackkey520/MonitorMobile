@@ -71,7 +71,6 @@ export default {
     * loadalarmlist({ payload: { alarmdgimn, alarmbegindate, alarmenddate } }, { call, put, select }) {
       let result = null;
       const state = yield select(state => state.alarm);
-
       yield put(createAction('fetchStart')({ alarmdgimn,
         alarmbegindate,
         alarmenddate,
