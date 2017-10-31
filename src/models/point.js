@@ -30,7 +30,7 @@ export default {
     * collectpoint({ payload: { dgimn, callback } }, { call, put, select }) {
       const state = yield select(state => state.point);
       result = yield call(pointService.collectpoint,
-           { dgimn: state.selectedpoint.Point.Dgimn });
+        { dgimn: state.selectedpoint.Point.Dgimn });
       const newselectedpoint = state.selectedpoint;
       if (result.data != null) {
         if (result.data == 1) {
@@ -53,7 +53,7 @@ export default {
       result = yield call(pointService.uploadimage, { img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}`, code: dgimn });
 
       const newImageresult = yield call(pointService.selectsinglepoint,
-           { dgimn, fileLength: 50000, width: 300 });
+        { dgimn, fileLength: 50000, width: 300 });
       const netconfig = getUseNetConfig();
       let img = [],
         lowimg = [],
@@ -80,7 +80,7 @@ export default {
       const state = yield select(state => state.point);
       yield put(createAction('updateState')());
       result = yield call(pointService.selectsinglepoint,
-           { dgimn, fileLength: 50000, width: 300 });
+        { dgimn, fileLength: 50000, width: 300 });
       const netconfig = getUseNetConfig();
 
       let img = [],
@@ -124,7 +124,7 @@ export default {
       let newresult = state.result;
       yield put(createAction('fetchStart')({ pollutantType, result: [] }));
       result = yield call(pointService.fetchlist,
-           { pollutantType, pageIndex: 1, pageSize: 10000 });
+        { pollutantType, pageIndex: 1, pageSize: 10000 });
       newresult = result.data;
       const legend = yield call(pointService.getlegend, { pollutantType });
 
@@ -135,13 +135,13 @@ export default {
       const state = yield select(state => state.point);
       yield put(createAction('fetchStart')({ pollutantType }));
       result = yield call(pointService.getcollectpointlist,
-           { pageIndex: 1, pageSize: 10000 });
+        { pageIndex: 1, pageSize: 10000 });
       yield put(createAction('fetchEnd')({ collectpointlist: result.data != null ? result.data : [] }));
       yield put(
-          NavigationActions.navigate({
-            routeName: 'CollectPointList',
-          }),
-        );
+        NavigationActions.navigate({
+          routeName: 'CollectPointList',
+        }),
+      );
     },
   },
 };

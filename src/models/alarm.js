@@ -26,6 +26,23 @@ export default {
       return { ...state, ...payload };
     },
   },
+  subscriptions: {
+    setup(param) {
+      // return history.listen(({ pathname, payload }) => {
+      //   debugger;
+      //   // if (pathname === '/monitoroverview') {
+      //   //   const { pollutantType = null, searchTime = null, monitortype = 'realtime' } = payload || {};
+      //   //   dispatch({ type: 'querydata',
+      //   //     payload: {
+      //   //       pollutantType,
+      //   //       searchTime,
+      //   //       monitortype,
+      //   //     },
+      //   //   });
+      //   // }
+      // });
+    },
+  },
   effects: {
     * uploadimage({ payload: { image, callback } }, { call, put, select }) {
       let result = null;
@@ -43,7 +60,7 @@ export default {
       yield put(createAction('updateState')({ postfetching: true }));
       result = yield call(AlarmService.postfeedback, postjson);
       const newlist = yield call(AlarmService.loadalarmlist,
-           { dgimn: state.alarmdgimn, starttime: state.alarmbegindate, endtime: state.alarmenddate, pageindex: 1, pagesize: state.pagesize });
+        { dgimn: state.alarmdgimn, starttime: state.alarmbegindate, endtime: state.alarmenddate, pageindex: 1, pagesize: state.pagesize });
       yield put(createAction('updateState')({ postfetching: false,
         imagelist: [],
         alarmtotal: Math.ceil(result.total / state.pagesize),
@@ -77,7 +94,7 @@ export default {
         alarmcurrent: 1,
         alarmlist: [] }));
       result = yield call(AlarmService.loadalarmlist,
-           { dgimn: alarmdgimn, starttime: alarmbegindate, endtime: alarmenddate, pageindex: 1, pagesize: state.pagesize });
+        { dgimn: alarmdgimn, starttime: alarmbegindate, endtime: alarmenddate, pageindex: 1, pagesize: state.pagesize });
       yield put(createAction('fetchEnd')({ alarmtotal: Math.ceil(result.total / state.pagesize), alarmlist: result && result.data != null && result.data.length != 0 ? result.data : [] }));
     },
   },

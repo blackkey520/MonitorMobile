@@ -86,6 +86,7 @@ class Login extends PureComponent {
     if (loginmsg != null) {
       this.setState(loginmsg);
     }
+    
     const user = await loadToken();
     if (user) {
       this.props.dispatch(createAction('app/changeState')({
