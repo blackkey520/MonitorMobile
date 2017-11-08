@@ -3,8 +3,8 @@
   "Config":[
   {
     "configName":"内网",
-    "configIp":"172.16.9.40",
-    "configPort":"8021"
+    "configIp":"172.16.12.152",
+    "configPort":"8013"
   },
   {
     "configName":"外网",

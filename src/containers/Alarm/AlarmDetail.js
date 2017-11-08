@@ -1,6 +1,6 @@
 
 
-import React, { Component, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 
 import {
   StyleSheet,
@@ -12,16 +12,23 @@ import {
   Image,
   Platform
 } from 'react-native';
-import { connect } from 'dva';
+import { connect } from 'react-redux';
+import Calendar from 'react-native-calendar-select';
+import moment from 'moment';
+import { Button } from 'antd-mobile';
+
 import { NavigationActions, createAction, ShowToast } from '../../utils';
 import LoadingComponent from '../../components/Common/LoadingComponent';
 import NoDataComponent from '../../components/Common/NoDataComponent';
-import Calendar from 'react-native-calendar-select';
+
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
-import { Button } from 'antd-mobile';
-import moment from 'moment';
-@connect(({ alarm }) => ({ alarmtotal: alarm.alarmtotal, alarmcurrent: alarm.alarmcurrent, fetching: alarm.fetching, alarmlist: alarm.alarmlist }))
+
+
+@connect(({ alarm }) => ({ alarmtotal: alarm.alarmtotal,
+  alarmcurrent: alarm.alarmcurrent,
+  loading: alarm.loading,
+  alarmlist: alarm.alarmlist }))
 class AlarmDetail extends PureComponent {
   static navigationOptions = ({ navigation, screenProps }) => ({
     headerTitle: navigation.state.params.pointname,
@@ -36,13 +43,31 @@ class AlarmDetail extends PureComponent {
       endtime: this.props.navigation.state.params.alarmenddate,
       selected: (new Map(): Map<string, boolean>)
     };
+  }
+
+  extraUniqueKey=(item, index) => `index${index}${item}`
+  footer=() => {
+    if (this.props.loading) {
+      return (<View style={{ height: 50, width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'center', }}>
+        <LoadingComponent Message={'正在加载数据'} /></View>);
+    }
+    return (<View />);
+  }
+  confirmDate=({ startDate, endDate, startMoment, endMoment }) => {
+    this.setState({
+      begintime: moment(startDate).format('YYYY-MM-DD'),
+      endtime: moment(endDate).format('YYYY-MM-DD')
+    });
     this.props.dispatch(createAction('alarm/loadalarmlist')({
-      alarmdgimn: this.props.navigation.state.params.DGIMN,
-      alarmbegindate: this.props.navigation.state.params.alarmbegindate,
-      alarmenddate: this.props.navigation.state.params.alarmenddate
+      alarmdgimn: this.props.navigation.state.params.alarmdgimn,
+      alarmbegindate: moment(startDate).format('YYYY-MM-DD 00:00:00'),
+      alarmenddate: moment(endDate).format('YYYY-MM-DD 23:59:59'),
     }));
   }
-  _renderItem=({ item }) => (
+  clearselect=() => {
+    this.state.selected.clear();
+  }
+  renderItem=({ item }) => (
     <TouchableOpacity
       style={{ width: SCREEN_WIDTH - 20,
         borderRadius: 10,
@@ -53,7 +78,7 @@ class AlarmDetail extends PureComponent {
         this.setState((state) => {
           // copy the map rather than modifying state.
           const selected = new Map(state.selected);
-          if (selected.get(item.ID) == undefined) {
+          if (selected.get(item.ID) === undefined) {
             selected.set(item.ID, true); // toggle
           } else {
             selected.delete(item.ID);
@@ -69,7 +94,7 @@ class AlarmDetail extends PureComponent {
             <Image source={require('../../images/checkbox_pressed.png')} style={{ width: 17, height: 17 }} /> :
             <Image source={require('../../images/checkbox_normal.png')} style={{ width: 17, height: 17 }} />
           }
-          <Text style={{ marginLeft: 5, fontSize: 15, color: '#37353a' }}>{item.AlarmType == 2 ? '超标报警' : '异常报警'}</Text>
+          <Text style={{ marginLeft: 5, fontSize: 15, color: '#37353a' }}>{item.AlarmType === 2 ? '超标报警' : '异常报警'}</Text>
         </View>
         <View style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
           <Image source={require('../../images/alarm_long.png')} style={{ width: 15, height: 15 }} />
@@ -77,33 +102,16 @@ class AlarmDetail extends PureComponent {
           }-${item.AlarmTime.substring(10, item.AlarmTime.length)}`}</Text>
         </View>
       </View>
-      <View style={{ marginTop: 10, marginBottom: 10, flex: 1, marginLeft: 30, width: SCREEN_WIDTH - 70 }}>
+      <View style={{ marginTop: 10,
+        marginBottom: 10,
+        flex: 1,
+        marginLeft: 30,
+        width: SCREEN_WIDTH - 70 }}
+      >
         <Text style={{ fontSize: 12, color: '#a0a0a2' }}>{item.AlarmMsg}</Text>
       </View>
     </TouchableOpacity>
   )
-  _extraUniqueKey=(item, index) => `index${index}${item}`
-  _footer=() => {
-    if (this.props.fetching) {
-      return (<View style={{ height: 50, width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'center', }}>
-        <LoadingComponent Message={'正在加载数据'} /></View>);
-    }
-    return (<View />);
-  }
-  _confirmDate=({ startDate, endDate, startMoment, endMoment }) => {
-    this.setState({
-      begintime: moment(startDate).format('YYYY-MM-DD'),
-      endtime: moment(endDate).format('YYYY-MM-DD')
-    });
-    this.props.dispatch(createAction('alarm/loadalarmlist')({
-      alarmdgimn: this.props.navigation.state.params.alarmdgimn,
-      alarmbegindate: moment(startDate).format('YYYY-MM-DD 00:00:00'),
-      alarmenddate: moment(endDate).format('YYYY-MM-DD 23:59:59'),
-    }));
-  }
-  _clearselect=() => {
-    this.state.selected.clear();
-  }
   render() {
     const color = {
       subColor: '#fff',
@@ -128,11 +136,11 @@ class AlarmDetail extends PureComponent {
         </View>
         <View style={{ flex: 1 }}>
           <FlatList
-            ListFooterComponent={this._footer}
-            ListEmptyComponent={() => (this.props.fetching ? null : <View style={{ height: SCREEN_HEIGHT - 200 }}><NoDataComponent Message={'没有查询到数据'} /></View>)}
-            keyExtractor={this._extraUniqueKey}
+            ListFooterComponent={this.footer}
+            ListEmptyComponent={() => (this.props.loading ? null : <View style={{ height: SCREEN_HEIGHT - 200 }}><NoDataComponent Message={'没有查询到数据'} /></View>)}
+            keyExtractor={this.extraUniqueKey}
             data={this.props.alarmlist}
-            renderItem={this._renderItem}
+            renderItem={this.renderItem}
             onEndReachedThreshold={Platform.OS === 'ios' ? 0 : 1}
             initialNumToRender={10}
             extraData={this.state.selected}
@@ -145,7 +153,8 @@ class AlarmDetail extends PureComponent {
               }));
             }}
             onEndReached={(info) => {
-              if (this.props.alarmtotal != 0 && !this.props.fetching && this.props.alarmtotal > this.props.alarmcurrent) {
+              if (this.props.alarmtotal !== 0 && !this.props.loading &&
+                this.props.alarmtotal > this.props.alarmcurrent) {
                 this.props.dispatch(createAction('alarm/loadmorealarmlist')({
                   current: this.props.alarmcurrent + 1
                 }));
@@ -161,7 +170,7 @@ class AlarmDetail extends PureComponent {
                   // copy the map rather than modifying state.
                   const selected = new Map(state.selected);
                   this.props.alarmlist.map((item, key) => {
-                    if (selected.get(item.ID) == undefined) {
+                    if (selected.get(item.ID) === undefined) {
                       selected.set(item.ID, true); // toggle
                     } else {
                       selected.set(item.ID, !selected.get(item.ID)); // toggle
@@ -175,13 +184,13 @@ class AlarmDetail extends PureComponent {
               className="btn"
               style={{ width: SCREEN_WIDTH / 2, backgroundColor: '#4498ff' }}
               onClick={() => {
-                if (this.state.selected.size != 0) {
+                if (this.state.selected.size !== 0) {
                   this.props.dispatch(NavigationActions.navigate({
                     routeName: 'AlarmFeedback',
                     params: {
                       alarmdgimn: this.props.navigation.state.params.alarmdgimn,
                       selected: this.state.selected,
-                      clearselect: this._clearselect
+                      clearselect: this.clearselect
                     }, }));
                 } else {
                   ShowToast('请选择报警记录进行核实');
@@ -200,7 +209,7 @@ class AlarmDetail extends PureComponent {
           endDate={this.state.endtime}
           minDate={moment().format('YYYY0101')}
           maxDate={moment().format('YYYYMMDD')}
-          onConfirm={this._confirmDate}
+          onConfirm={this.confirmDate}
         />
       </View>
     );

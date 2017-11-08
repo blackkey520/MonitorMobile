@@ -7,7 +7,7 @@
  */
 const api = {
   crawlerapi: 'http://172.16.12.35/WebApi/api/Values/',
-    // NOTE：用户相关api
+  // NOTE：用户相关api
   system: {
     login: '/rest/Author/IsLogins', // 登陆
     resetpwd: '/rest/Author/ResetPwd', // 修改密码
@@ -15,7 +15,7 @@ const api = {
     nettest: '/rest/Author/SwitchNewWork/',
     systemconfig: '/rest/SysConfig/GetAppSettings/'
   },
-    // NOTE: 全文检索相关api
+  // NOTE: 全文检索相关api
   monitorpoint: {
     monitortype: '/rest/MenuInfo/GetPolluntType/',
     pointlist: '/rest/OutputAsPointApi/GetPointsByPollutantType/',
@@ -31,11 +31,11 @@ const api = {
     savesearchtext: '/rest/OutputAsPointApi/AddSearchContent/',
   },
   monitortarget: {
-      // targetbase:'/rest/OutputAsPointApi/GetEntBaseInfo/',
+    // targetbase:'/rest/OutputAsPointApi/GetEntBaseInfo/',
     targetother: '/rest/OutputAsPointApi/GetEntOtherInfo/',
     uploadimage: '/rest/OutputAsPointApi/AddEntImg/',
   },
-    // NOTE: 监控相关api
+  // NOTE: 监控相关api
   monitordata: {
     lastData: '/rest/OutputAsPointApi/GetPointNewRealTimeData/',
     realtimeData: '/rest/RealTime/GetRealTimeData/',

@@ -1,13 +1,15 @@
 import React, { PureComponent } from 'react';
-import { BackHandler, Platform, Animated, Easing, View, TouchableOpacity, Text, Dimensions, StatusBar } from 'react-native';
+import { BackHandler, Platform, Animated, Easing, View, StatusBar } from 'react-native';
 import {
   StackNavigator,
   addNavigationHelpers
 } from 'react-navigation';
-import { loadToken, getNetConfig, saveNetConfig, loadNetConfig } from './logics/rpc';
 import JPushModule from 'jpush-react-native';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import SplashScreen from 'react-native-splash-screen';
 
-import { connect } from 'dva';
+import { loadToken, getNetConfig, saveNetConfig, loadNetConfig } from './logics/rpc';
 import ScanNetConfig from './components/Common/ScanNetConfig';
 import Login from './containers/Login';
 import Home from './containers/Main/Home';
@@ -22,14 +24,10 @@ import QRCodeScreen from './containers/Common/QRCodeScreen';
 import Target from './containers/Main/Target';
 import CollectPointList from './containers/Main/CollectPointList';
 import ContactList from './containers/Common/ContactList';
-import moment from 'moment';
 import ChangePassword from './containers/Common/ChangePassword';
-import { createAction, NavigationActions } from './utils';
+import { createAction, NavigationActions, getCurrentScreen } from './utils';
 import NetConfig from './config/NetConfig.json';
-import SplashScreen from 'react-native-splash-screen';
 
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const MainNavigator = StackNavigator(
   {
@@ -112,16 +110,6 @@ const AppNavigator = StackNavigator(
   }
 );
 
-function getCurrentScreen(navigationState) {
-  if (!navigationState) {
-    return null;
-  }
-  const route = navigationState.routes[navigationState.index];
-  if (route.routes) {
-    return getCurrentScreen(route);
-  }
-  return route.routeName;
-}
 
 @connect(({ router }) => ({ router }))
 class Router extends PureComponent {
@@ -153,18 +141,18 @@ class Router extends PureComponent {
         SplashScreen.hide();
       }
     }
-    this.props.dispatch(createAction('app/loadsystemconfig')({}));
     BackHandler.addEventListener('hardwareBackPress', this.backHandle);
   }
   async componentDidMount() {
     const user = await loadToken();
-       // 在收到点击事件之前调用此接口
-    if (Platform.OS === 'android') {
-      JPushModule.notifyJSDidLoad((resultCode) => {
-        if (resultCode === 0) {
-        }
-      });
-    }
+
+    // // 在收到点击事件之前调用此接口
+    // if (Platform.OS === 'android') {
+    //   JPushModule.notifyJSDidLoad((resultCode) => {
+    //     if (resultCode === 0) {
+    //     }
+    //   });
+    // }
 
     if (user) {
       if (Platform.OS === 'android') {
@@ -183,6 +171,7 @@ class Router extends PureComponent {
         });
       }
     }
+    this.props.dispatch(createAction('app/loadglobalvariable')({ user }));
     JPushModule.addOpenNotificationLaunchAppListener((result) => {
       console.log('notification open');
     });
@@ -196,28 +185,28 @@ class Router extends PureComponent {
       }
       if (resultjson != null) {
         this
-            .props
-            .dispatch(createAction('app/changebadge')({ badge: -1 }));
+          .props
+          .dispatch(createAction('app/changebadge')({ badge: -1 }));
         this
-            .props
-            .dispatch(NavigationActions.navigate({
-              routeName: 'AlarmDetail',
-              params: {
-                pointname: resultjson.PointName,
-                alarmbegindate: moment(resultjson.FirstTime).format('YYYY-MM-DD HH:mm:ss'),
-                alarmdgimn: resultjson.DGIMN,
-                alarmenddate: moment(resultjson.LastTime).format('YYYY-MM-DD HH:mm:ss')
-              }
-            }));
+          .props
+          .dispatch(NavigationActions.navigate({
+            routeName: 'AlarmDetail',
+            params: {
+              pointname: resultjson.PointName,
+              alarmbegindate: moment(resultjson.FirstTime).format('YYYY-MM-DD HH:mm:ss'),
+              alarmdgimn: resultjson.DGIMN,
+              alarmenddate: moment(resultjson.LastTime).format('YYYY-MM-DD HH:mm:ss')
+            }
+          }));
       }
     });
 
     JPushModule.addReceiveNotificationListener((result) => {
-          // alert('addReceiveNotificationListener','addReceiveNotificationListener')
+      // alert('addReceiveNotificationListener','addReceiveNotificationListener')
     });
     JPushModule.addReceiveCustomMsgListener((map) => {
       let Message = null;
-      if (Platform.OS == 'ios') {
+      if (Platform.OS === 'ios') {
         Message = JSON.parse(map.content);
       } else {
         Message = JSON.parse(map.message);
@@ -225,25 +214,25 @@ class Router extends PureComponent {
       const title = `${Message.EntName}-${Message.OutputName}`;
       let message = '';
       let subText = '';
-      if (Message.AlarmType == '2') {
-        datatype = Message.DataType == 'RealTimeData' ? '实时数据' : Message == 'MinuteData' ? '分钟数据' : Message == 'HourData' ? '小时数据' : '日数据';
+      if (Message.AlarmType === '2') {
+        datatype = Message.DataType === 'RealTimeData' ? '实时数据' : Message === 'MinuteData' ? '分钟数据' : Message === 'HourData' ? '小时数据' : '日数据';
         message = `${Message.FirstOverTime}-${
-            Message.AlarmTime} ${
-            Message.PolluntantName} ${
-            datatype} 监测浓度 ${
-            Message.AlarmValue} 超标 ${
-            Message.Level} 标准:${
-            Message.StandardValue} 超标倍数: ${
-            Message.Multiple}`;
+          Message.AlarmTime} ${
+          Message.PolluntantName} ${
+          datatype} 监测浓度 ${
+          Message.AlarmValue} 超标 ${
+          Message.Level} 标准:${
+          Message.StandardValue} 超标倍数: ${
+          Message.Multiple}`;
         subText = `${Message.PolluntantName} 检测值 ${Message.AlarmValue} 超标 ${Message.Level}`;
       } else {
-        datatype = Message.DataType == 'RealTimeData' ? '实时数据' : Message == 'MinuteData' ? '分钟数据' : Message == 'HourData' ? '小时数据' : '日数据';
+        datatype = Message.DataType === 'RealTimeData' ? '实时数据' : Message === 'MinuteData' ? '分钟数据' : Message === 'HourData' ? '小时数据' : '日数据';
         message = `${Message.FirstOverTime}-${
-            Message.AlarmTime} ${
-            Message.PolluntantName} ${
-            datatype} 监测浓度 ${
-            Message.ExceptionType} ${
-            Message.AlarmCount} 次 `;
+          Message.AlarmTime} ${
+          Message.PolluntantName} ${
+          datatype} 监测浓度 ${
+          Message.ExceptionType} ${
+          Message.AlarmCount} 次 `;
         subText = `${Message.PolluntantName} 检测值 ${Message.ExceptionType} ${Message.AlarmCount} 次 `;
       }
 

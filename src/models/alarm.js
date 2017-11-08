@@ -1,11 +1,9 @@
-import { createAction, NavigationActions, ShowToast, ShowResult } from '../utils';
 import * as AlarmService from '../services/alarmService';
-import moment from 'moment';
-const now = new Date();
-export default {
+import { Model } from '../dvapack';
+
+export default Model.extend({
   namespace: 'alarm',
   state: {
-    fetching: false,
     alarmdgimn: null,
     alarmlist: [],
     alarmbegindate: null,
@@ -13,89 +11,70 @@ export default {
     alarmcurrent: 1,
     alarmtotal: 0,
     pagesize: 10,
-    postfetching: false,
   },
-  reducers: {
-    fetchStart(state, { payload }) {
-      return { ...state, ...payload, fetching: true };
-    },
-    fetchEnd(state, { payload }) {
-      return { ...state, ...payload, fetching: false };
-    },
-    updateState(state, { payload }) {
-      return { ...state, ...payload };
-    },
-  },
+  reducers: {},
   subscriptions: {
-    setup(param) {
-      // return history.listen(({ pathname, payload }) => {
-      //   debugger;
-      //   // if (pathname === '/monitoroverview') {
-      //   //   const { pollutantType = null, searchTime = null, monitortype = 'realtime' } = payload || {};
-      //   //   dispatch({ type: 'querydata',
-      //   //     payload: {
-      //   //       pollutantType,
-      //   //       searchTime,
-      //   //       monitortype,
-      //   //     },
-      //   //   });
-      //   // }
-      // });
+    setupSubscriber({ dispatch, listen }) {
+      listen({
+        AlarmDetail: ({ params: { DGIMN, alarmbegindate, alarmenddate } }) => {
+          dispatch({ type: 'loadalarmlist',
+            payload: {
+              alarmdgimn: DGIMN,
+              alarmbegindate,
+              alarmenddate
+            },
+          });
+        },
+      });
     },
   },
   effects: {
-    * uploadimage({ payload: { image, callback } }, { call, put, select }) {
-      let result = null;
-      const state = yield select(state => state.alarm);
+    * uploadimage({ payload: { image, callback } }, { call }) {
       if (!image.fileName) {
         image.fileName = image.uri.split('/')[image.uri.split('/').length - 1];
       }
-      result = yield call(AlarmService.uploadimage, { Img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}` });
+      const result = yield call(AlarmService.uploadimage, { Img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}` });
       image.uploadID = result.data;
       callback(image);
     },
-    * postfeedback({ payload: { postjson, callback } }, { call, put, select }) {
-      let result = null;
-      const state = yield select(state => state.alarm);
-      yield put(createAction('updateState')({ postfetching: true }));
-      result = yield call(AlarmService.postfeedback, postjson);
-      const newlist = yield call(AlarmService.loadalarmlist,
-        { dgimn: state.alarmdgimn, starttime: state.alarmbegindate, endtime: state.alarmenddate, pageindex: 1, pagesize: state.pagesize });
-      yield put(createAction('updateState')({ postfetching: false,
-        imagelist: [],
-        alarmtotal: Math.ceil(result.total / state.pagesize),
-        alarmlist: newlist.data }));
+    * postfeedback({ payload: { postjson, callback } }, { callWithSpinning }) {
+      yield callWithSpinning(AlarmService.postfeedback, postjson, { imagelist: [] });
       callback();
     },
-    * loadmorealarmlist({ payload: { current } }, { call, put, select }) {
+    * loadmorealarmlist({ payload: { current } }, { callWithLoading, update, select }) {
       let result = null;
-      const state = yield select(state => state.alarm);
-      yield put(createAction('fetchStart')({ alarmcurrent: current }));
-      result = yield call(AlarmService.loadalarmlist,
-        { dgimn: state.alarmdgimn,
-          starttime: state.alarmbegindate,
-          endtime: state.alarmenddate,
+      let { alarmlist } = yield select(state => state.alarm);
+      const { alarmdgimn, alarmbegindate, alarmenddate, pagesize }
+      = yield select(state => state.alarm);
+      result = yield callWithLoading(AlarmService.loadalarmlist,
+        { dgimn: alarmdgimn,
+          starttime: alarmbegindate,
+          endtime: alarmenddate,
           pageindex: current,
-          pagesize: state.pagesize });
-      let oldCollection = state.alarmlist;
-      if (result && result.data != null && result.data.length != 0) {
-        oldCollection = oldCollection.concat(result.data);
+          pagesize }, { alarmcurrent: current });
+      if (result && result.data != null && result.data.length !== 0) {
+        alarmlist = alarmlist.concat(result.data);
       }
-      yield put(createAction('fetchEnd')({ alarmlist: oldCollection,
-        alarmtotal: Math.ceil(result.total / state.pagesize),
-        alarmcurrent: current }));
+      yield update({ alarmlist,
+        alarmtotal: Math.ceil(result.total / pagesize),
+        alarmcurrent: current });
     },
-    * loadalarmlist({ payload: { alarmdgimn, alarmbegindate, alarmenddate } }, { call, put, select }) {
+    * loadalarmlist({ payload: { alarmdgimn, alarmbegindate, alarmenddate } },
+      { callWithLoading, update, select }) {
       let result = null;
-      const state = yield select(state => state.alarm);
-      yield put(createAction('fetchStart')({ alarmdgimn,
-        alarmbegindate,
-        alarmenddate,
-        alarmcurrent: 1,
-        alarmlist: [] }));
-      result = yield call(AlarmService.loadalarmlist,
-        { dgimn: alarmdgimn, starttime: alarmbegindate, endtime: alarmenddate, pageindex: 1, pagesize: state.pagesize });
-      yield put(createAction('fetchEnd')({ alarmtotal: Math.ceil(result.total / state.pagesize), alarmlist: result && result.data != null && result.data.length != 0 ? result.data : [] }));
+      const { pagesize } = yield select(state => state.alarm);
+      result = yield callWithLoading(AlarmService.loadalarmlist,
+        { dgimn: alarmdgimn,
+          starttime: alarmbegindate,
+          endtime: alarmenddate,
+          pageindex: 1,
+          pagesize },
+        { alarmdgimn,
+          alarmbegindate,
+          alarmenddate,
+          alarmcurrent: 1 });
+      yield update({ alarmtotal: Math.ceil(result.total / pagesize),
+        alarmlist: result && result.data !== null && result.data.length !== 0 ? result.data : [] });
     },
   },
-};
+});

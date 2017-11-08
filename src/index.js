@@ -3,16 +3,22 @@
  */
 
 import React from 'react';
-import { AppRegistry } from 'react-native';
-import dva from 'dva/mobile';
+import { AppRegistry, AsyncStorage } from 'react-native';
+import { createLogger } from 'redux-logger';
+import { persistStore } from 'redux-persist';
+
+import dva from './utils/dva';
 import { ShowToast } from './utils';
 import storage from './config/globalstorage';
 import { registerModels } from './models';
 import Router from './router';
-import { createLogger } from 'redux-logger';
-const logger = createLogger();
+
 import { test, getNetConfig, saveNetConfig, getUseNetConfig } from './logics/rpc';
+
 import api from './config/globalapi';
+
+const logger = createLogger();
+
 if (!__DEV__) {
   global.console = {
     info: () => {},
@@ -23,39 +29,44 @@ if (!__DEV__) {
 }
 const app = dva({
   initialState: {},
+  models: [],
   //  onError(e, dispatch) {
   //    ShowToast('程序发生错误');
   //  },
+  onAction: logger,
   onEffect(effect, sagaEffects, model) {
     return function* (...args) {
       const config = getUseNetConfig();
-      const url = `${config.neturl + api.system.nettest}`;
-      const result = yield test(url, {}).then(async data => true, json => false);
+      let url = `${config.neturl + api.system.nettest}`;
+      let result = yield test(url, {}).then(async data => true, json => false);
       const CNConfig = [];
       const NetConfig = getNetConfig();
       if (result) {
         yield effect(...args);
       } else {
-        NetConfig.map((item, key) => {
-          if (config.neturl === item.neturl) {
-            item.isuse = false;
-          } else {
-            item.isuse = true;
-          }
-          CNConfig.push(item);
-        });
+        const configBak = NetConfig.find((value, index, arr) => value.isuse === false);
+        config.isuse = false;
+        configBak.isuse = true;
+        CNConfig.push(config);
+        CNConfig.push(configBak);
         saveNetConfig(CNConfig);
-        ShowToast('网络断开');
+        url = `${configBak.neturl + api.system.nettest}`;
+        result = yield test(url, {}).then(async data => true, json => false);
+        if (result) {
+          yield effect(...args);
+        } else {
+          ShowToast('网络断开');
+        }
       }
     };
   }
 });
-app.use({
-  onAction: logger
-});
 registerModels(app);
-app.router(() => <Router />);
-const App = app.start();
+const App = app.start(<Router />);
+persistStore(app.getStore(), {
+  storage: AsyncStorage,
+  blacklist: ['router']
+});
 
 // eslint-disable-next-line no-underscore-dangle
 AppRegistry.registerComponent('MonitorMobile', () => App);

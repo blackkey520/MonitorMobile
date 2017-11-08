@@ -1,54 +1,56 @@
-import { createAction } from '../utils';
-import * as AlarmService from '../services/alarmService';
 import moment from 'moment';
-export default {
+import * as AlarmService from '../services/alarmService';
+import { Model } from '../dvapack';
+
+
+export default Model.extend({
   namespace: 'warn',
   state: {
-    fetching: false,
     warnlist: [],
     getmorewarn: true,
     fetchtime: null,
   },
-  reducers: {
-    fetchStart(state, { payload }) {
-      return { ...state, ...payload, fetching: true };
-    },
-    fetchEnd(state, { payload }) {
-      return { ...state, ...payload, fetching: false };
-    },
-    updateState(state, { payload }) {
-      return { ...state, ...payload };
+  reducers: {},
+  subscriptions: {
+    setupSubscriber({ dispatch, listen }) {
+      listen({
+        Alarm: ({ params }) => {
+          dispatch({ type: 'loadwarnlist',
+            payload: {
+              isfirst: true,
+              time: moment().format('YYYY-MM-DD')
+            },
+          });
+        },
+      });
     },
   },
   effects: {
-    * loadwarnlist({ payload: { isfirst, time } }, { call, put, select }) {
+    * loadwarnlist({ payload: { isfirst, time } }, { callWithLoading, update, select }) {
       let result = null;
-      const state = yield select(state => state.warn);
-      yield put(createAction('fetchStart')());
-      result = yield call(AlarmService.loadawaitcheck,
-           { time });
+      let { warnlist } = yield select(state => state.warn);
+      result = yield callWithLoading(AlarmService.loadawaitcheck, { time });
       let getmorewarn = false;
-      let oldCollection = state.warnlist;
       let fetchtime = moment(time).add(-6, 'days');
-
-      if (result && result.data != null) {
-        if (result.data.length != 0) {
+      if (result && result.data !== null) {
+        if (result.data.length !== 0) {
           const sectionList = { key: result.data[0].DateNow.substring(0, 10), data: result.data };
           getmorewarn = true;
           if (isfirst) {
-            oldCollection = [];
-            oldCollection.push(sectionList);
+            warnlist = [];
+            warnlist.push(sectionList);
           } else {
-            const timeIndex = oldCollection.findIndex((value, index, arr) => value.key == result.data[0].DateNow.substring(0, 10));
+            const timeIndex = warnlist.findIndex(value => value.key
+              === result.data[0].DateNow.substring(0, 10));
             if (timeIndex === -1) {
-              oldCollection = oldCollection.concat(sectionList);
+              warnlist = warnlist.concat(sectionList);
             }
           }
           fetchtime = new Date(result.data[0].DateNow.replace(' ', 'T'));
         }
       }
       const newtime = moment(fetchtime).add(-1, 'days').format('YYYY-MM-DD');
-      yield put(createAction('fetchEnd')({ warnlist: oldCollection, fetchtime: newtime, getmorewarn }));
+      yield update({ warnlist, fetchtime: newtime, getmorewarn });
     },
   },
-};
+});

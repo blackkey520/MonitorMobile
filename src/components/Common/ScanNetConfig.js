@@ -61,9 +61,9 @@ class ScanNetConfig extends Component {
       saveNetConfig(newconfig);
       Toast.loading('扫描中...', 2, () => {
         this.props.ScanSuccess();
-        setTimeout(function() {
-            this.barCodeFlag = true;
-          }.bind(this),8000);
+        setTimeout(() => {
+          this.barCodeFlag = true;
+        }, 8000);
       });
     }
   }

@@ -1,105 +1,92 @@
-import { createAction, NavigationActions, ShowToast, delay } from '../utils';
+import moment from 'moment';
+import SplashScreen from 'react-native-splash-screen';
+import JPushModule from 'jpush-react-native';
+import { NavigationActions, ShowToast, delay } from '../utils';
 import * as authService from '../services/authService';
 import * as AlarmService from '../services/alarmService';
 import * as systemConfig from '../services/systemService';
 import { clearToken } from '../logics/rpc';
-import moment from 'moment';
-import SplashScreen from 'react-native-splash-screen';
-import JPushModule from 'jpush-react-native';
-export default {
+import { Model } from '../dvapack';
+
+export default Model.extend({
   namespace: 'app',
   state: {
-    fetching: false,
     user: null,
     contactlist: [],
     ismaintenance: false,
     badge: 0,
-    errorMsg: '',
     pollutanttype: [],
     globalConfig: {}
   },
+  subscriptions: {
+    setupSubscriber({ listen }) {
+      listen('ContactList', { type: 'loadcontactlist' });
+    }
+  },
   reducers: {
-    loginStart(state, { payload }) {
-      return { ...state, ...payload, fetching: true };
-    },
-    loginEnd(state, { payload }) {
-      return { ...state, ...payload, fetching: false };
-    },
-    changeState(state, { payload }) {
-      return { ...state, ...payload };
-    },
+    changebadge(state, { payload }) {
+      const badge = state.badge + payload.badge;
+      JPushModule.setBadge(badge, (success) => {
+        console.log(success);
+      });
+      return { ...state, badge };
+    }
   },
   effects: {
-    * loadsystemconfig({ payload }, { call, put, select }) { 
-      const globalConfig = yield call(systemConfig.getsystemconfig, {});
-      yield put(createAction('changeState')({ globalConfig }));
-    },
-    * loadglobalvariable({ payload }, { call, put, select }) {
-      const alarmCount = yield call(AlarmService.loadawaitcheck,
-               { time: moment().format('YYYY-MM-DD') });
-      const pollutanttype = yield call(systemConfig.loadpollutanttype, {});
-      yield put({ type: 'changebadge', payload: { badge: alarmCount.data.length } });
-      yield put({ type: 'point/fetchmore', payload: { pollutantType: pollutanttype[0].ID } });
-      yield put(createAction('loginEnd')({ pollutanttype }));
-      yield put(
-              NavigationActions.reset({
-                index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Main', params: { unverifiedCount: alarmCount.data.length } })],
-              }),
-            );
+    * loadglobalvariable({ payload }, { call, put, update }) {
+      const { user } = payload;
+      const globalConfig = yield call(systemConfig.getsystemconfig);
+      if (user && user != null) {
+        const alarmCount = yield call(AlarmService.loadawaitcheck, { time: moment().format('YYYY-MM-DD') });
+        const pollutanttype = yield call(systemConfig.loadpollutanttype);
+        yield put('changebadge', { badge: alarmCount.data.length });
+        yield put('hideSpinning', { pollutanttype });
+        yield put(
+          NavigationActions.reset({
+            index: 0,
+            actions: [NavigationActions.navigate({ routeName: 'Main', params: { unverifiedCount: alarmCount.data.length, pollutanttype } })],
+          }),
+        );
+      }
+      yield update({ globalConfig, user });
       yield call(delay, 500);
       SplashScreen.hide();
     },
-    * changebadge({ payload: { badge } }, { call, put, select }) {
-      const state = yield select(state => state.app);
-      const newbadge = state.badge + badge;
-      JPushModule.setBadge(newbadge, (success) => {
-        console.log(success);
-      });
-      yield put(createAction('changeState')({ badge: newbadge }));
+    * loadcontactlist({ payload }, { update, callWithLoading }) {
+      let contactlist = [];
+      contactlist = yield callWithLoading(authService.getcontactlist, {});
+      yield update({ contactlist });
     },
-    * loadcontactlist({ payload: { dgimn } }, { call, put, select }) {
-      let result = null;
-      yield put(createAction('loginStart')({}));
-      result = yield call(authService.getcontactlist, {});
-      yield put(createAction('loginEnd')({ contactlist: result != null ? result : [] }));
-      yield put(
-          NavigationActions.navigate({
-            routeName: 'ContactList',
-          }),
-        );
-    },
-    * login({ payload: { username, password } }, { call, put }) {
-      let result = null;
+    * login({ payload: { username, password } }, { update, call, put }) {
+      let user = null;
       let ismaintenance = false;
-
-      if (username == '' || password == '') {
+      if (username === '' || password === '') {
         ShowToast('用户名，密码不能为空');
       } else {
-        yield put(createAction('loginStart')());
-        result = yield call(authService.login, { username, password });
-        if (result.message == '') {
-          yield put({ type: 'loadglobalvariable', payload: { } });
-        } else if (result.message == '系统维护中') {
+        yield put('showSpinning', {});
+        user = yield call(authService.login, { username, password });
+        if (user.message === '') {
+          yield put('loadglobalvariable', { user });
+        } else if (result.message === '系统维护中') {
           ismaintenance = true;
         } else {
           ShowToast(result.message);
         }
+        yield update({ ismaintenance });
       }
-
-      yield put(createAction('changeState')({ user: result, ismaintenance }));
     },
-    * ModifyPassword({ payload: { authorCode, userPwdOld, userPwdNew, userPwdTwo } }, { call, put, select }) {
+    * ModifyPassword({ payload: { authorCode, userPwdOld, userPwdNew, userPwdTwo } }
+      , { call, put }) {
       let result = null;
-        // yield put(createAction('loginStart')({}));
+      // yield put(createAction('loginStart')({}));
       result = yield call(authService.resetPwd, { authorCode, userPwdOld, userPwdNew, userPwdTwo });
-      if (result.substring(0, 4) != '修改成功') {
+      if (result.substring(0, 4) !== '修改成功') {
         ShowToast(result);
       } else {
         clearToken();
-        JPushModule.deleteAlias((result) => {});
+        JPushModule.deleteAlias(() => {});
         yield put(NavigationActions.navigate({ routeName: 'Login' }));
       }
     },
-  },
-};
+  }
+});

@@ -6,21 +6,21 @@ import api from '../config/globalapi';
 export const getfeddbackalarmdetail = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       verifyID: param.verifyID,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.alarm.feddbackalarmdetail;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -36,21 +36,21 @@ export const getfeddbackalarmdetail = async (param) => {
 export const getfeedbackdetail = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       verifyID: param.verifyID,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.alarm.feedbackdetail;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -66,7 +66,7 @@ export const getfeedbackdetail = async (param) => {
 export const uploadimage = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = [{
       FileType: param.FileType,
       Img: param.Img,
@@ -75,16 +75,16 @@ export const uploadimage = async (param) => {
       FileName: '',
     }];
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = `${netconfig.neturl + api.alarm.uploadimage}?authorCode=${user.User_ID}`;
-        // console.log(param.Img);
+    // console.log(param.Img);
     await upload(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -100,7 +100,7 @@ export const uploadimage = async (param) => {
 export const postfeedback = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       DGIMN: param.DGIMN,
       ExceptionProcessingID: param.ExceptionProcessingID,
@@ -114,15 +114,15 @@ export const postfeedback = async (param) => {
       latitude: param.latitude,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = `${netconfig.neturl + api.alarm.postfeedback}?authorCode=${user.User_ID}`;
     await post(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -138,7 +138,7 @@ export const postfeedback = async (param) => {
 export const loadalarmlist = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       dgimn: param.dgimn,
@@ -148,15 +148,15 @@ export const loadalarmlist = async (param) => {
       pagesize: param.pagesize,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.alarm.alarmlist;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -172,21 +172,21 @@ export const loadalarmlist = async (param) => {
 export const loadaverifiedlist = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       time: param.time,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.alarm.verifiedlist;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -201,21 +201,21 @@ export const loadaverifiedlist = async (param) => {
 export const loadawaitcheck = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       time: param.time,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.alarm.awaitchecklist;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {

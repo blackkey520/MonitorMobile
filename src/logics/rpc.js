@@ -184,7 +184,7 @@ export function test(url, params) {
     body: jsonBody,
   });
   return new Promise((resolve, reject) => {
-    _fetch(myFetch, 1000)
+    _fetch(myFetch, 5000)
       .then(response => response.json())
       .then((responseData) => {
         resolve(responseData);

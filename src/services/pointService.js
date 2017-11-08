@@ -6,21 +6,21 @@ import api from '../config/globalapi';
 export const getlegend = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       pollutantType: param.pollutantType,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.monitorpoint.legend;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -36,7 +36,7 @@ export const getlegend = async (param) => {
 export const uploadimage = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       fileType: param.FileType,
       img: param.img,
@@ -49,16 +49,16 @@ export const uploadimage = async (param) => {
       baseType: 1,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = `${netconfig.neturl + api.monitorpoint.uploadimage}?authorCode=${user.User_ID}`;
 
     await upload(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -73,7 +73,7 @@ export const uploadimage = async (param) => {
 export const getcollectpointlist = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       userId: user.User_ID,
@@ -81,15 +81,15 @@ export const getcollectpointlist = async (param) => {
       pageSize: param.pageSize,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.monitorpoint.collectpointlist;
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -106,22 +106,22 @@ export const getcollectpointlist = async (param) => {
 export const collectpoint = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       userId: user.User_ID,
       dgimn: param.dgimn,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.monitorpoint.CollectPoint;
     await posturl(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -137,7 +137,7 @@ export const collectpoint = async (param) => {
 export const selectsinglepoint = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       dgimn: param.dgimn,
@@ -146,16 +146,16 @@ export const selectsinglepoint = async (param) => {
       height: '',
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.monitorpoint.singlepoint;
 
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {
@@ -170,7 +170,7 @@ export const selectsinglepoint = async (param) => {
 export const fetchlist = async (param) => {
   try {
     const user = await loadToken();
-        // 构建参数对象
+    // 构建参数对象
     const body = {
       authorCode: user.User_ID,
       pollutantType: param.pollutantType,
@@ -178,16 +178,16 @@ export const fetchlist = async (param) => {
       pageSize: param.pageSize,
     };
     let result = [];
-        // NOTE: 获取网络配置信息
+    // NOTE: 获取网络配置信息
     const netconfig = getUseNetConfig();
     const url = netconfig.neturl + api.monitorpoint.pointlist;
 
     await get(url, body).then(async (data) => {
-            // 处理 请求success
+      // 处理 请求success
       if (data && data != null) {
         result = data;
       } else {
-              // dispatch错误的原因
+        // dispatch错误的原因
         ShowToast(data.reason);
       }
     }, (json) => {

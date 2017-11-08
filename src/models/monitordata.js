@@ -1,11 +1,10 @@
-import { createAction, NavigationActions, ShowToast } from '../utils';
-import { ShowResult } from '../utils';
-import * as monitordataService from '../services/monitordataService';
 import moment from 'moment';
-export default {
+import * as monitordataService from '../services/monitordataService';
+import { Model } from '../dvapack';
+
+export default Model.extend({
   namespace: 'monitordata',
   state: {
-    datafetching: false,
     lastmonitorpoint: null,
     lastmonitordata: [],
     startDate: moment().format('YYYY-MM-DD'),
@@ -20,25 +19,20 @@ export default {
     yAxis: [],
   },
   reducers: {
-    fetchStart(state, { payload }) {
-      return { ...state, ...payload, datafetching: true };
-    },
-    fetchEnd(state, { payload }) {
-      return { ...state, ...payload, datafetching: false };
-    },
     loadData(state, { payload }) {
-      const xAxis = [];
-      const yAxis = [];
+      const xAxis = state.xAxis;
+      const yAxis = state.yAxis;
+      const monitordata = state.monitordata;
       payload.monitordata.map((type, i) => {
         let formatTime = '';
         let formatValue = '';
-        if (payload.dataType == 'realtime') {
+        if (payload.dataType === 'realtime') {
           formatValue = type.MonitorValue ? type.MonitorValue : '-';
           formatTime = moment(type.MonitorTime).format('HH:mm');
         } else {
-          if (payload.dataType == 'minute') {
+          if (payload.dataType === 'minute') {
             formatTime = moment(type.MonitorTime).format('HH:mm');
-          } else if (payload.dataType == 'hour') {
+          } else if (payload.dataType === 'hour') {
             formatTime = moment(type.MonitorTime).format('MM-DD HH:mm');
           } else {
             formatTime = moment(type.MonitorTime).format('YYYY-MM-DD');
@@ -47,30 +41,28 @@ export default {
         }
         type.formatTime = formatTime;
         type.formatValue = formatValue;
+        monitordata.push(type);
         xAxis.push(formatTime);
         yAxis.push(formatValue);
       });
-      return { ...state, ...payload, datafetching: false, xAxis, yAxis };
-    },
-    updateState(state, { payload }) {
-      return { ...state, ...payload };
+      return { ...state, ...payload, monitordata, xAxis, yAxis, spinning: false };
     },
   },
   effects: {
-    * searchlastdata({ payload: { dgimn } }, { call, put, select }) {
+    * searchlastdata({ payload: { dgimn } }, { callWithSpinning, update }) {
       let result = null;
-      yield put(createAction('fetchStart')({ lastmonitordata: [] }));
-      result = yield call(monitordataService.getLastData,
-             { dgimn });
-      yield put(createAction('fetchEnd')({ lastmonitorpoint: result.data.Point,
-        lastmonitordata: result.data.RealtimeData != null ? result.data.RealtimeData : [] }));
+      result = yield callWithSpinning(monitordataService.getLastData,
+        { dgimn });
+      const lastmonitorpoint = result.data.Point;
+      const lastmonitordata = result.data.RealtimeData;
+      yield update({ lastmonitorpoint, lastmonitordata });
     },
     * searchmore({ payload: { current } }, { call, put, select }) {
       let result = null;
       const monitor = yield select(state => state.monitordata);
       const point = yield select(state => state.point);
-      const dataType = monitor.dataType;
-      yield put(createAction('fetchStart')({ current }));
+      yield put('showSpinning', {});
+
       result = yield call(monitordataService.searchdatalist,
         { PollutantCode: monitor.pollutant.PolluntCode,
           DGIMN: point.selectedpoint.Point.Dgimn,
@@ -78,18 +70,14 @@ export default {
           EndTime: monitor.endDate,
           pageIndex: current,
           pageSize: monitor.pageSize,
-          dataType });
-      let newresult = monitor.monitordata;
-      if (result && result.data != null) {
-        newresult = newresult.concat(result.data);
-      }
-      yield put(createAction('loadData')({ dataType, monitordata: newresult, total: result.total }));
+          dataType: monitor.dataType });
+      yield put('loadData', { dataType: monitor.dataType, monitordata: result.data != null ? result.data : [], current, total: result.total, spinning: true });
     },
-    * searchdata({ payload: { dataType, startDate, endDate, pollutant, dgimn } }, { call, put, select }) {
+    * searchdata({ payload: { dataType, startDate, endDate,
+      pollutant, dgimn } }, { call, put, select }) {
       let result = null;
       const monitor = yield select(state => state.monitordata);
-
-      yield put(createAction('fetchStart')({ dataType, startDate, endDate, pollutant, current: 1, monitordata: [] }));
+      yield put('showSpinning', { dataType, startDate, endDate, pollutant, current: 1, monitordata: [], xAxis: [], yAxis: [] });
       result = yield call(monitordataService.searchdatalist,
         { PollutantCode: pollutant.PolluntCode,
           DGIMN: dgimn,
@@ -98,7 +86,7 @@ export default {
           pageIndex: 1,
           pageSize: monitor.pageSize,
           dataType });
-      yield put(createAction('loadData')({ dataType, monitordata: result.data != null ? result.data : [], current: 1, total: result.total }));
+      yield put('loadData', { dataType, monitordata: result.data != null ? result.data : [], current: 1, total: result.total });
     },
   },
-};
+});

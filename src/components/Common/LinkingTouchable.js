@@ -1,6 +1,6 @@
-'use strict';
 
-import React, { Component,PureComponent } from 'react';
+
+import React, { Component, PureComponent } from 'react';
 
 import {
   StyleSheet,
@@ -11,52 +11,26 @@ import {
 } from 'react-native';
 
 class LinkingTouchable extends PureComponent {
-  constructor(props){
+  render() {
+    return (
 
-    super(props);
-
-  }
-
-  protoTypes:{
-
-    url:react.ProtoTypes.string
-
-  }
-
-  render (){
-
-    return(
-
-      <TouchableOpacity onPress={()=>{
-
-        Linking.canOpenURL(this.props.url).then(supported => {
-
-          if (!supported) {
- 
-
-          } else {
-
+      <TouchableOpacity onPress={() => {
+        Linking.canOpenURL(this.props.url).then((supported) => {
+          if (supported) {
             return Linking.openURL(this.props.url);
-
           }
-
         }).catch(err => console.error('An error occurred', err));
-
-        }}>
+      }}
+      >
 
         <Text>
           {this.props.title}
         </Text>
       </TouchableOpacity>
 
-    )
-
+    );
   }
 }
-
-const styles = StyleSheet.create({
-
-});
 
 
 export default LinkingTouchable;

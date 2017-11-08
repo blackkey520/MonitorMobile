@@ -1,5 +1,5 @@
-import { delay, NavigationActions } from '../utils'
-import { routerReducer } from '../router'
+import { delay, NavigationActions, getCurrentScreen, Event, getCurrentParams } from '../utils';
+import { routerReducer } from '../router';
 
 const actions = [
   NavigationActions.BACK,
@@ -8,7 +8,7 @@ const actions = [
   NavigationActions.RESET,
   NavigationActions.SET_PARAMS,
   NavigationActions.URI,
-]
+];
 
 export default {
   namespace: 'router',
@@ -17,26 +17,34 @@ export default {
   },
   reducers: {
     apply(state, { payload: action }) {
-      return routerReducer(state, action)
+      return routerReducer(state, action);
     },
   },
   effects: {
     watch: [
-      function* watch({ take, call, put }) {
-        const loop = true
+      function* watch({ take, call, put, select }) {
+        const loop = true;
         while (loop) {
-          const payload = yield take(actions)
+          const payload = yield take(actions);
+          const routerState = yield select(state => state.router);
+          const navigateInfo = routerReducer(routerState, payload);
+          const currentScreen = getCurrentScreen(navigateInfo);
+          const params = getCurrentParams(navigateInfo);
           yield put({
             type: 'apply',
             payload,
-          })
+          });
+          Event.emit('RouterChange', {
+            currentScreen,
+            params
+          });
           // debounce, see https://github.com/react-community/react-navigation/issues/271
           if (payload.type === 'Navigation/NAVIGATE') {
-            yield call(delay, 500)
+            yield call(delay, 500);
           }
         }
       },
       { type: 'watcher' },
     ],
   },
-}
+};

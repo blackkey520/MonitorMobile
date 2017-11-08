@@ -18,6 +18,7 @@
         "comma-dangle": 0,
         "react/prop-types": 0,
         "no-use-before-define": 0,
+        "global-require": "off",
         "radix": 0,
         "no-param-reassign": 0,
         "react/jsx-filename-extension": 0,
@@ -27,7 +28,12 @@
         "no-plusplus": 0,
         "react/prefer-stateless-function": 0,
         "class-methods-use-this": 0,
-        "react/require-default-props": 0
+        "no-nested-ternary": 0,
+        "semi": [2, "always"],
+        "react/require-default-props": 0,
+        "no-unused-vars": [2, {"vars": "local","args": "none" }],
+        "arrow-parens": 0,
+        "max-lines":0
     },
     "plugins": [
         "react",
