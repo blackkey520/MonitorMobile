@@ -185,7 +185,6 @@ class Router extends PureComponent {
     }
     return false;
   }
-  debugger;
   render() {
     if (!this.state.configload) {
       return (
