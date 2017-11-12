@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { connect } from 'react-redux';
+import ImagePicker from 'react-native-image-picker';
 import { createAction, ShowLoadingToast, CloseToast, ShowResult } from '../../utils';
 import PointImageComponent from '../../components/Point/PointImageComponent';
 import PointBaseMessage from '../../components/Point/PointBaseMessage';

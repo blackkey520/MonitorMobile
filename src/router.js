@@ -1,115 +1,17 @@
 import React, { PureComponent } from 'react';
-import { BackHandler, Platform, Animated, Easing, View, StatusBar } from 'react-native';
+import { BackHandler, Platform, View, StatusBar } from 'react-native';
 import {
-  StackNavigator,
   addNavigationHelpers
 } from 'react-navigation';
 import JPushModule from 'jpush-react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
-
-import { loadToken, getNetConfig, saveNetConfig, loadNetConfig } from './logics/rpc';
-import ScanNetConfig from './components/Common/ScanNetConfig';
-import Login from './containers/Login';
-import Home from './containers/Main/Home';
-import Account from './containers/Main/Account';
-import Search from './containers/Main/Search';
-import Alarm from './containers/Alarm/Alarm';
-import AlarmDetail from './containers/Alarm/AlarmDetail';
-import AlarmFeedback from './containers/Alarm/AlarmFeedback';
-import FeedbackDetail from './containers/Alarm/FeedbackDetail';
-import MonitorPoint from './containers/Main/MonitorPoint';
-import QRCodeScreen from './containers/Common/QRCodeScreen';
-import Target from './containers/Main/Target';
-import CollectPointList from './containers/Main/CollectPointList';
-import ContactList from './containers/Common/ContactList';
-import ChangePassword from './containers/Common/ChangePassword';
+import { loadToken, getNetConfig, saveNetConfig, loadNetConfig } from './dvapack/storage';
 import { createAction, NavigationActions, getCurrentScreen } from './utils';
 import NetConfig from './config/NetConfig.json';
-
-
-const MainNavigator = StackNavigator(
-  {
-    Home: {
-      path: 'home/:mode',
-      screen: Home
-    },
-    Account: { screen: Account },
-    Search: { screen: Search },
-    Alarm: { screen: Alarm },
-    CollectPointList: { screen: CollectPointList },
-    ContactList: { screen: ContactList },
-    QRCodeScreen: {
-      screen: QRCodeScreen
-    },
-    MonitorPoint: {
-      screen: MonitorPoint
-    },
-    Target: {
-      path: 'monitorpoint/:targettype',
-      screen: Target
-    },
-    AlarmDetail: {
-      path: 'alarmdetail/:pointname',
-      screen: AlarmDetail
-    },
-    AlarmFeedback: {
-      path: 'alarmfeedback/:dgimn',
-      screen: AlarmFeedback
-    },
-    FeedbackDetail: {
-      path: 'alarmfeedback/:verifyid',
-      screen: FeedbackDetail
-    },
-    ChangePassword: {
-      screen: ChangePassword
-    }
-  },
-  {
-    initialRouteName: 'Home',
-    initialRouteParams: { mode: 'list' },
-    headerMode: 'float'
-  }
-);
-
-const AppNavigator = StackNavigator(
-  {
-    Login: { screen: Login },
-    Main: { screen: MainNavigator }
-  },
-  {
-    headerMode: 'none',
-    navigationOptions: {
-      gesturesEnabled: false
-    },
-    transitionConfig: () => ({
-      transitionSpec: {
-        duration: 300,
-        easing: Easing.out(Easing.poly(4)),
-        timing: Animated.timing
-      },
-      screenInterpolator: (sceneProps) => {
-        const { layout, position, scene } = sceneProps;
-        const { index } = scene;
-
-        const height = layout.initHeight;
-        const translateY = position.interpolate({
-          inputRange: [index - 1, index, index + 1],
-          outputRange: [height, 0, 0]
-        });
-
-        const opacity = position.interpolate({
-          inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1]
-        });
-
-        return { opacity, transform: [{ translateY }] };
-      }
-    })
-  }
-);
-
+import ScanNetConfig from './components/Common/ScanNetConfig';
+import AppNavigator from './containers/';
 
 @connect(({ router }) => ({ router }))
 class Router extends PureComponent {
@@ -283,7 +185,7 @@ class Router extends PureComponent {
     }
     return false;
   }
-
+  debugger;
   render() {
     if (!this.state.configload) {
       return (

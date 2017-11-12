@@ -50,43 +50,52 @@ export default Model.extend({
   },
   effects: {
     * searchlastdata({ payload: { dgimn } }, { callWithSpinning, update }) {
-      let result = null;
-      result = yield callWithSpinning(monitordataService.getLastData,
-        { dgimn });
-      const lastmonitorpoint = result.data.Point;
-      const lastmonitordata = result.data.RealtimeData;
+      const { data: { Point: lastmonitorpoint, RealtimeData: lastmonitordata } } =
+        yield callWithSpinning(monitordataService.getLastData, { dgimn });
       yield update({ lastmonitorpoint, lastmonitordata });
     },
-    * searchmore({ payload: { current } }, { call, put, select }) {
-      let result = null;
-      const monitor = yield select(state => state.monitordata);
-      const point = yield select(state => state.point);
+    * searchmore({ payload: { current: pageIndex } }, { call, put, select }) {
+      const {
+        dataType,
+        pageSize,
+        endDate: EndTime,
+        startDate: BeginTime,
+        pollutant: {
+          PolluntCode: PollutantCode
+        }
+      } = yield select(state => state.monitordata);
+      const {
+        selectedpoint: {
+          Point: {
+            Dgimn: DGIMN
+          }
+        }
+      } = yield select(state => state.point);
       yield put('showSpinning', {});
-
-      result = yield call(monitordataService.searchdatalist,
-        { PollutantCode: monitor.pollutant.PolluntCode,
-          DGIMN: point.selectedpoint.Point.Dgimn,
-          BeginTime: monitor.startDate,
-          EndTime: monitor.endDate,
-          pageIndex: current,
-          pageSize: monitor.pageSize,
-          dataType: monitor.dataType });
-      yield put('loadData', { dataType: monitor.dataType, monitordata: result.data != null ? result.data : [], current, total: result.total, spinning: true });
-    },
-    * searchdata({ payload: { dataType, startDate, endDate,
-      pollutant, dgimn } }, { call, put, select }) {
-      let result = null;
-      const monitor = yield select(state => state.monitordata);
-      yield put('showSpinning', { dataType, startDate, endDate, pollutant, current: 1, monitordata: [], xAxis: [], yAxis: [] });
-      result = yield call(monitordataService.searchdatalist,
-        { PollutantCode: pollutant.PolluntCode,
-          DGIMN: dgimn,
-          BeginTime: startDate,
-          EndTime: endDate,
-          pageIndex: 1,
-          pageSize: monitor.pageSize,
+      const { data, total } = yield call(monitordataService.searchdatalist,
+        { PollutantCode,
+          DGIMN,
+          BeginTime,
+          EndTime,
+          pageIndex,
+          pageSize,
           dataType });
-      yield put('loadData', { dataType, monitordata: result.data != null ? result.data : [], current: 1, total: result.total });
+      yield put('loadData', { dataType, monitordata: data !== null && data.length !== 0 ? data : [], current, total, spinning: true });
+    },
+    * searchdata({ payload: { dataType, startDate: BeginTime,
+      endDate: EndTime, pollutant,
+      dgimn: DGIMN } }, { call, put, select }) {
+      const { pageSize } = yield select(state => state.monitordata);
+      yield put('showSpinning', { dataType, BeginTime, EndTime, pollutant, current: 1, monitordata: [], xAxis: [], yAxis: [] });
+      const { data, total } = yield call(monitordataService.searchdatalist,
+        { PollutantCode: pollutant.PolluntCode,
+          DGIMN,
+          BeginTime,
+          EndTime,
+          pageIndex: 1,
+          pageSize,
+          dataType });
+      yield put('loadData', { dataType, monitordata: data !== null && data.length !== 0 ? data : [], current: 1, total });
     },
   },
 });

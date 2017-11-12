@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { List, InputItem, WhiteSpace, Button, Toast } from 'antd-mobile';
 import { createForm } from 'rc-form';
 import { createAction } from '../../utils';
-import { loadToken } from '../../logics/rpc';
+import { loadToken } from '../../dvapack/storage';
 
 @connect(({ app }) => ({ fetching: app.fetching,
   contactlist:

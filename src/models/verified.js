@@ -14,7 +14,7 @@ export default Model.extend({
   subscriptions: {
     setupSubscriber({ dispatch, listen }) {
       listen({
-        Alarm: ({ params }) => {
+        Notification: ({ params }) => {
           dispatch({ type: 'loadverifiedlist',
             payload: {
               isfirst: true,
@@ -27,27 +27,26 @@ export default Model.extend({
   },
   effects: {
     * loadverifiedlist({ payload: { isfirst, time } }, { callWithLoading, update, select }) {
-      let result = null;
       let { verifiedlist } = yield select(state => state.verified);
-      result = yield callWithLoading(AlarmService.loadaverifiedlist, { time });
+      const { data } = yield callWithLoading(AlarmService.loadaverifiedlist, { time });
       let getmoreverified = false;
       let fetchtime = moment(time).add(-6, 'days');
-      if (result && result.data !== null) {
-        if (result.data.length !== 0) {
-          const sectionList = { key: result.data[0].VerifyTime.substring(0, 10),
-            data: result.data };
+      if (data !== null) {
+        if (data.length !== 0) {
+          const sectionList = { key: data[0].VerifyTime.substring(0, 10),
+            data };
           getmoreverified = true;
           if (isfirst) {
             verifiedlist = [];
             verifiedlist.push(sectionList);
           } else {
             const timeIndex = verifiedlist.findIndex(value => value.key
-              === result.data[0].VerifyTime.substring(0, 10));
+              === data[0].VerifyTime.substring(0, 10));
             if (timeIndex === -1) {
               verifiedlist = verifiedlist.concat(sectionList);
             }
           }
-          fetchtime = new Date(`${result.data[0].VerifyTime.substring(0, 10)}T00:00:00`);
+          fetchtime = new Date(`${data[0].VerifyTime.substring(0, 10)}T00:00:00`);
         }
       }
       const newtime = moment(fetchtime).add(-1, 'days').format('YYYY-MM-DD');

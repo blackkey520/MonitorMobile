@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Button } from 'antd-mobile';
-import { loadLoginMsg, saveLoginMsg } from '../logics/rpc';
+import { saveStorage, loadStorage } from '../dvapack/storage';
 import { createAction } from '../utils';
 
 
@@ -82,7 +82,7 @@ class Login extends PureComponent {
     };
   }
   async componentWillMount() {
-    const loginmsg = await loadLoginMsg();
+    const loginmsg = await loadStorage('loginmsg');
     if (loginmsg != null) {
       this.setState(loginmsg);
     }
@@ -92,7 +92,7 @@ class Login extends PureComponent {
       username: this.state.username,
       password: this.state.password
     }));
-    await saveLoginMsg(this.state);
+    await saveStorage('loginmsg', this.state);
   };
 
   // 组件渲染方法

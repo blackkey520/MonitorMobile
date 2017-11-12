@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { ShowToast, ShowResult } from '../utils';
 import * as pointService from '../services/pointService';
-import { getUseNetConfig } from '../logics/rpc';
+import { getUseNetConfig, loadToken } from '../dvapack/storage';
 import { Model } from '../dvapack';
 
 
@@ -12,6 +12,7 @@ export default Model.extend({
     selectedpoint: null,
     legend: [],
     collectpointlist: [],
+    page: 0
   },
   reducers: {
   },
@@ -25,11 +26,9 @@ export default Model.extend({
             },
           });
         },
-        Home: ({ params: { pollutanttype } }) => {
+        MonitorList: ({ params }) => {
           dispatch({ type: 'fetchmore',
-            payload: {
-              pollutantType: pollutanttype[0].ID
-            },
+            payload: { page: 0 },
           });
         },
         MonitorPoint: ({ params: { dgimn } }) => {
@@ -45,16 +44,18 @@ export default Model.extend({
   effects: {
     * collectpoint({ payload: { dgimn, callback }, }, { call, update, select }) {
       const { selectedpoint } = yield select(state => state.point);
-      result = yield call(pointService.collectpoint, { dgimn });
-      if (result.data != null) {
-        if (result.data === 1) {
+      const user = yield loadToken();
+      const { data: result } = yield call(pointService.collectpoint, { dgimn, user });
+
+      if (result != null) {
+        if (result === 1) {
           ShowResult(true, '关注成功');
           selectedpoint.Point.CollectStatus = 1;
         } else {
           ShowResult(true, '取消关注成功');
           selectedpoint.Point.CollectStatus = 0;
         }
-        callback(result.data);
+        callback(result);
       }
       yield update({ selectedpoint });
     },
@@ -63,14 +64,13 @@ export default Model.extend({
         image.fileName = image.uri.split('/')[image.uri.split('/').length - 1];
       }
       yield call(pointService.uploadimage, { img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}`, code: dgimn });
-      const result = yield call(pointService.selectsinglepoint,
+      const { data: selectedpoint } = yield call(pointService.selectsinglepoint,
         { dgimn, fileLength: 50000, width: 300 });
-      const selectedpoint = result.data;
       const netconfig = getUseNetConfig();
       selectedpoint.img = [];
       selectedpoint.lowimg = [];
       selectedpoint.thumbimg = [];
-      if (data.data.ImgList !== '') {
+      if (selectedpoint.ImgList !== '') {
         const imgList = selectedpoint.ImgList.split(',');
         const lowimgList = selectedpoint.LowimgList.split(',');
         const thumbimgList = selectedpoint.ThumbimgList.split(',');
@@ -84,9 +84,8 @@ export default Model.extend({
       callback();
     },
     * selectpoint({ payload: { dgimn } }, { call, put, update, callWithLoading }) {
-      const result = yield callWithLoading(pointService.selectsinglepoint
+      const { data: selectedpoint } = yield callWithLoading(pointService.selectsinglepoint
         , { dgimn, fileLength: 50000, width: 300 });
-      const selectedpoint = result.data;
       const netconfig = getUseNetConfig();
       selectedpoint.img = [];
       selectedpoint.lowimg = [];
@@ -113,16 +112,21 @@ export default Model.extend({
         ShowToast('该监测点没有绑定污染物');
       }
     },
-    * fetchmore({ payload: { pollutantType } }, { call, update, callWithLoading }) {
-      const pointlist = yield callWithLoading(pointService.fetchlist,
+    * fetchmore({ payload: { page } }, { put, call, update, select }) {
+      yield put('showLoading', {});
+      const { pollutanttype } = yield select(state => state.app);
+      const pollutantType = pollutanttype[page].ID;
+      const { data: pointlist } = yield call(pointService.fetchlist,
         { pollutantType, pageIndex: 1, pageSize: 10000 });
-      const legend = yield call(pointService.getlegend, { pollutantType });
-      yield update({ pointlist: pointlist.data, legend: legend.data });
+      const { data: legend } = yield call(pointService.getlegend, { pollutantType });
+      yield update({ pointlist, legend, page });
+      yield put('hideLoading', {});
     },
     * loadcollectpointlist({ payload }, { update, callWithLoading }) {
-      const collectpointlist = yield callWithLoading(pointService.getcollectpointlist,
-        { pageIndex: 1, pageSize: 10000 });
-      yield update({ collectpointlist: collectpointlist.data });
+      const user = yield loadToken();
+      const { data } = yield callWithLoading(pointService.getcollectpointlist,
+        { pageIndex: 1, pageSize: 10000, user });
+      yield update({ collectpointlist: data !== null && data.length !== 0 ? data : [] });
     },
   },
 });

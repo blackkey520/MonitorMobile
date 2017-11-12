@@ -12,8 +12,8 @@ import { ShowToast } from './utils';
 import storage from './config/globalstorage';
 import { registerModels } from './models';
 import Router from './router';
-
-import { test, getNetConfig, saveNetConfig, getUseNetConfig } from './logics/rpc';
+import { getNetConfig, saveNetConfig, getUseNetConfig } from './dvapack/storage';
+import { test } from './dvapack/request';
 
 import api from './config/globalapi';
 

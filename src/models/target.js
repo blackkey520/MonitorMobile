@@ -1,5 +1,5 @@
 import * as targetService from '../services/targetService';
-import { getUseNetConfig } from '../logics/rpc';
+import { getUseNetConfig } from '../dvapack/storage';
 import { Model } from '../dvapack';
 
 
@@ -35,11 +35,9 @@ export default Model.extend({
       callback(image.uri);
     },
     * selecttarget({ payload: { targetCode, baseType } }, { call, put }) {
-      let result = null;
       yield put('showLoading', {});
-      result = yield call(targetService.selecttarget,
+      const { data: targetBase } = yield call(targetService.selecttarget,
         { targetCode, baseType, fileLength: 50000, width: 300 });
-      targetBase = result.data;
       targetBase.TargetInfo.CoordinateJson = [];
       targetBase.TargetInfo.baseType = baseType;
       const corrdinateset = JSON.parse(targetBase.TargetInfo.TargetCoordinateSet);

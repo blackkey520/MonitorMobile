@@ -1,4 +1,4 @@
-import { getUseNetConfig } from '../logics/rpc';
+import { getUseNetConfig } from '../dvapack/storage';
 import * as AlarmService from '../services/alarmService';
 import { Model } from '../dvapack';
 
@@ -25,28 +25,26 @@ export default Model.extend({
   },
   effects: {
     * getfeedbackdetail({ payload: { verifyID } }, { call, put, select }) {
-      let feedbackresult = null;
-      let alarmresult = null;
       yield put('showLoading', {});
-      feedbackresult = yield call(AlarmService.getfeedbackdetail, { verifyID });
+      const { data: feedbackdetail } = yield call(AlarmService.getfeedbackdetail, { verifyID });
       const netconfig = getUseNetConfig();
-      feedbackresult.data.img = [];
-      feedbackresult.data.lowimg = [];
-      feedbackresult.data.thumbimg = [];
-      if (feedbackresult.data.ImgList !== '') {
-        const imgList = feedbackresult.data.imglist.split(',');
-        const lowimgList = feedbackresult.data.lowimglist.split(',');
-        const thumbimgList = feedbackresult.data.thumbimglist.split(',');
+      feedbackdetail.img = [];
+      feedbackdetail.lowimg = [];
+      feedbackdetail.thumbimg = [];
+      if (feedbackdetail.ImgList !== '') {
+        const imgList = feedbackdetail.imglist.split(',');
+        const lowimgList = feedbackdetail.lowimglist.split(',');
+        const thumbimgList = feedbackdetail.thumbimglist.split(',');
         imgList.map((item, key) => {
           if (item !== '') {
-            feedbackresult.data.img.push(`${netconfig.neturl}/upload/${imgList[key]}`);
-            feedbackresult.data.lowimg.push(`${netconfig.neturl}/upload/${lowimgList[key]}`);
-            feedbackresult.data.thumbimg.push(`${netconfig.neturl}/upload/${thumbimgList[key]}`);
+            feedbackdetail.img.push(`${netconfig.neturl}/upload/${imgList[key]}`);
+            feedbackdetail.lowimg.push(`${netconfig.neturl}/upload/${lowimgList[key]}`);
+            feedbackdetail.thumbimg.push(`${netconfig.neturl}/upload/${thumbimgList[key]}`);
           }
         });
       }
-      alarmresult = yield call(AlarmService.getfeddbackalarmdetail, { verifyID });
-      yield put('hideLoading', { feedbackdetail: feedbackresult.data, alarmdetail: alarmresult.data });
+      const { data: alarmdetail } = yield call(AlarmService.getfeddbackalarmdetail, { verifyID });
+      yield put('hideLoading', { feedbackdetail, alarmdetail });
     },
   }
 });

@@ -1,12 +1,9 @@
 // import liraries
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View } from 'react-native';
 import { Toast } from 'antd-mobile';
 import { QRScannerView } from 'ac-qrcode';
-import { saveNetConfig } from '../../logics/rpc';
-const SCREEN_HEIGHT = Dimensions.get('window').height;
-const SCREEN_WIDTH = Dimensions.get('window').width;
+import { saveNetConfig } from '../../dvapack/storage';
 // create a component
 class ScanNetConfig extends Component {
   constructor(props) {
@@ -16,34 +13,9 @@ class ScanNetConfig extends Component {
       isAutoLoad: false
     };
   }
-  render() {
-    return (
-      <QRScannerView
-        onScanResultReceived={this._barcodeReceived}
-        hintText={'请扫描平台中的授权码'}
-        hintTextPosition={170}
-        borderWidth={0}
-        iscorneroffset={false}
-        cornerOffsetSize={0}
-        scanBarAnimateTime={3000}
-        renderTopBarView={() => (<View style={{ flex: 1 }} />)}
-        renderBottomMenuView={() => this._renderMenu()}
-      />
 
-    );
-  }
-  _renderTitleBar() {
-    return (
-      <View />
-    );
-  }
-  _renderMenu() {
-    return (
-      <View />
-    );
-  }
 
-  _barcodeReceived=(e) => {
+  barcodeReceived=(e) => {
     if (this.barCodeFlag) {
       this.barCodeFlag = false;
       const config = e.data.split('§');
@@ -66,6 +38,32 @@ class ScanNetConfig extends Component {
         }, 8000);
       });
     }
+  }
+  renderMenu() {
+    return (
+      <View />
+    );
+  }
+  renderTitleBar() {
+    return (
+      <View />
+    );
+  }
+  render() {
+    return (
+      <QRScannerView
+        onScanResultReceived={this.barcodeReceived}
+        hintText={'请扫描平台中的授权码'}
+        hintTextPosition={170}
+        borderWidth={0}
+        iscorneroffset={false}
+        cornerOffsetSize={0}
+        scanBarAnimateTime={3000}
+        renderTopBarView={() => (<View style={{ flex: 1 }} />)}
+        renderBottomMenuView={() => this.renderMenu()}
+      />
+
+    );
   }
 }
 export default ScanNetConfig;

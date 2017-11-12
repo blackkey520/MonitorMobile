@@ -30,7 +30,7 @@
 
 - 克隆项目到本地
 ```bash
-git clone https://github.com/blackkey520/HNDemo.git
+git clone https://github.com/blackkey520/MonitorMobile.git
 ```
 - 进入项目目录
 ```bash

@@ -1,4 +1,5 @@
 import * as searchService from '../services/searchService';
+import { loadToken } from '../dvapack/storage';
 import { Model } from '../dvapack';
 
 export default Model.extend({
@@ -25,19 +26,21 @@ export default Model.extend({
   },
   effects: {
     * loadsearchhistory({ payload }, { call, update, select }) {
-      const searchhistory = yield call(searchService.loadsearchhistory, {});
+      const user = yield loadToken();
+      const { data: searchhistory } = yield call(searchService.loadsearchhistory, { user });
       yield update({ searchhistory });
     },
     * associate({ payload: { searchText } }, { callWithLoading, update, select }) {
-      const associateresult = yield callWithLoading(searchService.associatefetch,
+      const { data: associateresult } = yield callWithLoading(searchService.associatefetch,
         { text: searchText }, { searchscene: 'associate' });
       yield update({ associateresult });
     },
     * search({ payload: { current, searchText } }, { call, put, select }) {
+      const user = yield loadToken();
       yield put('showLoading', { searchscene: 'result', result: [] });
-      const searchresult = yield call(searchService.searchfetch,
+      const { data: searchresult } = yield call(searchService.searchfetch,
         { text: searchText });
-      yield call(searchService.savesearchtext, { content: searchText, num: 10 });
+      yield call(searchService.savesearchtext, { content: searchText, num: 10, user });
       yield put('hideLoading', { searchresult, searchText });
     },
   },

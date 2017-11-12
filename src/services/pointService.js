@@ -1,201 +1,63 @@
-import { ShowToast } from '../utils';
-import { loadToken, get, posturl, getUseNetConfig, upload } from '../logics/rpc';
+import { get, posturl, upload } from '../dvapack/request';
 // 全局api文件
 import api from '../config/globalapi';
 // legend
 export const getlegend = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      authorCode: user.User_ID,
-      pollutantType: param.pollutantType,
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = netconfig.neturl + api.monitorpoint.legend;
-    await get(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+  const body = {
+    pollutantType: param.pollutantType,
+  };
+  const result = await get(api.monitorpoint.legend, body, null);
+  return result;
 };
-// uploadimage
 export const uploadimage = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      fileType: param.FileType,
-      img: param.img,
-      IsUploadSuccess: true,
-      IsPc: false,
-      code: param.code,
-      fileName: '',
-      fileSize: '',
-      attachId: '',
-      baseType: 1,
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = `${netconfig.neturl + api.monitorpoint.uploadimage}?authorCode=${user.User_ID}`;
-
-    await upload(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+  const body = {
+    fileType: param.FileType,
+    img: param.img,
+    IsUploadSuccess: true,
+    IsPc: false,
+    code: param.code,
+    fileName: '',
+    fileSize: '',
+    attachId: '',
+    baseType: 1,
+  };
+  const result = await upload(api.monitorpoint.uploadimage, body, null);
+  return result;
 };
 export const getcollectpointlist = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      authorCode: user.User_ID,
-      userId: user.User_ID,
-      pageIndex: param.pageIndex,
-      pageSize: param.pageSize,
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = netconfig.neturl + api.monitorpoint.collectpointlist;
-    await get(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+  const body = {
+    userId: param.user.User_ID,
+    pageIndex: param.pageIndex,
+    pageSize: param.pageSize,
+  };
+  const result = await get(api.monitorpoint.collectpointlist, body, null);
+  return result;
 };
-
-// CollectPoint
 export const collectpoint = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      authorCode: user.User_ID,
-      userId: user.User_ID,
-      dgimn: param.dgimn,
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = netconfig.neturl + api.monitorpoint.CollectPoint;
-    await posturl(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+  const body = {
+    userId: param.user.User_ID,
+    dgimn: param.dgimn,
+  };
+  const result = await posturl(api.monitorpoint.CollectPoint, body, null);
+  return result;
 };
-
 export const selectsinglepoint = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      authorCode: user.User_ID,
-      dgimn: param.dgimn,
-      fileLength: param.fileLength,
-      width: param.width,
-      height: '',
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = netconfig.neturl + api.monitorpoint.singlepoint;
-
-    await get(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+  const body = {
+    dgimn: param.dgimn,
+    fileLength: param.fileLength,
+    width: param.width,
+    height: '',
+  };
+  const result = await get(api.monitorpoint.singlepoint, body, null);
+  return result;
 };
-export const fetchlist = async (param) => {
-  try {
-    const user = await loadToken();
-    // 构建参数对象
-    const body = {
-      authorCode: user.User_ID,
-      pollutantType: param.pollutantType,
-      pageIndex: param.pageIndex,
-      pageSize: param.pageSize,
-    };
-    let result = [];
-    // NOTE: 获取网络配置信息
-    const netconfig = getUseNetConfig();
-    const url = netconfig.neturl + api.monitorpoint.pointlist;
 
-    await get(url, body).then(async (data) => {
-      // 处理 请求success
-      if (data && data != null) {
-        result = data;
-      } else {
-        // dispatch错误的原因
-        ShowToast(data.reason);
-      }
-    }, (json) => {
-      ShowToast('查询异常');
-    });
-    return result;
-  } catch (e) {
-    return e;
-  } finally {
-  }
+export const fetchlist = async (param) => {
+  const body = {
+    pollutantType: param.pollutantType,
+    pageIndex: param.pageIndex,
+    pageSize: param.pageSize,
+  };
+  const result = await get(api.monitorpoint.pointlist, body, null);
+  return result;
 };

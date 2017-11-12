@@ -1,34 +1,33 @@
-
-
-import React, { PureComponent } from 'react';
-
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Dimensions
-} from 'react-native';
+// import liraries
+import React, { Component } from 'react';
+import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
-import { List, Button } from 'antd-mobile';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { List, Button } from 'antd-mobile';
 import JPushModule from 'jpush-react-native';
 import CodePush from 'react-native-code-push';
-import { NavigationActions, ShowToast } from '../../utils';
-import { clearToken } from '../../dvapack/storage';
+import { NavigationActions, ShowToast } from '../../../utils';
+import { clearToken } from '../../../dvapack/storage';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const Item = List.Item;
+/**
+ * 我的Tab页
+ * liz 2017.11.11
+ * @class Mine
+ * @extends {Component}
+ */
 @connect(({ app }) => ({ user: app.user }))
-class Account extends PureComponent {
-  static navigationOptions = {
-    title: '我',
-    header: null,
+class Mine extends Component {
+  static navigationOptions={
+    title: '我的',
+    tabBarLable: '我的',
     headerBackTitle: null,
     headerTintColor: '#fff',
     headerStyle: { backgroundColor: '#4f6aea' },
+    tabBarIcon: ({ focused, tintColor }) =>
+      <Icon name={'ios-person'} size={26} color={focused ? tintColor : 'gray'} />
   }
   constructor() {
     super();
@@ -70,25 +69,9 @@ class Account extends PureComponent {
  }
  render() {
    return (
-     <View style={styles.layout}>
-       <View style={{ flexDirection: 'row', width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'space-between', backgroundColor: '#4f6aea', height: 60 }}>
-         <TouchableOpacity onPress={() => {
-           this.props.dispatch(NavigationActions.back());
-         }}
-         >
-           <Icon name={'ios-arrow-back'} style={{ marginTop: 15, marginLeft: 15 }} size={32} color={'#fff'} />
-         </TouchableOpacity>
-         <View style={{ flexDirection: 'row', marginTop: 15, marginRight: 15 }}>
-           <TouchableOpacity>
-             <Icon name="ios-settings-outline" size={23} color="#fff" style={{ marginLeft: 10 }} />
-           </TouchableOpacity>
-           <TouchableOpacity>
-             <Icon name="ios-create-outline" size={23} color="#fff" style={{ marginLeft: 10 }} />
-           </TouchableOpacity>
-         </View>
-       </View>
+     <View style={{ flex: 1 }}>
        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', backgroundColor: '#4f6aea', height: 130, }}>
-         <Image source={require('../../images/userlogo.png')} style={{ width: 70, height: 70, marginLeft: 20 }} />
+         <Image source={require('../../../images/userlogo.png')} style={{ width: 70, height: 70, marginLeft: 20 }} />
          <View style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10 }}>
            <Text style={{ fontSize: 15, color: '#fff' }}>{this.props.user.User_Name}</Text>
            <Text style={{ fontSize: 13, color: '#fff', marginTop: 6 }}>{this.props.user.Phone}</Text>
@@ -99,7 +82,7 @@ class Account extends PureComponent {
          <Item
            arrow="horizontal"
            multipleLine
-           thumb={<Image source={require('../../images/contacts.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
+           thumb={<Image source={require('../../../images/contacts.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            onClick={() => {
              this.props.dispatch(NavigationActions.navigate({
                routeName: 'ContactList' }));
@@ -111,7 +94,7 @@ class Account extends PureComponent {
          <Item
            arrow="horizontal"
            multipleLine
-           thumb={<Image source={require('../../images/attention.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
+           thumb={<Image source={require('../../../images/attention.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            onClick={() => {
              this.props.dispatch(NavigationActions.navigate({
                routeName: 'CollectPointList',
@@ -128,7 +111,7 @@ class Account extends PureComponent {
          <Item
            arrow="horizontal"
            multipleLine
-           thumb={<Image source={require('../../images/setting.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
+           thumb={<Image source={require('../../../images/setting.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            onClick={() => {
              this.props.dispatch(NavigationActions.navigate({
                routeName: 'ChangePassword' }));
@@ -141,7 +124,7 @@ class Account extends PureComponent {
          <Item
            arrow="horizontal"
            multipleLine
-           thumb={<Image source={require('../../images/clearcache.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
+           thumb={<Image source={require('../../../images/clearcache.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            onClick={async () => {
              await global.storage.remove({ key: 'PollutantType' });
              await global.storage.remove({ key: 'netConfig' });
@@ -155,7 +138,7 @@ class Account extends PureComponent {
          </Item>
          <Item
            arrow="horizontal"
-           thumb={<Image source={require('../../images/systemupdate.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
+           thumb={<Image source={require('../../../images/systemupdate.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            multipleLine
            extra={this.state.syncMessage || ''}
            onClick={() => {
@@ -189,11 +172,5 @@ class Account extends PureComponent {
  }
 }
 
-const styles = StyleSheet.create({
-  layout: {
-    flex: 1
-  }
-});
-
-
-export default Account;
+// make this component available to the app
+export default Mine;

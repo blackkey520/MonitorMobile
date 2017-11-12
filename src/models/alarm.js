@@ -33,37 +33,36 @@ export default Model.extend({
       if (!image.fileName) {
         image.fileName = image.uri.split('/')[image.uri.split('/').length - 1];
       }
-      const result = yield call(AlarmService.uploadimage, { Img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}` });
-      image.uploadID = result.data;
+      const { data } = yield call(AlarmService.uploadimage, { Img: image.data, FileType: `.${image.fileName.split('.')[1].toLowerCase()}` });
+      image.uploadID = data;
       callback(image);
     },
     * postfeedback({ payload: { postjson, callback } }, { callWithSpinning }) {
       yield callWithSpinning(AlarmService.postfeedback, postjson, { imagelist: [] });
       callback();
     },
-    * loadmorealarmlist({ payload: { current } }, { callWithLoading, update, select }) {
-      let result = null;
+    * loadmorealarmlist({ payload: { current } }
+      , { callWithLoading, update, select }) {
       let { alarmlist } = yield select(state => state.alarm);
       const { alarmdgimn, alarmbegindate, alarmenddate, pagesize }
       = yield select(state => state.alarm);
-      result = yield callWithLoading(AlarmService.loadalarmlist,
+      const { data, total } = yield callWithLoading(AlarmService.loadalarmlist,
         { dgimn: alarmdgimn,
           starttime: alarmbegindate,
           endtime: alarmenddate,
           pageindex: current,
           pagesize }, { alarmcurrent: current });
-      if (result && result.data != null && result.data.length !== 0) {
-        alarmlist = alarmlist.concat(result.data);
+      if (data != null && data.length !== 0) {
+        alarmlist = alarmlist.concat(data);
       }
       yield update({ alarmlist,
-        alarmtotal: Math.ceil(result.total / pagesize),
+        alarmtotal: Math.ceil(total / pagesize),
         alarmcurrent: current });
     },
     * loadalarmlist({ payload: { alarmdgimn, alarmbegindate, alarmenddate } },
       { callWithLoading, update, select }) {
-      let result = null;
       const { pagesize } = yield select(state => state.alarm);
-      result = yield callWithLoading(AlarmService.loadalarmlist,
+      const { data, total } = yield callWithLoading(AlarmService.loadalarmlist,
         { dgimn: alarmdgimn,
           starttime: alarmbegindate,
           endtime: alarmenddate,
@@ -73,8 +72,8 @@ export default Model.extend({
           alarmbegindate,
           alarmenddate,
           alarmcurrent: 1 });
-      yield update({ alarmtotal: Math.ceil(result.total / pagesize),
-        alarmlist: result && result.data !== null && result.data.length !== 0 ? result.data : [] });
+      yield update({ alarmtotal: Math.ceil(total / pagesize),
+        alarmlist: data !== null && data.length !== 0 ? data : [] });
     },
   },
 });

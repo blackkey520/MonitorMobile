@@ -82,7 +82,7 @@ class ListCompontent extends PureComponent {
   }
   render() {
     return (
-      <View style={{ height: SCREEN_HEIGHT - 115 }}>
+      <View style={{ height: SCREEN_HEIGHT - 157 }}>
         {this.props.loading ?
           <LoadingComponent Message="正在加载数据" />
           : <ListView

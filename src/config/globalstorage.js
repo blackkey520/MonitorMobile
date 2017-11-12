@@ -1,8 +1,5 @@
 import Storage from 'react-native-storage';
-import NetConfig from '../config/NetConfig.json';
 import { AsyncStorage } from 'react-native';
-import { saveNetConfig, loadNetConfig } from '../logics/rpc';
-import * as systemConfig from '../services/systemService';
 
 const storage = new Storage({
   size: 1000,

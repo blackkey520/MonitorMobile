@@ -14,7 +14,7 @@ export default Model.extend({
   subscriptions: {
     setupSubscriber({ dispatch, listen }) {
       listen({
-        Alarm: ({ params }) => {
+        Notification: ({ params }) => {
           dispatch({ type: 'loadwarnlist',
             payload: {
               isfirst: true,
@@ -27,26 +27,25 @@ export default Model.extend({
   },
   effects: {
     * loadwarnlist({ payload: { isfirst, time } }, { callWithLoading, update, select }) {
-      let result = null;
       let { warnlist } = yield select(state => state.warn);
-      result = yield callWithLoading(AlarmService.loadawaitcheck, { time });
+      const { data } = yield callWithLoading(AlarmService.loadawaitcheck, { time });
       let getmorewarn = false;
       let fetchtime = moment(time).add(-6, 'days');
-      if (result && result.data !== null) {
-        if (result.data.length !== 0) {
-          const sectionList = { key: result.data[0].DateNow.substring(0, 10), data: result.data };
+      if (data !== null) {
+        if (data.length !== 0) {
+          const sectionList = { key: data[0].DateNow.substring(0, 10), data };
           getmorewarn = true;
           if (isfirst) {
             warnlist = [];
             warnlist.push(sectionList);
           } else {
             const timeIndex = warnlist.findIndex(value => value.key
-              === result.data[0].DateNow.substring(0, 10));
+              === data[0].DateNow.substring(0, 10));
             if (timeIndex === -1) {
               warnlist = warnlist.concat(sectionList);
             }
           }
-          fetchtime = new Date(result.data[0].DateNow.replace(' ', 'T'));
+          fetchtime = new Date(data[0].DateNow.replace(' ', 'T'));
         }
       }
       const newtime = moment(fetchtime).add(-1, 'days').format('YYYY-MM-DD');
