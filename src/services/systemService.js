@@ -10,3 +10,7 @@ export const loadpollutanttype = async () => {
   const result = await get(api.monitorpoint.monitortype, {}, null);
   return result;
 };
+export const loadsystemstate = async () => {
+  const result = await get(api.system.systemstate, {});
+  return result;
+};

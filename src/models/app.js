@@ -13,7 +13,6 @@ export default Model.extend({
   state: {
     user: null,
     contactlist: [],
-    ismaintenance: false,
     badge: 0,
     pollutanttype: [],
     globalConfig: {}
@@ -87,7 +86,6 @@ export default Model.extend({
      * @param {any} { update, call, put } 
      */
     * login({ payload: { username, password } }, { update, call, put }) {
-      const ismaintenance = false;
       if (username === '' || password === '') {
         ShowToast('用户名，密码不能为空');
       } else {
@@ -97,8 +95,6 @@ export default Model.extend({
           yield saveToken(user);
           yield put('loadglobalvariable', { user });
         }
-        // ismaintenance = true;
-        yield update({ ismaintenance });
       }
     },
     /**

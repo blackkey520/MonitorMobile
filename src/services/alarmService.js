@@ -18,13 +18,14 @@ export const getfeedbackdetail = async (param) => {
 };
 
 export const uploadimage = async (param) => {
-  const body = {
+  const body = [{
+    ID: '',
     FileType: param.FileType,
     Img: param.Img,
     IsUploadSuccess: true,
     IsPc: false,
-    FileName: ''
-  };
+    FileName: 'uploadimage'
+  }];
   const result = await upload(api.alarm.uploadimage, body, null);
   return result;
 };

@@ -65,7 +65,7 @@ async function request(url, _options) {
 export function test(url, params) {
   const jsonBody = JSON.stringify(params.body);
   const myFetch = fetch(url, {
-    method: 'post',
+    method: 'get',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export function test(url, params) {
       .then(response => response.json())
       .then((responseData) => {
         resolve(responseData);
-        return true;
+        return responseData;
       })
       .catch((error) => {
         reject(error);
@@ -99,6 +99,7 @@ export async function upload(url, body, optionscall, tooken) {
     body: JSON.stringify(body),
     ...optionscall
   };
+
   const resp = await fetch(uri.toString(), options);
   console.log(`status${resp.status}`);
 
@@ -107,6 +108,7 @@ export async function upload(url, body, optionscall, tooken) {
   console.log('RESP:', text);
 
   const json = JSON.parse(text);
+
   // 如果请求失败
   if (resp.status !== 200) {
     if (resp.status === 401) {

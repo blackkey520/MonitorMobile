@@ -37,12 +37,17 @@ const app = dva({
   onEffect(effect, sagaEffects, model) {
     return function* (...args) {
       const config = getUseNetConfig();
-      let url = `${config.neturl + api.system.nettest}`;
-      let result = yield test(url, {}).then(async data => true, json => false);
+      let url = `${config.neturl + api.system.systemstate}`;
+      let result = yield test(url, {}).then(async data => data, json => false);
       const CNConfig = [];
       const NetConfig = getNetConfig();
       if (result) {
-        yield effect(...args);
+        const { data } = result;
+        if (data === '0') {
+          yield effect(...args);
+        } else {
+          ShowToast('系统正在维护中，请稍后再试');
+        }
       } else {
         const configBak = NetConfig.find((value, index, arr) => value.isuse === false);
         config.isuse = false;
@@ -50,7 +55,7 @@ const app = dva({
         CNConfig.push(config);
         CNConfig.push(configBak);
         saveNetConfig(CNConfig);
-        url = `${configBak.neturl + api.system.nettest}`;
+        url = `${configBak.neturl + api.system.systemstate}`;
         result = yield test(url, {}).then(async data => true, json => false);
         if (result) {
           yield effect(...args);

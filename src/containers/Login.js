@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   }
 });
 
-@connect(({ app }) => ({ ismaintenance: app.ismaintenance,
+@connect(({ app }) => ({
   spinning: app.spinning,
   globalConfig: app.globalConfig }))
 class Login extends PureComponent {
@@ -102,126 +102,111 @@ class Login extends PureComponent {
         <StatusBar
           barStyle="light-content"
         />
-        {
-          this.props.ismaintenance ?
-            <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => {
-                this.props.dispatch(createAction('search/changeScene')({
-                  ismaintenance: false
-                }));
-              }}
+        <View style={{ flex: 1 }}>
+          <Image source={require('../images/bg_login.jpg')} style={styles.launchImageStyle} />
+          <View style={styles.LoginForm}>
+            <Image source={require('../images/bg_logo.png')} style={{ height: 30, width: 80, marginBottom: 20 }} />
+            <Text style={{ fontSize: 25, width: 270, color: 'white', marginBottom: 50, textAlign: 'center' }}>{this.props.globalConfig.AppName}</Text>
+            <View style={[styles.TextInputStyle, { marginBottom: 10 }]}>
+              <Image source={require('../images/ueser_icon.png')} style={{ width: 20, height: 20, marginBottom: 8 }} />
+              <TextInput
+                keyboardType={'default'}
+                clearTextOnFocus
+                placeholderTextColor="white"
+                placeholder="请输入用户名"
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                underlineColorAndroid={'transparent'}
+                onChangeText={(text) => {
+                  // 动态更新组件内State记录用户名
+                  this.setState({
+                    username: text
+                  });
+                }}
+                value={this.state.username}
+                style={{
+                  width: SCREEN_WIDTH - 120,
+                  marginLeft: 10,
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  color: 'white',
+                  height: 20
+                }}
+              />
+            </View>
+            <View style={[styles.TextInputStyle, { marginBottom: 20 }]}>
+              <Image source={require('../images/password_icon.png')} style={{ width: 20, height: 20, marginBottom: 8 }} />
+              <TextInput
+                clearTextOnFocus
+                keyboardType={'default'}
+                placeholderTextColor="white"
+                placeholder="请输入密码"
+                autoCapitalize={'none'}
+                autoCorrect={false}
+                underlineColorAndroid={'transparent'}
+                secureTextEntry
+                onChangeText={(text) => {
+                  // 动态更新组件内State记录密码
+                  this.setState({
+                    password: text
+                  });
+                }}
+                value={this.state.password}
+                style={{ width: SCREEN_WIDTH - 120,
+                  marginLeft: 10,
+                  paddingTop: 1,
+                  paddingBottom: 1,
+                  marginBottom: 8,
+                  height: 21,
+                  color: 'white' }}
+              />
+            </View>
+            <View style={styles.checkStyle}>
+              <TouchableOpacity
+                style={styles.checkStyleDetail}
+                onPress={() => {
+                  // 动态更新组件内State记录记住我
+                  this.setState({
+                    isreminber: !this.state.isreminber
+                  });
+                }}
               >
-                <Text>{'系统维护中,点击重试'}</Text>
+                <Image
+                  source={this.state.isreminber ?
+                    require('../images/checkbox_on.png') :
+                    require('../images/checkbox_off.png')
+                  }
+                  style={{ width: 12, height: 12 }}
+                />
+                <Text style={{ fontSize: 11, color: 'white', marginLeft: 3 }}>记住密码</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.checkStyleDetail}
+                onPress={() => {
+                  // 动态更新组件内State记录是否自动登陆
+                  this.setState({
+                    autologin: !this.state.autologin
+                  });
+                }}
+              >
+                <Image
+                  source={this.state.autologin ? require('../images/checkbox_on.png')
+                    : require('../images/checkbox_off.png')
+                  }
+                  style={{ width: 12, height: 12 }}
+                />
+                <Text style={{ fontSize: 11, color: 'white', marginLeft: 3 }}>自动登陆</Text>
               </TouchableOpacity>
             </View>
-            :
-            <View style={{ flex: 1 }}>
-              <Image source={require('../images/bg_login.jpg')} style={styles.launchImageStyle} />
-              <View style={styles.LoginForm}>
-                <Image source={require('../images/bg_logo.png')} style={{ height: 30, width: 80, marginBottom: 20 }} />
-                <Text style={{ fontSize: 25, width: 270, color: 'white', marginBottom: 50, textAlign: 'center' }}>{this.props.globalConfig.AppName}</Text>
-                <View style={[styles.TextInputStyle, { marginBottom: 10 }]}>
-                  <Image source={require('../images/ueser_icon.png')} style={{ width: 20, height: 20, marginBottom: 8 }} />
-                  <TextInput
-                    keyboardType={'default'}
-                    clearTextOnFocus
-                    placeholderTextColor="white"
-                    placeholder="请输入用户名"
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    underlineColorAndroid={'transparent'}
-                    onChangeText={(text) => {
-                      // 动态更新组件内State记录用户名
-                      this.setState({
-                        username: text
-                      });
-                    }}
-                    value={this.state.username}
-                    style={{
-                      width: SCREEN_WIDTH - 120,
-                      marginLeft: 10,
-                      paddingTop: 1,
-                      paddingBottom: 1,
-                      color: 'white',
-                      height: 20
-                    }}
-                  />
-                </View>
-                <View style={[styles.TextInputStyle, { marginBottom: 20 }]}>
-                  <Image source={require('../images/password_icon.png')} style={{ width: 20, height: 20, marginBottom: 8 }} />
-                  <TextInput
-                    clearTextOnFocus
-                    keyboardType={'default'}
-                    placeholderTextColor="white"
-                    placeholder="请输入密码"
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    underlineColorAndroid={'transparent'}
-                    secureTextEntry
-                    onChangeText={(text) => {
-                      // 动态更新组件内State记录密码
-                      this.setState({
-                        password: text
-                      });
-                    }}
-                    value={this.state.password}
-                    style={{ width: SCREEN_WIDTH - 120,
-                      marginLeft: 10,
-                      paddingTop: 1,
-                      paddingBottom: 1,
-                      marginBottom: 8,
-                      height: 21,
-                      color: 'white' }}
-                  />
-                </View>
-                <View style={styles.checkStyle}>
-                  <TouchableOpacity
-                    style={styles.checkStyleDetail}
-                    onPress={() => {
-                      // 动态更新组件内State记录记住我
-                      this.setState({
-                        isreminber: !this.state.isreminber
-                      });
-                    }}
-                  >
-                    <Image
-                      source={this.state.isreminber ?
-                        require('../images/checkbox_on.png') :
-                        require('../images/checkbox_off.png')
-                      }
-                      style={{ width: 12, height: 12 }}
-                    />
-                    <Text style={{ fontSize: 11, color: 'white', marginLeft: 3 }}>记住密码</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.checkStyleDetail}
-                    onPress={() => {
-                      // 动态更新组件内State记录是否自动登陆
-                      this.setState({
-                        autologin: !this.state.autologin
-                      });
-                    }}
-                  >
-                    <Image
-                      source={this.state.autologin ? require('../images/checkbox_on.png')
-                        : require('../images/checkbox_off.png')
-                      }
-                      style={{ width: 12, height: 12 }}
-                    />
-                    <Text style={{ fontSize: 11, color: 'white', marginLeft: 3 }}>自动登陆</Text>
-                  </TouchableOpacity>
-                </View>
-                <View >
-                  {
-                    this.props.spinning ?
-                      <Button style={{ width: 280 }} className="btn" type="primary" loading>正在登陆</Button> :
-                      <Button className="btn" style={{ width: 280 }} type="primary" onClick={this._userLogin} >登陆</Button>
-                  }
-                </View>
-              </View>
+            <View >
+              {
+                this.props.spinning ?
+                  <Button style={{ width: 280 }} className="btn" type="primary" loading>正在登陆</Button> :
+                  <Button className="btn" style={{ width: 280 }} type="primary" onClick={this._userLogin} >登陆</Button>
+              }
             </View>
-        }
-
+          </View>
+        </View>
       </View>
     );
   }
