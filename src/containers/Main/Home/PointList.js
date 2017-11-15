@@ -3,10 +3,9 @@ import React, { Component } from 'react';
 import { View, StatusBar, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
 import ListCompontent from '../../../components/Home/ListComponent';
 import { createAction, NavigationActions } from '../../../utils';
-import CustomTabBar from '../../../components/Common/CustomTabBar';
+import PollutantType from '../../../components/Home/PollutantType';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -18,7 +17,6 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
  */
 @connect(({ point, alarm, app }) => ({ unverifiedCount: alarm.unverifiedCount,
   legend: point.legend,
-  page: point.page,
   pollutanttype: app.pollutanttype }))
 class PointList extends Component {
  static navigationOptions = ({ navigation }) => ({
@@ -48,55 +46,36 @@ class PointList extends Component {
      </TouchableOpacity>
    ),
    tabBarIcon: ({ focused, tintColor }) =>
-     <Icon name={'ios-list-box'} size={26} color={focused ? tintColor : 'gray'} />
+     <Icon name={'ios-list-box'} size={26} color={focused ? tintColor : 'gray'} />,
  })
-  handleChangeTab=({ i }) => {
-    this.props.dispatch(createAction('point/fetchmore')({
-      page: i
-    }));
-  }
-  render() {
-    const tabnames = [];
-    if (this.props.pollutanttype != null) {
-      this.props.pollutanttype.map((item, key) => tabnames.push(item.Name));
-    }
-    return (
-      <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }}>
-        <StatusBar
-          barStyle="light-content"
-        />
-        <View style={{ flex: 1 }}>
-          <ScrollableTabView
-            tabBarBackgroundColor={'#fff'}
-            tabBarUnderlineStyle={{ backgroundColor: '#108ee9', height: 1 }}
-            locked={false}
-            onChangeTab={this.handleChangeTab}
-            renderTabBar={() => <CustomTabBar tabNames={tabnames} />}
-            page={this.props.page}
-            initialPage={0}
-            prerenderingSiblingsNumber={1}
-          >
-            {
-              this.props.pollutanttype.map((item, key) =>
-                (<MainContent
-                  key={item.ID}
-                  arraykey={key}
-                  tabLabel={item.Name}
-                  PollutantType={item.ID}
-                />))
-            }
-          </ScrollableTabView>
-        </View>
-      </View>
-    );
-  }
+
+ render() {
+   const tabnames = [];
+   if (this.props.pollutanttype != null) {
+     this.props.pollutanttype.map((item, key) => tabnames.push(item.Name));
+   }
+   return (
+     <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }}>
+       <StatusBar
+         barStyle="light-content"
+       />
+       <PollutantType press={(ID) => {
+         this.props.dispatch(createAction('point/fetchmore')({
+           loadpage: ID,
+         }));
+       }}
+       />
+       <ListCompontent />
+     </View>
+   );
+ }
 }
 
-const MainContent = () => (
-  <View style={{ flex: 1 }}>
-    <ListCompontent {...this.props} />
-  </View>
-);
+// const MainContent = () => (
+//   <View style={{ flex: 1 }}>
+//     <ListCompontent {...this.props} />
+//   </View>
+// );
 
 // make this component available to the app
 export default PointList;

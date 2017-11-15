@@ -10,18 +10,18 @@ import MainNavigator from './Main/';
 export default StackNavigator(
   {
     Login: { screen: Login },
-    MainNavigator: { screen: MainNavigator }
+    MainNavigator: { screen: MainNavigator },
   },
   {
     headerMode: 'none',
     navigationOptions: {
-      gesturesEnabled: false
+      gesturesEnabled: false,
     },
     transitionConfig: () => ({
       transitionSpec: {
         duration: 300,
         easing: Easing.out(Easing.poly(4)),
-        timing: Animated.timing
+        timing: Animated.timing,
       },
       screenInterpolator: (sceneProps) => {
         const { layout, position, scene } = sceneProps;
@@ -30,16 +30,16 @@ export default StackNavigator(
         const height = layout.initHeight;
         const translateY = position.interpolate({
           inputRange: [index - 1, index, index + 1],
-          outputRange: [height, 0, 0]
+          outputRange: [height, 0, 0],
         });
 
         const opacity = position.interpolate({
           inputRange: [index - 1, index - 0.99, index],
-          outputRange: [0, 1, 1]
+          outputRange: [0, 1, 1],
         });
 
         return { opacity, transform: [{ translateY }] };
-      }
-    })
+      },
+    }),
   }
 );

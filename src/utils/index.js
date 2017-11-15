@@ -289,15 +289,5 @@ export const getCurrentScreen = (navigationState) => {
   if (route.routes) {
     return getCurrentScreen(route);
   }
-  return route.routeName;
-};
-export const getCurrentParams = (navigationState) => {
-  if (!navigationState) {
-    return null;
-  }
-  const route = navigationState.routes[navigationState.index];
-  if (route.routes) {
-    return getCurrentParams(route);
-  }
-  return route.params;
+  return route;
 };

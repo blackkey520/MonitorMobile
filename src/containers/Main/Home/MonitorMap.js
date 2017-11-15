@@ -1,12 +1,11 @@
 // import liraries
 import React, { Component } from 'react';
-import { View, Text, Platform, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
 import MapCompontent from '../../../components/Home/MapCompontent';
 import { createAction, NavigationActions } from '../../../utils';
-import CustomTabBar from '../../../components/Common/CustomTabBar';
+import PollutantType from '../../../components/Home/PollutantType';
 
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -50,17 +49,13 @@ class MonitorMap extends Component {
      </TouchableOpacity>
    ),
    tabBarIcon: ({ focused, tintColor }) =>
-     <Icon name={'ios-map'} size={26} color={focused ? tintColor : 'gray'} />
+     <Icon name={'ios-map'} size={26} color={focused ? tintColor : 'gray'} />,
  })
-   handleChangeTab=({ i }) => {
-     this.props.dispatch(createAction('point/fetchmore')({
-       page: i
-     }));
-   }
+
      renderlegend=() => {
        const rtnVal = [];
        this.props.legend.map((item, key) =>
-         rtnVal.push(<View keys={key} style={{ flex: 1, backgroundColor: item.Color, alignItems: 'center', justifyContent: 'center', }} key={item.Name} >
+         rtnVal.push(<View keys={key} style={{ flex: 1, backgroundColor: item.Color, alignItems: 'center', justifyContent: 'center' }} key={item.Name} >
            <Text style={{ fontSize: 13 }}>{item.Name}</Text>
          </View>)
        );
@@ -74,31 +69,16 @@ class MonitorMap extends Component {
 
        return (
          <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }}>
-           <View style={{ flex: 1 }}>
-             <ScrollableTabView
-               tabBarBackgroundColor={'#fff'}
-               tabBarUnderlineStyle={{ backgroundColor: '#108ee9', height: 1 }}
-               locked={false}
-               onChangeTab={this.handleChangeTab}
-               renderTabBar={() => <CustomTabBar tabNames={tabnames} />}
-               page={this.props.page}
-               initialPage={0}
-               prerenderingSiblingsNumber={1}
-             >
-               {this.props.pollutanttype.map((item, key) =>
-                 (<View
-                   key={item.ID}
-                   arraykey={key}
-                   tabLabel={item.Name}
-                 ><Text>{item.Name}</Text></View>))}
-             </ScrollableTabView>
-           </View>
+           <PollutantType press={(ID) => {
+             this.props.dispatch(createAction('point/fetchmore')({
+               loadpage: ID,
+             }));
+           }}
+           />
            <View style={{ height: SCREEN_HEIGHT - 41, width: SCREEN_WIDTH }}>
-             <View style={{ position: 'absolute', left: 0, top: 0, height: Platform.OS === 'ios' ? SCREEN_HEIGHT - 150 : SCREEN_HEIGHT - 170, width: SCREEN_WIDTH }}>
-               <MapCompontent style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} />
-               <View style={{ flexDirection: 'row', width: SCREEN_WIDTH, height: 30 }}>
-                 {this.renderlegend()}
-               </View>
+             <MapCompontent style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} />
+             <View style={{ flexDirection: 'row', width: SCREEN_WIDTH, height: 30 }}>
+               {this.renderlegend()}
              </View>
            </View>
          </View>

@@ -1,6 +1,6 @@
 // import liraries
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Badge } from 'antd-mobile';
@@ -23,8 +23,8 @@ class Notification extends Component {
    headerTintColor: '#fff',
    headerStyle: { backgroundColor: '#4f6aea' },
    tabBarIcon: ({ focused, tintColor }) =>
-     (<View><Icon name={'ios-notifications'} size={26} color={focused ? tintColor : 'gray'} />
-       {navigation.state.params ? <Badge style={{ position: 'absolute', top: 2, left: 30 }} text={navigation.state.params.badge} overflowCount={99} /> : null}</View>)
+     (<View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? -15 : 5 }}><Icon name={'ios-notifications'} size={26} color={focused ? tintColor : 'gray'} />
+       {navigation.state.params ? <Badge style={{ position: 'absolute', top: 5, left: 25 }} text={navigation.state.params.badge} overflowCount={99} /> : null}</View>),
  });
  componentWillMount() {
    this.props.navigation.setParams({ badge: this.props.badge });

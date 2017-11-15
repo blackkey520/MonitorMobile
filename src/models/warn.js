@@ -18,7 +18,7 @@ export default Model.extend({
           dispatch({ type: 'loadwarnlist',
             payload: {
               isfirst: true,
-              time: moment().format('YYYY-MM-DD')
+              time: moment().format('YYYY-MM-DD'),
             },
           });
         },

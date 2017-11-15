@@ -8,7 +8,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  ListView
+  ListView,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from '../../utils';
@@ -37,8 +37,8 @@ class ListCompontent extends PureComponent {
           this.props.dispatch(NavigationActions.navigate({
             routeName: 'MonitorPoint',
             params: {
-              dgimn: rowData.dgimn
-            }, }));
+              dgimn: rowData.dgimn,
+            } }));
         }}
         style={{ width: SCREEN_WIDTH - 16,
           backgroundColor: 'white',
@@ -47,7 +47,7 @@ class ListCompontent extends PureComponent {
           borderRadius: 5,
           flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'space-between', }}
+          justifyContent: 'space-between' }}
       >
         <View style={{ width: SCREEN_WIDTH - 70,
           height: 75,
@@ -64,15 +64,15 @@ class ListCompontent extends PureComponent {
             </Text>
           </View>
         </View>
-        <View style={{ flexDirection: 'column', height: 70, marginRight: 10, alignItems: 'center', justifyContent: 'space-around', }}>
+        <View style={{ flexDirection: 'column', height: 70, marginRight: 10, alignItems: 'center', justifyContent: 'space-around' }}>
           <Image
             source={img}
             style={{
               width: 40,
-              height: 40
+              height: 40,
             }}
           />
-          <View style={{ flexDirection: 'row', }}>
+          <View style={{ flexDirection: 'row' }}>
             <Text style={{ fontSize: 13, color: '#959494' }}>{'详情'}</Text>
             <Image source={require('../../images/arr_right_icon.png')} style={{ width: 13, height: 13 }} />
           </View>

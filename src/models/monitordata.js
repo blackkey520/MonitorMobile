@@ -61,15 +61,15 @@ export default Model.extend({
         endDate: EndTime,
         startDate: BeginTime,
         pollutant: {
-          PolluntCode: PollutantCode
-        }
+          PolluntCode: PollutantCode,
+        },
       } = yield select(state => state.monitordata);
       const {
         selectedpoint: {
           Point: {
-            Dgimn: DGIMN
-          }
-        }
+            Dgimn: DGIMN,
+          },
+        },
       } = yield select(state => state.point);
       yield put('showSpinning', {});
       const { data, total } = yield call(monitordataService.searchdatalist,

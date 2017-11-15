@@ -12,7 +12,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Button } from 'antd-mobile';
@@ -25,7 +25,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   checkStyleDetail: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   LoginForm: {
     alignItems: 'center',
@@ -36,32 +36,32 @@ const styles = StyleSheet.create({
       : 120,
     width: SCREEN_WIDTH,
     height: 700,
-    ...StyleSheet.absoluteFillObject
+    ...StyleSheet.absoluteFillObject,
   },
   TextInputStyle: {
     flexDirection: 'row',
     width: SCREEN_WIDTH - 100,
     borderBottomWidth: 0.5,
-    borderBottomColor: 'white'
+    borderBottomColor: 'white',
   },
   checkStyle: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     width: SCREEN_WIDTH - 100,
-    marginBottom: 20
+    marginBottom: 20,
   },
   launchImageStyle: {
     flex: 1,
     resizeMode: 'cover',
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT
+    height: SCREEN_HEIGHT,
   },
   LoginLayout: {
     flexDirection: 'column',
     justifyContent: 'flex-end',
-    ...StyleSheet.absoluteFillObject
-  }
+    ...StyleSheet.absoluteFillObject,
+  },
 });
 
 @connect(({ app }) => ({
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   globalConfig: app.globalConfig }))
 class Login extends PureComponent {
   static navigationOptions={
-    title: 'Login'
+    title: 'Login',
   }
   constructor(props) {
     super(props);
@@ -78,7 +78,7 @@ class Login extends PureComponent {
       username: '',
       password: '',
       isreminber: '',
-      autologin: ''
+      autologin: '',
     };
   }
   async componentWillMount() {
@@ -90,7 +90,7 @@ class Login extends PureComponent {
   _userLogin = async () => {
     this.props.dispatch(createAction('app/login')({
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
     }));
     await saveStorage('loginmsg', this.state);
   };
@@ -120,7 +120,7 @@ class Login extends PureComponent {
                 onChangeText={(text) => {
                   // 动态更新组件内State记录用户名
                   this.setState({
-                    username: text
+                    username: text,
                   });
                 }}
                 value={this.state.username}
@@ -130,7 +130,7 @@ class Login extends PureComponent {
                   paddingTop: 1,
                   paddingBottom: 1,
                   color: 'white',
-                  height: 20
+                  height: 20,
                 }}
               />
             </View>
@@ -148,7 +148,7 @@ class Login extends PureComponent {
                 onChangeText={(text) => {
                   // 动态更新组件内State记录密码
                   this.setState({
-                    password: text
+                    password: text,
                   });
                 }}
                 value={this.state.password}
@@ -167,7 +167,7 @@ class Login extends PureComponent {
                 onPress={() => {
                   // 动态更新组件内State记录记住我
                   this.setState({
-                    isreminber: !this.state.isreminber
+                    isreminber: !this.state.isreminber,
                   });
                 }}
               >
@@ -185,7 +185,7 @@ class Login extends PureComponent {
                 onPress={() => {
                   // 动态更新组件内State记录是否自动登陆
                   this.setState({
-                    autologin: !this.state.autologin
+                    autologin: !this.state.autologin,
                   });
                 }}
               >

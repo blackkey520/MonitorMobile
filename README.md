@@ -34,7 +34,7 @@ git clone https://github.com/blackkey520/MonitorMobile.git
 ```
 - 进入项目目录
 ```bash
-cd .\HNDemo
+cd .\MonitorMobile
 ```
 
 - 依赖安装

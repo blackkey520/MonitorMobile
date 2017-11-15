@@ -12,7 +12,7 @@ export default Model.extend({
     selectedpoint: null,
     legend: [],
     collectpointlist: [],
-    page: 0
+    page: 0,
   },
   reducers: {
   },
@@ -22,19 +22,19 @@ export default Model.extend({
         CollectPointList: ({ params: { PollutantType } }) => {
           dispatch({ type: 'loadcollectpointlist',
             payload: {
-              pollutantType: PollutantType
+              pollutantType: PollutantType,
             },
           });
         },
         MonitorList: ({ params }) => {
           dispatch({ type: 'fetchmore',
-            payload: { page: 0 },
+            payload: { },
           });
         },
         MonitorPoint: ({ params: { dgimn } }) => {
           dispatch({ type: 'selectpoint',
             payload: {
-              dgimn
+              dgimn,
             },
           });
         },
@@ -42,7 +42,7 @@ export default Model.extend({
     },
   },
   effects: {
-    * collectpoint({ payload: { dgimn, callback }, }, { call, update, select }) {
+    * collectpoint({ payload: { dgimn, callback } }, { call, update, select }) {
       const { selectedpoint } = yield select(state => state.point);
       const user = yield loadToken();
       const { data: result } = yield call(pointService.collectpoint, { dgimn, user });
@@ -112,15 +112,22 @@ export default Model.extend({
         ShowToast('该监测点没有绑定污染物');
       }
     },
-    * fetchmore({ payload: { page } }, { put, call, update, select }) {
-      yield put('showLoading', {});
+    * fetchmore({ payload }, { put, call, update, select }) {
       const { pollutanttype } = yield select(state => state.app);
-      const pollutantType = pollutanttype[page].ID;
-      const { data: pointlist } = yield call(pointService.fetchlist,
-        { pollutantType, pageIndex: 1, pageSize: 10000 });
-      const { data: legend } = yield call(pointService.getlegend, { pollutantType });
-      yield update({ pointlist, legend, page });
-      yield put('hideLoading', {});
+      const { page } = yield select(state => state.point);
+      let { loadpage } = payload;
+      if (loadpage !== page) {
+        if (loadpage === undefined) {
+          loadpage = page;
+        }
+        yield put('showLoading', { page: loadpage });
+        const pollutantType = pollutanttype[loadpage].ID;
+        const { data: pointlist } = yield call(pointService.fetchlist,
+          { pollutantType, pageIndex: 1, pageSize: 10000 });
+        const { data: legend } = yield call(pointService.getlegend, { pollutantType });
+        yield update({ pointlist, legend });
+        yield put('hideLoading', {});
+      }
     },
     * loadcollectpointlist({ payload }, { update, callWithLoading }) {
       const user = yield loadToken();

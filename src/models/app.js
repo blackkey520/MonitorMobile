@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Platform } from 'react-native';
 import SplashScreen from 'react-native-splash-screen';
 import JPushModule from 'jpush-react-native';
 import { NavigationActions, ShowToast, delay } from '../utils';
@@ -15,12 +16,12 @@ export default Model.extend({
     contactlist: [],
     badge: 0,
     pollutanttype: [],
-    globalConfig: {}
+    globalConfig: {},
   },
   subscriptions: {
     setupSubscriber({ listen }) {
       listen('ContactList', { type: 'loadcontactlist' });
-    }
+    },
   },
   reducers: {
     /**
@@ -32,11 +33,14 @@ export default Model.extend({
      */
     changebadge(state, { payload }) {
       const badge = state.badge + payload.badge;
-      JPushModule.setBadge(badge, (success) => {
-        console.log(success);
-      });
+      if (Platform.OS === 'ios') {
+        JPushModule.setBadge(badge, (success) => {
+          console.log(success);
+        });
+      }
+
       return { ...state, badge };
-    }
+    },
   },
   effects: {
     /**
@@ -61,7 +65,7 @@ export default Model.extend({
         yield put(
           NavigationActions.reset({
             index: 0,
-            actions: [NavigationActions.navigate({ routeName: 'MainNavigator', params: { unverifiedCount: alarmCount.length, pollutanttype } })],
+            actions: [NavigationActions.navigate({ routeName: 'MainNavigator', params: { } })],
           }),
         );
       }
@@ -83,9 +87,9 @@ export default Model.extend({
      * 登录
      * liz 2017.11.11
      * @param {any} { payload: { username, password } } 
-     * @param {any} { update, call, put } 
+     * @param {any} { call, put } 
      */
-    * login({ payload: { username, password } }, { update, call, put }) {
+    * login({ payload: { username, password } }, { call, put }) {
       if (username === '' || password === '') {
         ShowToast('用户名，密码不能为空');
       } else {
@@ -116,5 +120,5 @@ export default Model.extend({
         yield put(NavigationActions.navigate({ routeName: 'Login' }));
       }
     },
-  }
+  },
 });

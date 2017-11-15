@@ -24,7 +24,7 @@ if (!__DEV__) {
     info: () => {},
     log: () => {},
     warn: () => {},
-    error: () => {}
+    error: () => {},
   };
 }
 const app = dva({
@@ -64,13 +64,13 @@ const app = dva({
         }
       }
     };
-  }
+  },
 });
 registerModels(app);
 const App = app.start(<Router />);
 persistStore(app.getStore(), {
   storage: AsyncStorage,
-  blacklist: ['router']
+  blacklist: ['router'],
 });
 
 // eslint-disable-next-line no-underscore-dangle

@@ -1,6 +1,6 @@
 // import liraries
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, Image, Dimensions } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { List, Button } from 'antd-mobile';
@@ -24,10 +24,11 @@ class Mine extends Component {
     title: '我的',
     tabBarLable: '我的',
     headerBackTitle: null,
+    header: null,
     headerTintColor: '#fff',
     headerStyle: { backgroundColor: '#4f6aea' },
     tabBarIcon: ({ focused, tintColor }) =>
-      <Icon name={'ios-person'} size={26} color={focused ? tintColor : 'gray'} />
+      <Icon name={'ios-person'} size={26} color={focused ? tintColor : 'gray'} />,
   }
   constructor() {
     super();
@@ -70,11 +71,11 @@ class Mine extends Component {
  render() {
    return (
      <View style={{ flex: 1 }}>
-       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', backgroundColor: '#4f6aea', height: 130, }}>
+       <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', backgroundColor: '#4f6aea', height: 130 }}>
          <Image source={require('../../../images/userlogo.png')} style={{ width: 70, height: 70, marginLeft: 20 }} />
          <View style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'space-around', marginLeft: 10 }}>
-           <Text style={{ fontSize: 15, color: '#fff' }}>{this.props.user.User_Name}</Text>
-           <Text style={{ fontSize: 13, color: '#fff', marginTop: 6 }}>{this.props.user.Phone}</Text>
+           <Text style={{ fontSize: 15, color: '#fff' }}>{this.props.user !== null ? this.props.user.User_Name : ''}</Text>
+           <Text style={{ fontSize: 13, color: '#fff', marginTop: 6 }}>{this.props.user !== null ? this.props.user.Phone : ''}</Text>
          </View>
        </View>
 
@@ -99,7 +100,7 @@ class Mine extends Component {
              this.props.dispatch(NavigationActions.navigate({
                routeName: 'CollectPointList',
                params: {
-                 pollutantType: this.props.PollutantType
+                 pollutantType: this.props.PollutantType,
                },
              }));
            }}

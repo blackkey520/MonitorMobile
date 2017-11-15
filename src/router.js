@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { BackHandler, Platform, View, StatusBar } from 'react-native';
 import {
-  addNavigationHelpers
+  addNavigationHelpers,
 } from 'react-navigation';
 import JPushModule from 'jpush-react-native';
 import { connect } from 'react-redux';
@@ -18,7 +18,7 @@ class Router extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      configload: true
+      configload: true,
     };
   }
   async componentWillMount() {
@@ -97,8 +97,8 @@ class Router extends PureComponent {
               pointname: resultjson.PointName,
               alarmbegindate: moment(resultjson.FirstTime).format('YYYY-MM-DD HH:mm:ss'),
               alarmdgimn: resultjson.DGIMN,
-              alarmenddate: moment(resultjson.LastTime).format('YYYY-MM-DD HH:mm:ss')
-            }
+              alarmenddate: moment(resultjson.LastTime).format('YYYY-MM-DD HH:mm:ss'),
+            },
           }));
       }
     });
@@ -148,15 +148,15 @@ class Router extends PureComponent {
           DGIMN: Message.DGIMN,
           FirstTime: Message.FirstOverTime,
           LastTime: Message.AlarmTime,
-          PointName: Message.OutputName
+          PointName: Message.OutputName,
         },
         fireTime: currentDate.getTime() + 1000,
         badge: 0,
         soundName: null,
-        subtitle: subText
+        subtitle: subText,
       });
       this.props.dispatch(createAction('app/changebadge')({
-        badge: 1
+        badge: 1,
       }));
     });
   }

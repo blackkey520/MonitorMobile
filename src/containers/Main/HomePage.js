@@ -75,6 +75,7 @@ class Home extends Component {
   });
 
   handleChangeTab=({ i }) => {
+    debugger;
     this.props.dispatch(createAction('point/fetchmore')({
       pollutantType: this.props.navigation.state.params.pollutanttype[i].ID
     }));

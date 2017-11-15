@@ -28,20 +28,19 @@ export default {
           const payload = yield take(actions);
           const routerState = yield select(state => state.router);
           const navigateInfo = routerReducer(routerState, payload);
-          const currentScreen = getCurrentScreen(navigateInfo);
-          const params = getCurrentParams(navigateInfo);
+          const router = getCurrentScreen(navigateInfo);
           yield put({
             type: 'apply',
             payload,
           });
           Event.emit('RouterChange', {
-            currentScreen,
-            params
+            ...router,
+            type: payload.type,
           });
           // debounce, see https://github.com/react-community/react-navigation/issues/271
-          if (payload.type === 'Navigation/NAVIGATE') {
-            yield call(delay, 500);
-          }
+          // if (payload.type === 'Navigation/NAVIGATE') {
+          //   yield call(delay, 500);
+          // }
         }
       },
       { type: 'watcher' },

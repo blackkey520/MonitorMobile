@@ -21,7 +21,7 @@ export default Model.extend({
             payload: {
               alarmdgimn: DGIMN,
               alarmbegindate,
-              alarmenddate
+              alarmenddate,
             },
           });
         },

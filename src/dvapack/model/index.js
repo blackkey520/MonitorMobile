@@ -11,7 +11,7 @@ const createNestedValueRecuder = (parentKey, value) => (state, { payload }) => {
       : parentState;
     parentState = {
       ...parentState,
-      [key]: value
+      [key]: value,
     };
   } else {
     // 兼容旧版本，如果type不存在，则直接对parent赋值
@@ -20,7 +20,7 @@ const createNestedValueRecuder = (parentKey, value) => (state, { payload }) => {
   return {
     ...state,
     ...payload,
-    [parentKey]: parentState
+    [parentKey]: parentState,
   };
 };
 
@@ -34,8 +34,8 @@ const createNestedRecuder = parentKey => (state, { payload }) => {
     ...state,
     [parentKey]: {
       ...parentState,
-      payload
-    }
+      payload,
+    },
   };
 };
 
@@ -45,7 +45,7 @@ const getDefaultModel = () => ({
     visible: false,
     spinning: false,
     loading: false,
-    confirmLoading: false
+    confirmLoading: false,
   },
   subscriptions: {},
   effects: {},
@@ -62,10 +62,10 @@ const getDefaultModel = () => ({
     updateState(state, { payload }) {
       return {
         ...state,
-        ...payload
+        ...payload,
       };
-    }
-  }
+    },
+  },
 });
 
 /**
@@ -110,18 +110,18 @@ const enhanceSubscriptions = (subscriptions = {}) => {
         } else {
           listeners[pathReg] = action;
         }
-        Event.on('RouterChange', ({ currentScreen, params }) => {
+        Event.on('RouterChange', ({ routeName, params, type }) => {
           Object
             .keys(listeners)
             .forEach((key) => {
               const _pathReg = key;
               const _action = listeners[key];
-              if (currentScreen === _pathReg) {
+              if (routeName === _pathReg && (type === 'Navigation/NAVIGATE' || type === 'Navigation/SET_PARAMS')) {
                 if (typeof _action === 'object') {
                   dispatch(_action);
                 } else if (typeof _action === 'function') {
                   _action({
-                    params
+                    params,
                   });
                 }
               }
@@ -130,7 +130,7 @@ const enhanceSubscriptions = (subscriptions = {}) => {
       };
       subscriber({
         ...props,
-        listen
+        listen,
       });
     };
   }
@@ -164,7 +164,7 @@ const enhanceEffects = (effects = {}) => {
           callWithMessage: createExtraCall(sagaEffects),
           callWithExtra: (serviceFn, args, config) => {
             createExtraCall(sagaEffects, config)(serviceFn, args, config);
-          }
+          },
         };
 
         yield effects[key](action, extraSagaEffects);
@@ -178,7 +178,7 @@ const enhanceEffects = (effects = {}) => {
     return function* putEffect(type, payload) {
       let action = {
         type,
-        payload
+        payload,
       };
       if (arguments.length === 1 && typeof type === 'object') {
         action = arguments[0];
@@ -204,21 +204,21 @@ const enhanceEffects = (effects = {}) => {
         yield put({ type: 'showLoading',
           payload: {
             ...payloadupdate,
-            key
+            key,
           } });
       }
       if (confirmLoading) {
         yield put({ type: 'showConfirmLoading',
           payload: {
             ...payloadupdate,
-            key
+            key,
           } });
       }
       if (spinning) {
         yield put({ type: 'showSpinning',
           payload: {
             ...payloadupdate,
-            key
+            key,
           } });
       }
 
@@ -233,21 +233,21 @@ const enhanceEffects = (effects = {}) => {
           yield put({ type: 'hideLoading',
             payload: {
               ...payloadupdate,
-              key
+              key,
             } });
         }
         if (confirmLoading) {
           yield put({ type: 'hideConfirmLoading',
             payload: {
               ...payloadupdate,
-              key
+              key,
             } });
         }
         if (spinning) {
           yield put({ type: 'hideSpinning',
             payload: {
               ...payloadupdate,
-              key
+              key,
             } });
         }
       }
@@ -285,20 +285,20 @@ function extend(defaults, properties) {
   });
 
   const initialState = {
-    ...model.state
+    ...model.state,
   };
 
   Object.assign(model.reducers, {
     resetState() {
       return {
-        ...initialState
+        ...initialState,
       };
-    }
+    },
   });
 
   return Object.assign(model, { namespace });
 }
 
 export default {
-  extend
+  extend,
 };
