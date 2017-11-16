@@ -144,10 +144,8 @@ class Account extends PureComponent {
            thumb={<Image source={require('../../images/clearcache.png')} style={{ width: 15, height: 15, marginRight: 10 }} />}
            onClick={async () => {
              await global.storage.remove({ key: 'PollutantType' });
-             await global.storage.remove({ key: 'netConfig' });
              await global.storage.remove({ key: 'loginmsg' });
              await global.storage.remove({ key: 'accessToken' });
-             await global.storage.remove({ key: 'globalconfig' });
              ShowToast('清理完成');
            }}
          >

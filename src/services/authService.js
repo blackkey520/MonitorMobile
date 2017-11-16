@@ -14,10 +14,10 @@ export const getcontactlist = async (param) => {
 export const login = async (param) => {
   const body = {
     User_Name: param.username,
-    User_Pwd: param.password
+    User_Pwd: param.password,
   };
   const result = await post(api.system.login, body, null);
-  return result;
+  return result === null ? { data: null } : result;
 };
 
 export const resetPwd = async (param) => {

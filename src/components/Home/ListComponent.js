@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  Platform,
   ListView,
 } from 'react-native';
 import { connect } from 'react-redux';
@@ -82,7 +83,7 @@ class ListCompontent extends PureComponent {
   }
   render() {
     return (
-      <View style={{ height: SCREEN_HEIGHT - 157 }}>
+      <View style={{ height: Platform.OS === 'ios' ? SCREEN_HEIGHT - 160 : SCREEN_HEIGHT - 177 }} >
         {this.props.loading ?
           <LoadingComponent Message="正在加载数据" />
           : <ListView

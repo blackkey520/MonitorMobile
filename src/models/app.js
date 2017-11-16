@@ -98,6 +98,8 @@ export default Model.extend({
         if (user !== null) {
           yield saveToken(user);
           yield put('loadglobalvariable', { user });
+        } else {
+          yield put('hideSpinning', { });
         }
       }
     },

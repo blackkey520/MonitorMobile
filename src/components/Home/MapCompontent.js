@@ -8,14 +8,15 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
-  Image
+  Platform,
+  Image,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { MapView, Marker } from 'react-native-amap3d';
 import { createAction, NavigationActions, FindMapImg } from '../../utils';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-
+const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 @connect(({ point, monitordata }) => ({ pointlist: point.pointlist,
   lastmonitorpoint: monitordata.lastmonitorpoint,
@@ -125,8 +126,8 @@ class MapCompontent extends PureComponent {
                 this.props.dispatch(NavigationActions.navigate({
                   routeName: 'MonitorPoint',
                   params: {
-                    dgimn: item.dgimn
-                  }, }));
+                    dgimn: item.dgimn,
+                  } }));
               }}
               style={{ justifyContent: 'center',
                 height: 25,
@@ -150,12 +151,9 @@ class MapCompontent extends PureComponent {
 
   render() {
     return (
-      <View style={{
-        flex: 1
-      }}
-      >
+      <View style={{ height: Platform.OS === 'ios' ? SCREEN_HEIGHT - 188 : SCREEN_HEIGHT - 205 }}>
         <MapView
-          ref={ref => { this.mapView = ref; }}
+          ref={(ref) => { this.mapView = ref; }}
           rotateEnabled
           tiltEnabled
           style={StyleSheet.absoluteFill}

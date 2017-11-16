@@ -121,7 +121,7 @@ class Mine extends Component {
            <Text style={{ color: '#313131', fontSize: 16 }}>{'修改密码'}</Text>
          </Item>
 
-
+          
          <Item
            arrow="horizontal"
            multipleLine
@@ -132,7 +132,7 @@ class Mine extends Component {
              await global.storage.remove({ key: 'loginmsg' });
              await global.storage.remove({ key: 'accessToken' });
              await global.storage.remove({ key: 'globalconfig' });
-             ShowToast('清理完成');
+             
            }}
          >
            <Text style={{ color: '#313131', fontSize: 16 }}>{'清除缓存'}</Text>
@@ -150,7 +150,7 @@ class Mine extends Component {
              );
            }}
          >
-           <Text style={{ color: '#313131', fontSize: 16 }}>{this.state.progress !== ''
+           <Text style={{ color: '#313131', fontSize: 16 }}>{this.state.progress !== '' && this.state.progress.receivedBytes
              ? `${this.state.progress.receivedBytes}/${this.state.progress.totalBytes}` : '版本更新'}</Text>
          </Item>
        </List>
@@ -172,6 +172,10 @@ class Mine extends Component {
    );
  }
 }
-
+// await global.storage.remove({ key: 'PollutantType' });
+//              await global.storage.remove({ key: 'netConfig' });
+//              await global.storage.remove({ key: 'loginmsg' });
+//              await global.storage.remove({ key: 'accessToken' });
+//              await global.storage.remove({ key: 'globalconfig' });
 // make this component available to the app
 export default Mine;

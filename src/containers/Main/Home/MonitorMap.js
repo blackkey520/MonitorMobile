@@ -75,8 +75,8 @@ class MonitorMap extends Component {
              }));
            }}
            />
-           <View style={{ height: SCREEN_HEIGHT - 41, width: SCREEN_WIDTH }}>
-             <MapCompontent style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }} />
+           <View style={{ height: SCREEN_HEIGHT, width: SCREEN_WIDTH }}>
+             <MapCompontent />
              <View style={{ flexDirection: 'row', width: SCREEN_WIDTH, height: 30 }}>
                {this.renderlegend()}
              </View>
