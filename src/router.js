@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { BackHandler, Platform, View, StatusBar } from 'react-native';
+import { ToastAndroid, BackAndroid, BackHandler, Platform, View, StatusBar } from 'react-native';
 import {
   addNavigationHelpers,
 } from 'react-navigation';
@@ -7,8 +7,8 @@ import JPushModule from 'jpush-react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import SplashScreen from 'react-native-splash-screen';
-import { loadToken, getNetConfig, saveNetConfig, loadNetConfig } from './dvapack/storage';
-import { createAction, NavigationActions, getCurrentScreen } from './utils';
+import { loadToken, getNetConfig, saveNetConfig, loadNetConfig, clearToken } from './dvapack/storage';
+import { createAction, NavigationActions, getCurrentScreen, ShowToast } from './utils';
 import NetConfig from './config/NetConfig.json';
 import ScanNetConfig from './components/Common/ScanNetConfig';
 import AppNavigator from './containers/';
@@ -21,6 +21,7 @@ class Router extends PureComponent {
       configload: true,
     };
   }
+  lastBackPressed=0;
   async componentWillMount() {
     await loadNetConfig();
     const netconfig = await getNetConfig();
@@ -176,11 +177,19 @@ class Router extends PureComponent {
 
   backHandle = () => {
     const currentScreen = getCurrentScreen(this.props.router);
-    if (currentScreen === 'Login') {
-      return true;
-    }
-    if (currentScreen !== 'Home') {
+
+    if (currentScreen.key !== 'MonitorList') {
       this.props.dispatch(NavigationActions.back());
+      return true;
+    } else {
+      const now = Date.now();
+      if (now - this.lastBackPressed < 1500) {
+        BackAndroid.exitApp();
+      } else {
+        clearToken();
+        this.lastBackPressed = now;
+        ToastAndroid.show('再按一次退出应用', 1000);
+      }
       return true;
     }
     return false;

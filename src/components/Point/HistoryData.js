@@ -14,7 +14,7 @@ import {
 import { connect } from 'react-redux';
 import { Modal, SegmentedControl } from 'antd-mobile';
 import moment from 'moment';
-import Calendar from 'react-native-calendar-select';
+import Calendar from '../Common/calendarselect'
 
 import { createAction } from '../../utils';
 import MonitorData from './MonitorData';

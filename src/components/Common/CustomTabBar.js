@@ -9,11 +9,12 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { Badge } from 'antd-mobile';
+import PropTypes from 'prop-types';
 
 class CustomTabBar extends Component {
   static propTypes = {
-    goToPage: React.PropTypes.func, // 跳转到对应tab的方法
-    activeTab: React.PropTypes.number, // 当前被选中的tab下标
+    goToPage: PropTypes.func, // 跳转到对应tab的方法
+    activeTab: PropTypes.number, // 当前被选中的tab下标
   }; // 注意这里有分号
 
   // 组件渲染完毕方法

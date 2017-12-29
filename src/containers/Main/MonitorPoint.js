@@ -1,63 +1,49 @@
 
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 
 import {
   StyleSheet,
   View,
+  ScrollView,
 } from 'react-native';
 import { connect } from 'react-redux';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
-import HistoryData from '../../components/Point/HistoryData';
+import moment from 'moment';
+import MonitorView from '../../components/Point/MonitorView';
 import LoadingComponent from '../../components/Common/LoadingComponent';
-import CustomTabBar from '../../components/Common/CustomTabBar';
-import pointMenu from '../../config/pointMenu.json';
 import PointDetail from '../../components/Point/PointDetail';
+import { createAction } from '../../utils';
 
 @connect(({ point }) => ({ loading: point.loading, selectedpoint: point.selectedpoint }))
-class MonitorPoint extends PureComponent {
+class MonitorPoint extends Component {
     static navigationOptions = ({ navigation, screenProps }) => ({
       headerTitle: '监控点位',
       headerBackTitle: null,
       headerTintColor: '#fff',
-      headerStyle: { backgroundColor: '#4f6aea' }
+      headerStyle: { backgroundColor: '#4f6aea' },
     });
+  // this.props.dispatch(createAction('monitordata/searchdata')({
+  //                       dgimn: this.props.navigation.state.params.dgimn,
+  //                       startDate: moment().add(-10, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+  //                       endDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+  //                       pollutant: this.props.selectedpoint.PollutantTypeInfo[0],
+  //                       dataType: 'realtime',
+  //                     }));
+  // <HistoryData
+  //                   navdgimn={this.props.navigation.state.params.dgimn}
+  //                 />
     render() {
-      const tabnames = [];
-      pointMenu.map((item, key) => {
-        tabnames.push(item.pointMenuName);
-      });
       return (
         <View style={styles.layout}>
           {
             this.props.loading || this.props.selectedpoint === null ?
               <LoadingComponent Message="正在加载数据" />
               :
-              <ScrollableTabView
-                tabBarBackgroundColor={'#fff'}
-                tabBarUnderlineStyle={{ backgroundColor: '#108ee9', height: 1 }}
-                renderTabBar={() => <CustomTabBar tabNames={tabnames} />}
-                removeClippedSubviews={false}
-                initialPage={0}
-                prerenderingSiblingsNumber={1}
-              >
-                {
-                  pointMenu.map((item, key) => {
-                    if (key === 0) {
-                      return (<PointDetail
-                        key={item.pointMenuID}
-                        tabLabel={item.pointMenuName}
-                      />);
-                    } else if (key === 1) {
-                      return (<HistoryData
-                        navdgimn={this.props.navigation.state.params.dgimn}
-                        key={item.pointMenuID}
-                        tabLabel={item.pointMenuName}
-                      />);
-                    }
-                  })
-                }
-              </ScrollableTabView>
+              <ScrollView>
+                <PointDetail />
+                <View style={{ height: 5 }} />
+                <MonitorView />
+              </ScrollView>
           }
         </View>
       );
@@ -67,8 +53,8 @@ class MonitorPoint extends PureComponent {
 
 const styles = StyleSheet.create({
   layout: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 

@@ -4,8 +4,7 @@
 
 import React from 'react';
 import { AppRegistry, AsyncStorage } from 'react-native';
-import { createLogger } from 'redux-logger';
-import { persistStore } from 'redux-persist';
+import { createLogger } from 'redux-logger'; 
 
 import dva from './utils/dva';
 import { ShowToast } from './utils';
@@ -58,7 +57,12 @@ const app = dva({
         url = `${configBak.neturl + api.system.systemstate}`;
         result = yield test(url, {}).then(async data => true, json => false);
         if (result) {
-          yield effect(...args);
+          const { data } = result;
+          if (data === '0') {
+            yield effect(...args);
+          } else {
+            ShowToast('系统正在维护中，请稍后再试');
+          }
         } else {
           ShowToast('网络断开');
         }
@@ -67,11 +71,7 @@ const app = dva({
   },
 });
 registerModels(app);
-const App = app.start(<Router />);
-persistStore(app.getStore(), {
-  storage: AsyncStorage,
-  blacklist: ['router'],
-});
+const App = app.start(<Router />); 
 
 // eslint-disable-next-line no-underscore-dangle
 AppRegistry.registerComponent('MonitorMobile', () => App);

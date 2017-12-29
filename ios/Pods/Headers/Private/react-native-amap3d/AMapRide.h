@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapRide.h
+../../../../../node_modules/react-native-amap3d/ios/navigation/AMapRide.h

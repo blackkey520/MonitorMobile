@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { Toast } from 'antd-mobile';
-import { QRScannerView } from 'ac-qrcode';
+import { QRScannerView } from '../../components/Common/QRCode';
 import { NavigationActions } from '../../utils';
 
  @connect()

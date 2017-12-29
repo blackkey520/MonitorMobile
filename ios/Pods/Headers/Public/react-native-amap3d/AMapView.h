@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapView.h
+../../../../../node_modules/react-native-amap3d/ios/maps/AMapView.h

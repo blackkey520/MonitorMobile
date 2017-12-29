@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @optional
 
 /**
- * @brief 导航模式更新回调
+ * @brief 导航模式更新回调. 从5.3.0版本起,算路失败后导航SDK只对外通知算路失败,SDK内部不再执行停止导航的相关逻辑.因此,当算路失败后,不会收到 driveManager:updateNaviMode: 回调; AMapDriveManager.naviMode 不会切换到 AMapNaviModeNone 状态, 而是会保持在 AMapNaviModeGPS or AMapNaviModeEmulator 状态.
  * @param driveManager 驾车导航管理类
  * @param naviMode 导航模式,参考 AMapNaviMode 值
  */
@@ -125,6 +125,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @param serviceAreaInfos 服务区信息,参考 AMapNaviServiceAreaInfo 类
  */
 - (void)driveManager:(AMapNaviDriveManager *)driveManager updateServiceAreaInfos:(nullable NSArray<AMapNaviServiceAreaInfo *> *)serviceAreaInfos;
+
+/**
+ * @brief 平行道路信息更新回调. 当存在平行路时(AMapNaviParallelRoadStatus.flag != AMapNaviParallelRoadStatusFlagNone),可以调用AMapNaviDriveManager的switchParallelRoad:方法进行平行路切换. since 5.3.0
+ * @param driveManager 驾车导航管理类
+ * @param parallelRoadStatus 平行道路信息,参考 AMapNaviParallelRoadStatus 类
+ */
+- (void)driveManager:(AMapNaviDriveManager *)driveManager updateParallelRoadStatus:(nullable AMapNaviParallelRoadStatus *)parallelRoadStatus;
 
 @end
 

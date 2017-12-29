@@ -6,8 +6,24 @@ import echarts from './echarts.min';
 export default class App extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.option !== this.props.option) {
-      this.refs.chart.reload();
+      // 解决数据改变时页面闪烁的问题
+      this.refs.chart.injectJavaScript(renderChart(nextProps));
     }
+  }
+  // 预防过渡渲染
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    nextProps = nextProps || {};
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length) {
+      return true;
+    }
+    for (const key in nextProps) {
+      if (JSON.stringify(thisProps[key]) != JSON.stringify(nextProps[key])) {
+      // console.log('props', key, thisProps[key], nextProps[key])
+        return true;
+      }
+    }
+    return false;
   }
 
   render() {
@@ -21,8 +37,10 @@ export default class App extends Component {
           injectedJavaScript={renderChart(this.props)}
           style={{
             height: this.props.height || 400,
+            backgroundColor: 'rgba(0,0,0,0)',
           }}
-          source={require('./tpl.html')}
+          //source={require('./tpl.html')}
+          source={{ uri: 'file:///android_asset/tpl.html' }}
         />
       </View>
     );

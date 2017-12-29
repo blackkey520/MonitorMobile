@@ -16,8 +16,8 @@ export default Model.extend({
           dispatch({
             type: 'getfeedbackdetail',
             payload: {
-              verifyID
-            }
+              verifyID,
+            },
           });
         },
       });
@@ -46,5 +46,5 @@ export default Model.extend({
       const { data: alarmdetail } = yield call(AlarmService.getfeddbackalarmdetail, { verifyID });
       yield put('hideLoading', { feedbackdetail, alarmdetail });
     },
-  }
+  },
 });

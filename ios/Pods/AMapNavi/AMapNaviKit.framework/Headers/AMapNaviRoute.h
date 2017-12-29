@@ -141,4 +141,7 @@
 ///路径经过的城市的adcode列表 since 5.1.0
 @property (nonatomic, strong) NSArray<NSNumber *> *routeCityAdcodes;
 
+///路径的所有红绿灯坐标 since 5.3.0
+@property (nonatomic, strong) NSArray<AMapNaviPoint *> *routeTrafficLights;
+
 @end

@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapMultiPoint.h
+../../../../../node_modules/react-native-amap3d/ios/maps/AMapMultiPoint.h

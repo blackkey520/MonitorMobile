@@ -10,6 +10,7 @@ import AlarmDetail from './AlarmDetail';
 import AlarmFeedback from './AlarmFeedback';
 import FeedbackDetail from './FeedbackDetail';
 import ChangePassword from './ChangePassword';
+import HistoryData from './HistoryData';
 
 export default StackNavigator(
   {
@@ -17,14 +18,15 @@ export default StackNavigator(
     MonitorPoint: { screen: MonitorPoint },
     Search: { screen: Search },
     CollectPointList: { screen: CollectPointList },
-    ContactList: { screen: ContactList },
+    ContactList: { screen: ContactList }, 
     QRCodeScreen: { screen: QRCodeScreen },
     Target: { screen: Target },
     AlarmDetail: { screen: AlarmDetail },
     AlarmFeedback: { screen: AlarmFeedback },
     FeedbackDetail: { screen: FeedbackDetail },
     ChangePassword: { screen: ChangePassword },
+    HistoryData: { screen: HistoryData },
   }, {
-    headerMode: 'float'
+    headerMode: 'float',
   }
 );

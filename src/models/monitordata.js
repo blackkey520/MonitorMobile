@@ -15,13 +15,35 @@ export default Model.extend({
     total: 0,
     current: 1,
     pageSize: 40,
-    xAxis: [],
-    yAxis: [],
+    lineData: [],
+  },
+  subscriptions: {
+    setupSubscriber({ dispatch, listen }) {
+      listen({
+        MonitorPoint: ({ params: { dgimn } }) => {
+          dispatch({ type: 'searchlastdata',
+            payload: {
+              dgimn,
+            },
+          });
+        },
+        HistoryData: ({ params: { dgimn, pollutant } }) => {
+          dispatch({ type: 'searchdata',
+            payload: {
+              dgimn,
+              startDate: moment().add(-10, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
+              endDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+              pollutant,
+              dataType: 'realtime',
+            },
+          });
+        },
+      });
+    },
   },
   reducers: {
     loadData(state, { payload }) {
-      const xAxis = state.xAxis;
-      const yAxis = state.yAxis;
+      const lineData = state.lineData;
       const monitordata = state.monitordata;
       payload.monitordata.map((type, i) => {
         let formatTime = '';
@@ -42,10 +64,12 @@ export default Model.extend({
         type.formatTime = formatTime;
         type.formatValue = formatValue;
         monitordata.push(type);
-        xAxis.push(formatTime);
-        yAxis.push(formatValue);
+        lineData.push({
+          x: formatTime,
+          y: formatValue,
+        });
       });
-      return { ...state, ...payload, monitordata, xAxis, yAxis, spinning: false };
+      return { ...state, ...payload, monitordata, lineData, loading: false };
     },
   },
   effects: {
@@ -54,7 +78,7 @@ export default Model.extend({
         yield callWithSpinning(monitordataService.getLastData, { dgimn });
       yield update({ lastmonitorpoint, lastmonitordata });
     },
-    * searchmore({ payload: { current: pageIndex } }, { call, put, select }) {
+    * searchmore({ payload: { current } }, { call, put, select }) {
       const {
         dataType,
         pageSize,
@@ -71,13 +95,13 @@ export default Model.extend({
           },
         },
       } = yield select(state => state.point);
-      yield put('showSpinning', {});
+      yield put('showLoading', {});
       const { data, total } = yield call(monitordataService.searchdatalist,
         { PollutantCode,
           DGIMN,
           BeginTime,
           EndTime,
-          pageIndex,
+          pageIndex: current,
           pageSize,
           dataType });
       yield put('loadData', { dataType, monitordata: data !== null && data.length !== 0 ? data : [], current, total, spinning: true });
@@ -86,7 +110,7 @@ export default Model.extend({
       endDate: EndTime, pollutant,
       dgimn: DGIMN } }, { call, put, select }) {
       const { pageSize } = yield select(state => state.monitordata);
-      yield put('showSpinning', { dataType, BeginTime, EndTime, pollutant, current: 1, monitordata: [], xAxis: [], yAxis: [] });
+      yield put('showLoading', { dataType, BeginTime, EndTime, pollutant, current: 1, monitordata: [], xAxis: [], yAxis: [] });
       const { data, total } = yield call(monitordataService.searchdatalist,
         { PollutantCode: pollutant.PolluntCode,
           DGIMN,

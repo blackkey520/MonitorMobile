@@ -15,14 +15,15 @@ import {
 import pinyin from 'pinyin';
 import heightMsg from './heightMsg';
 import styles from './style';
+import PropTypes from 'prop-types';
 
 let {height, width} = Dimensions.get('window');
 
 export default class AlphabetaList extends React.Component {
     static propTypes = {
-        headHeight: React.PropTypes.number,
-        functionHeight: React.PropTypes.number,
-        scroll: React.PropTypes.func
+        headHeight: PropTypes.number,
+        functionHeight: PropTypes.number,
+        scroll: PropTypes.func
     };
 
     constructor(props) {

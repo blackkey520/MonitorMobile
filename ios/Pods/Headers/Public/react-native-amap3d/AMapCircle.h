@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapCircle.h
+../../../../../node_modules/react-native-amap3d/ios/maps/AMapCircle.h

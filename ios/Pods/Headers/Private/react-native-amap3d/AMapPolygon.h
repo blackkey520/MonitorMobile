@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapPolygon.h
+../../../../../node_modules/react-native-amap3d/ios/maps/AMapPolygon.h

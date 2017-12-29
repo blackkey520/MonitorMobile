@@ -72,6 +72,9 @@ typedef NS_ENUM(NSInteger, AMapNaviDriveViewShowMode)
 ///是否显示转向箭头,默认YES
 @property (nonatomic, assign) BOOL showTurnArrow;
 
+///当显示模式为非锁车模式时，是否在6秒后自动设置为锁车模式，默认为NO. since 5.3.0
+@property (nonatomic, assign) BOOL autoSwitchShowModeToCarPositionLocked;
+
 #pragma mark - MapView
 
 ///是否显示指南针,默认NO

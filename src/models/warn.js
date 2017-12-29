@@ -28,6 +28,9 @@ export default Model.extend({
   effects: {
     * loadwarnlist({ payload: { isfirst, time } }, { callWithLoading, update, select }) {
       let { warnlist } = yield select(state => state.warn);
+      if (isfirst) {
+        yield update({ warnlist: [] });
+      }
       const { data } = yield callWithLoading(AlarmService.loadawaitcheck, { time });
       let getmorewarn = false;
       let fetchtime = moment(time).add(-6, 'days');

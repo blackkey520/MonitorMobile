@@ -18,7 +18,7 @@ import LoadingComponent from '../Common/LoadingComponent';
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
-@connect(({ point }) => ({ loading: point.loading, pointlist: point.pointlist }))
+@connect(({ point }) => ({ spinning: point.spinning, pointlist: point.pointlist }))
 class ListCompontent extends PureComponent {
   constructor(props) {
     super(props);
@@ -84,7 +84,7 @@ class ListCompontent extends PureComponent {
   render() {
     return (
       <View style={{ height: Platform.OS === 'ios' ? SCREEN_HEIGHT - 160 : SCREEN_HEIGHT - 177 }} >
-        {this.props.loading ?
+        {this.props.spinning ?
           <LoadingComponent Message="正在加载数据" />
           : <ListView
             style={{ width: SCREEN_WIDTH }}

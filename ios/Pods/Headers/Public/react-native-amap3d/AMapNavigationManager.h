@@ -1,1 +1,1 @@
-../../../../../node_modules/react-native-amap3d/ios/AMapNavigationManager.h
+../../../../../node_modules/react-native-amap3d/ios/navigation/AMapNavigationManager.h

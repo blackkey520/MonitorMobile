@@ -16,10 +16,10 @@ export default Model.extend({
   subscriptions: {
     setupSubscriber({ dispatch, listen }) {
       listen({
-        AlarmDetail: ({ params: { DGIMN, alarmbegindate, alarmenddate } }) => {
+        AlarmDetail: ({ params: { alarmdgimn, alarmbegindate, alarmenddate } }) => {
           dispatch({ type: 'loadalarmlist',
             payload: {
-              alarmdgimn: DGIMN,
+              alarmdgimn,
               alarmbegindate,
               alarmenddate,
             },
@@ -60,7 +60,7 @@ export default Model.extend({
         alarmcurrent: current });
     },
     * loadalarmlist({ payload: { alarmdgimn, alarmbegindate, alarmenddate } },
-      { callWithLoading, update, select }) {
+      { callWithLoading, select, update }) {
       const { pagesize } = yield select(state => state.alarm);
       const { data, total } = yield callWithLoading(AlarmService.loadalarmlist,
         { dgimn: alarmdgimn,
@@ -68,7 +68,8 @@ export default Model.extend({
           endtime: alarmenddate,
           pageindex: 1,
           pagesize },
-        { alarmdgimn,
+        { alarmlist: [],
+          alarmdgimn,
           alarmbegindate,
           alarmenddate,
           alarmcurrent: 1 });

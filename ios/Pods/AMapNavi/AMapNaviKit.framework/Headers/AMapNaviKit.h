@@ -30,3 +30,4 @@
 #import <AMapNaviKit/AMapNaviTrafficBarView.h>
 
 #import <AMapNaviKit/AMapNaviCompositeManager.h>
+#import <AMapNaviKit/AMapNaviCompositeUserConfig.h>

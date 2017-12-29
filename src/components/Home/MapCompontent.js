@@ -27,9 +27,9 @@ class MapCompontent extends PureComponent {
     let rtnVal;
     if (this.props.lastmonitorpoint != null && this.props.lastmonitorpoint.DGIMN === dgimn) {
       if (this.props.spinning) {
-        rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>{'正在加载中'}</Text></View>;
+        rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>正在加载中</Text></View>;
       } else if (this.props.lastmonitordata.length === 0) {
-        rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>{'没有查询到数据'}</Text></View>;
+        rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>没有查询到数据</Text></View>;
       } else {
         rtnVal = [];
         this.props.lastmonitordata.map((item, key) => {
@@ -60,7 +60,7 @@ class MapCompontent extends PureComponent {
         });
       }
     } else {
-      rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>{'正在加载中'}</Text></View>;
+      rtnVal = <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}><Text style={{ fontSize: 15, color: '#747270' }}>正在加载中</Text></View>;
     }
     return rtnVal;
   }
@@ -80,9 +80,7 @@ class MapCompontent extends PureComponent {
             this.props.dispatch(createAction('monitordata/searchlastdata')({ dgimn: item.dgimn }));
           }}
           icon={() =>
-            (<View style={{ width: 20, height: 20 }}>
-              <Image style={{ width: 20, height: 20 }} source={img} />
-            </View>)
+            (<View style={{ width: 20, height: 20 }}><Image style={{ width: 20, height: 20 }} source={img} /></View>)
           }
           coordinate={{
             latitude: item.latitude,

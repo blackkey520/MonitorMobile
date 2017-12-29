@@ -11,6 +11,14 @@
 #import "MAOverlay.h"
 #import "MALineDrawType.h"
 
+///虚线类型
+typedef NS_ENUM(NSUInteger, MALineDashType) {
+    kMALineDashTypeNone = 0,     ///<不画虚线
+    kMALineDashTypeSquare,       ///<方块样式
+    kMALineDashTypeDot,          ///<圆点样式
+};
+
+
 #define kMAOverlayRendererDefaultStrokeColor [UIColor colorWithRed:0.3 green:0.63 blue:0.89 alpha:0.8]
 #define kMAOverlayRendererDefaultFillColor [UIColor colorWithRed:0.77 green:0.88 blue:0.94 alpha:0.8]
 
@@ -19,7 +27,9 @@
 ///该类是地图覆盖物Renderer的基类, 提供绘制overlay的接口但并无实际的实现（render相关方法只能在重写后的glRender方法中使用）
 @interface MAOverlayRenderer : NSObject {
     @protected
+    GLuint _strokeTextureID;
     BOOL _needsUpdate;
+    BOOL _needsLoadStrokeTexture;
 }
 
 ///delegate 为assign，移除时需要设置为nil。由地图添加时，不要手动设置。如果不是使用mapview进行添加，则需要手动设置。（since 5.1.0）
@@ -34,7 +44,10 @@
 ///缓存的OpenGLES坐标 个数
 @property (nonatomic) NSUInteger glPointCount;
 
-///笔触纹理id, 修改纹理id参考 - (GLuint)loadStrokeTextureImage:(UIImage *)textureImage
+///用于生成笔触纹理id的图片，since 5.3.0
+@property (nonatomic, strong) UIImage *strokeImage;
+
+///笔触纹理id, 修改纹理id参考, 如果strokeImage未指定、尚未加载或加载失败返回0
 @property (nonatomic, readonly) GLuint strokeTextureID;
 
 ///透明度[0，1]，默认为1. 使用MAOverlayRenderer类提供的渲染接口会自动应用此属性。（since 5.1.0）
@@ -153,7 +166,7 @@
  * @param looped       是否闭合, 如polyline会设置NO, polygon会设置YES
  * @param lineJoinType 线连接点样式
  * @param lineCapType  线端点样式
- * @param lineDash     是否是虚线
+ * @param lineDash     虚线类型
  */
 - (void)renderLinesWithPoints:(CGPoint *)points
                    pointCount:(NSUInteger)pointCount
@@ -162,14 +175,14 @@
                        looped:(BOOL)looped
                  LineJoinType:(MALineJoinType)lineJoinType
                   LineCapType:(MALineCapType)lineCapType
-                     lineDash:(BOOL)lineDash;
+                     lineDash:(MALineDashType)lineDash;
 
 /**
  * @brief 使用OpenGLES 按指定纹理绘制线
  * @param points     OpenGLES坐标系点指针, 参考- (CGPoint)glPointForMapPoint:(MAMapPoint)mapPoint, - (CGPoint *)glPointsForMapPoints:(MAMapPoint *)mapPoints count:(NSUInteger)count
  * @param pointCount 点个数
  * @param lineWidth  线OpenGLES支持线宽尺寸, 参考 - (CGFloat)glWidthForWindowWidth:(CGFloat)windowWidth
- * @param textureID  指定的纹理 使用- (void)loadStrokeTextureImage:(UIImage *)textureImage;加载
+ * @param textureID  指定的纹理
  * @param looped     是否闭合, 如polyline会设置NO, polygon会设置YES
  */
 - (void)renderTexturedLinesWithPoints:(CGPoint *)points
@@ -206,7 +219,7 @@
  * @param looped           是否闭合, 如polyline会设置NO, polygon会设置YES
  * @param lineJoinType     线连接点样式
  * @param lineCapType      线端点样式
- * @param lineDash         是否虚线
+ * @param lineDash         虚线类型
  */
 - (void)renderLinesWithPoints:(CGPoint *)points
                    pointCount:(NSUInteger)pointCount
@@ -217,7 +230,7 @@
                        looped:(BOOL)looped
                  LineJoinType:(MALineJoinType)lineJoinType
                   LineCapType:(MALineCapType)lineCapType
-                     lineDash:(BOOL)lineDash;
+                     lineDash:(MALineDashType)lineDash;
 
 
 /**
@@ -241,7 +254,7 @@
  * @param strokeColor        轮廓线颜色
  * @param strokeLineWidth    轮廓线宽。OpenGLES支持线宽尺寸, 参考 - (CGFloat)glWidthForWindowWidth:(CGFloat)windowWidth
  * @param strokeLineJoinType 轮廓线连接点样式
- * @param strokeLineDash     轮廓线是否是虚线
+ * @param strokeLineDash     轮廓虚线类型
  * @param usingTriangleFan   若必为凸多边形输入YES，可能为凹多边形输入NO
  */
 - (void)renderStrokedRegionWithPoints:(CGPoint *)points pointCount:(NSUInteger)pointCount
@@ -249,7 +262,7 @@
                           strokeColor:(UIColor *)strokeColor
                       strokeLineWidth:(CGFloat)strokeLineWidth
                    strokeLineJoinType:(MALineJoinType)strokeLineJoinType
-                       strokeLineDash:(BOOL)strokeLineDash
+                       strokeLineDash:(MALineDashType)strokeLineDash
                      usingTriangleFan:(BOOL)usingTriangleFan;
 
 
@@ -294,7 +307,7 @@
  * @param textureImage 纹理图片（需满足：长宽相等，且宽度值为2的次幂）。若为nil，则清空原有纹理
  * @return openGL纹理ID, 若纹理加载失败返回0
  */
-- (GLuint)loadStrokeTextureImage:(UIImage *)textureImage;
+- (GLuint)loadStrokeTextureImage:(UIImage *)textureImage __attribute__((deprecated("已废弃, 请通过属性strokeImage设置")));
 
 /**
  * @brief 加载纹理图片（since 5.1.0）

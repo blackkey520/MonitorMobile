@@ -1,6 +1,6 @@
 
 
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 
 import {
   StyleSheet,
@@ -10,10 +10,10 @@ import {
   Dimensions,
   FlatList,
   Image,
-  Platform
+  Platform,
 } from 'react-native';
 import { connect } from 'react-redux';
-import Calendar from 'react-native-calendar-select';
+import Calendar from '../../components/Common/calendarselect';
 import moment from 'moment';
 import { Button } from 'antd-mobile';
 
@@ -29,7 +29,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
   alarmcurrent: alarm.alarmcurrent,
   loading: alarm.loading,
   alarmlist: alarm.alarmlist }))
-class AlarmDetail extends PureComponent {
+class AlarmDetail extends Component {
   static navigationOptions = ({ navigation, screenProps }) => ({
     headerTitle: navigation.state.params.pointname,
     headerBackTitle: null,
@@ -41,14 +41,14 @@ class AlarmDetail extends PureComponent {
     this.state = {
       begintime: this.props.navigation.state.params.alarmbegindate,
       endtime: this.props.navigation.state.params.alarmenddate,
-      selected: (new Map(): Map<string, boolean>)
+      selected: (new Map(): Map<string, boolean>),
     };
   }
 
   extraUniqueKey=(item, index) => `index${index}${item}`
   footer=() => {
     if (this.props.loading) {
-      return (<View style={{ height: 50, width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'center', }}>
+      return (<View style={{ height: 50, width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'center' }}>
         <LoadingComponent Message={'正在加载数据'} /></View>);
     }
     return (<View />);
@@ -56,7 +56,7 @@ class AlarmDetail extends PureComponent {
   confirmDate=({ startDate, endDate, startMoment, endMoment }) => {
     this.setState({
       begintime: moment(startDate).format('YYYY-MM-DD'),
-      endtime: moment(endDate).format('YYYY-MM-DD')
+      endtime: moment(endDate).format('YYYY-MM-DD'),
     });
     this.props.dispatch(createAction('alarm/loadalarmlist')({
       alarmdgimn: this.props.navigation.state.params.alarmdgimn,
@@ -88,15 +88,15 @@ class AlarmDetail extends PureComponent {
         });
       }}
     >
-      <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', }}>
-        <View style={{ marginLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+      <View style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ marginLeft: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           {this.state.selected.get(item.ID) ?
             <Image source={require('../../images/checkbox_pressed.png')} style={{ width: 17, height: 17 }} /> :
             <Image source={require('../../images/checkbox_normal.png')} style={{ width: 17, height: 17 }} />
           }
           <Text style={{ marginLeft: 5, fontSize: 15, color: '#37353a' }}>{item.AlarmType === 2 ? '超标报警' : '异常报警'}</Text>
         </View>
-        <View style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', }}>
+        <View style={{ marginRight: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <Image source={require('../../images/alarm_long.png')} style={{ width: 15, height: 15 }} />
           <Text style={{ marginLeft: 5, fontSize: 13, color: '#a4a4a4' }}>{`${item.FirstTime.substring(10, item.FirstTime.length)
           }-${item.AlarmTime.substring(10, item.AlarmTime.length)}`}</Text>
@@ -115,7 +115,7 @@ class AlarmDetail extends PureComponent {
   render() {
     const color = {
       subColor: '#fff',
-      mainColor: '#4c68ea'
+      mainColor: '#4c68ea',
     };
     return (
       <View style={styles.layout}>
@@ -123,7 +123,7 @@ class AlarmDetail extends PureComponent {
           width: SCREEN_WIDTH,
           height: 30,
           backgroundColor: '#f3f3f3',
-          justifyContent: 'center', }}
+          justifyContent: 'center' }}
         >
           <TouchableOpacity
             onPress={() => {
@@ -149,14 +149,14 @@ class AlarmDetail extends PureComponent {
               this.props.dispatch(createAction('alarm/loadalarmlist')({
                 alarmdgimn: this.props.navigation.state.params.alarmdgimn,
                 alarmbegindate: this.state.begintime,
-                alarmenddate: this.state.endtime
+                alarmenddate: this.state.endtime,
               }));
             }}
             onEndReached={(info) => {
               if (this.props.alarmtotal !== 0 && !this.props.loading &&
                 this.props.alarmtotal > this.props.alarmcurrent) {
                 this.props.dispatch(createAction('alarm/loadmorealarmlist')({
-                  current: this.props.alarmcurrent + 1
+                  current: this.props.alarmcurrent + 1,
                 }));
               }
             }}
@@ -190,8 +190,8 @@ class AlarmDetail extends PureComponent {
                     params: {
                       alarmdgimn: this.props.navigation.state.params.alarmdgimn,
                       selected: this.state.selected,
-                      clearselect: this.clearselect
-                    }, }));
+                      clearselect: this.clearselect,
+                    } }));
                 } else {
                   ShowToast('请选择报警记录进行核实');
                 }
@@ -218,7 +218,7 @@ class AlarmDetail extends PureComponent {
 const styles = StyleSheet.create({
   layout: {
     flex: 1,
-    backgroundColor: '#f0f0f0'
-  }
+    backgroundColor: '#f0f0f0',
+  },
 });
 export default AlarmDetail;

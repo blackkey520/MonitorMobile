@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { View } from 'react-native';
 import { Toast } from 'antd-mobile';
-import { QRScannerView } from 'ac-qrcode';
+import { QRScannerView } from '../Common/QRCode';
 import { saveNetConfig } from '../../dvapack/storage';
 // create a component
 class ScanNetConfig extends Component {

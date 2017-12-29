@@ -96,9 +96,9 @@ export const FindMapImg = (imgName) => {
     case 'atmosphere_Over.png':
       return require('../images/atmosphere_Over.png');
       break;
-    case 'atmosphere_Over.gif':
-      return require('../images/atmosphere_Over.gif');
-      break;
+    // case 'atmosphere_Over.gif':
+    //   return require('../images/atmosphere_Over.gif');
+    //   break;
     case 'atmosphere_unOnLine.png':
       return require('../images/atmosphere_unOnLine.png');
       break;
@@ -108,9 +108,9 @@ export const FindMapImg = (imgName) => {
     case 'Dust_exc.png':
       return require('../images/Dust_exc.png');
       break;
-    case 'Dust_Overdata.gif':
-      return require('../images/Dust_Overdata.gif');
-      break;
+    // case 'Dust_Overdata.gif':
+    //   return require('../images/Dust_Overdata.gif');
+    //   break;
     case 'Dust_Unline.png':
       return require('../images/Dust_Unline.png');
       break;
@@ -123,9 +123,9 @@ export const FindMapImg = (imgName) => {
     case 'Exhaust.png':
       return require('../images/Exhaust.png');
       break;
-    case 'Exhaust_Over.gif':
-      return require('../images/Exhaust_Over.gif');
-      break;
+    // case 'Exhaust_Over.gif':
+    //   return require('../images/Exhaust_Over.gif');
+    //   break;
     case 'Exhaust_Over.png':
       return require('../images/Exhaust_Over.png');
       break;
@@ -141,12 +141,12 @@ export const FindMapImg = (imgName) => {
     case 'MiniStation_Over.png':
       return require('../images/MiniStation_Over.png');
       break;
-    case 'MiniStation_Over.gif':
-      return require('../images/MiniStation_Over.gif');
-      break;
-    case 'MiniStation_unOnLine.gif':
-      return require('../images/MiniStation_unOnLine.png');
-      break;
+    // case 'MiniStation_Over.gif':
+    //   return require('../images/MiniStation_Over.gif');
+    //   break;
+    // case 'MiniStation_unOnLine.gif':
+    //   return require('../images/MiniStation_unOnLine.png');
+    //   break;
     case 'MiniStation.png':
       return require('../images/MiniStation.png');
       break;
@@ -156,9 +156,9 @@ export const FindMapImg = (imgName) => {
     case 'Stench_Over.png':
       return require('../images/Stench_Over.png');
       break;
-    case 'Stench_Over.gif':
-      return require('../images/Stench_Over.gif');
-      break;
+    // case 'Stench_Over.gif':
+    //   return require('../images/Stench_Over.gif');
+    //   break;
     case 'Stench_unOnLine.png':
       return require('../images/Stench_unOnLine.png');
       break;
@@ -171,9 +171,9 @@ export const FindMapImg = (imgName) => {
     case 'VOC_Over.png':
       return require('../images/VOC_Over.png');
       break;
-    case 'VOC_Over.gif':
-      return require('../images/VOC_Over.gif');
-      break;
+    // case 'VOC_Over.gif':
+    //   return require('../images/VOC_Over.gif');
+    //   break;
     case 'VOC_unOnLine.png':
       return require('../images/VOC_unOnLine.png');
       break;
@@ -186,12 +186,12 @@ export const FindMapImg = (imgName) => {
     case 'WasteWater_Over.png':
       return require('../images/WasteWater_Over.png');
       break;
-    case 'WasteWater_Over.gif':
-      return require('../images/WasteWater_Over.gif');
-      break;
-    case 'WasteWater_unOnLine.png':
-      return require('../images/WasteWater_unOnLine.png');
-      break;
+    // case 'WasteWater_Over.gif':
+    //   return require('../images/WasteWater_Over.gif');
+    //   break;
+    // case 'WasteWater_unOnLine.png':
+    //   return require('../images/WasteWater_unOnLine.png');
+    //   break;
     case 'WasteWater.png':
       return require('../images/WasteWater.png');
       break;
@@ -201,9 +201,9 @@ export const FindMapImg = (imgName) => {
     case 'WaterQuality_Over.png':
       return require('../images/WaterQuality_Over.png');
       break;
-    case 'WaterQuality_Over.gif':
-      return require('../images/WaterQuality_Over.gif');
-      break;
+    // case 'WaterQuality_Over.gif':
+    //   return require('../images/WaterQuality_Over.gif');
+    //   break;
     case 'WaterQuality_unOnLine.png':
       return require('../images/WaterQuality_unOnLine.png');
       break;
@@ -260,7 +260,7 @@ export const Event = {
         value: {},
         enumerable: false,
         configurable: true,
-        writable: true
+        writable: true,
       });
     }
 
@@ -279,7 +279,7 @@ export const Event = {
         this.handles[arguments[0]][i](arguments[1]);
       }
     }
-  }
+  },
 };
 export const getCurrentScreen = (navigationState) => {
   if (!navigationState) {

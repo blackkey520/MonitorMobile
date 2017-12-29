@@ -36,6 +36,7 @@ class Notification extends Component {
          // 指定单个选项卡的渲染组件
          renderTabBar={() => <CustomTabBar tabBadge={[this.props.unverifiedCount]} tabNames={['待核实', '核实记录']} />}
          initialPage={0}
+         locked
          prerenderingSiblingsNumber={1}
        >
          <WarnList tabLabel="待核实" />

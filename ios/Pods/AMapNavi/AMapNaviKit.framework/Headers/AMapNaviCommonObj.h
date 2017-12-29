@@ -119,6 +119,7 @@ typedef NS_ENUM(NSInteger, AMapNaviIconType)
 ///导航播报类型
 typedef NS_ENUM(NSInteger, AMapNaviSoundType)
 {
+    AMapNaviSoundTypeDefault = -1,                  ///< -1 默认播报(导航播报)
     AMapNaviSoundTypeNaviInfo = 1,                  ///< 1 导航播报
     AMapNaviSoundTypeFrontTraffic = 2,              ///< 2 前方路况
     AMapNaviSoundTypeSurroundingTraffic = 4,        ///< 4 周边路况
@@ -202,6 +203,40 @@ typedef NS_ENUM(NSInteger, AMapNaviRouteStatus)
     AMapNaviRouteStatusSeriousJam,                  ///< 4 严重阻塞
 };
 
+///路径规划时POI点的起终点类型
+typedef NS_ENUM(NSInteger, AMapNaviRoutePlanPOIType)
+{
+    AMapNaviRoutePlanPOITypeStart = 0,              ///< 0 起点
+    AMapNaviRoutePlanPOITypeEnd,                    ///< 1 终点
+    AMapNaviRoutePlanPOITypeWay,                    ///< 2 途径点
+};
+
+///可切换到的平行路类型 since 5.3.0
+typedef NS_ENUM(NSInteger, AMapNaviParallelRoadStatusFlag)
+{
+    AMapNaviParallelRoadStatusFlagNone = 0,         ///< 0 无主辅路可切换
+    AMapNaviParallelRoadStatusFlagAssist = 1,       ///< 1 可切换到辅路
+    AMapNaviParallelRoadStatusFlagMain = 2,         ///< 2 可切换到主路
+};
+
+///导航组件主题皮肤类型 since 5.4.0
+typedef NS_ENUM(NSInteger, AMapNaviCompositeThemeType)
+{
+    AMapNaviCompositeThemeTypeDefault = 0,          ///< 0 蓝色系
+    AMapNaviCompositeThemeTypeLight = 1,            ///< 1 浅色系
+    AMapNaviCompositeThemeTypeDark = 2,             ///< 2 暗色系
+};
+
+///导航过程中提示音的类型 since 5.4.0
+typedef NS_ENUM(NSInteger, AMapNaviRingType)
+{
+    AMapNaviRingTypeNULL = 0,                       ///< 0 无
+    AMapNaviRingTypeReroute = 1,                    ///< 1 偏航重算的提示音
+    AMapNaviRingTypeDing = 100,                     ///< 100 即将到达转向路口时的提示音
+    AMapNaviRingTypeDong = 101,                     ///< 101 导航状态下通过测速电子眼的提示音
+    AMapNaviRingTypeElecDing = 102,                 ///< 102 巡航状态下通过电子眼（所有类型）的提示音
+};
+
 #pragma mark - LaneInfo Image
 
 /**
@@ -244,6 +279,13 @@ FOUNDATION_EXTERN AMapNaviDrivingStrategy ConvertDrivingPreferenceToDrivingStrat
  * @return AMapNaviPoint类对象id
  */
 + (AMapNaviPoint *)locationWithLatitude:(CGFloat)lat longitude:(CGFloat)lon;
+
+/**
+ * @brief 判断点是否与当前点相同
+ * @param aPoint 需要判断的点
+ * @return 两个点是否相同
+ */
+- (BOOL)isEqualToNaviPoint:(AMapNaviPoint *)aPoint;
 
 @end
 
@@ -481,5 +523,15 @@ FOUNDATION_EXTERN AMapNaviDrivingStrategy ConvertDrivingPreferenceToDrivingStrat
 
 ///tips描述，titleType为0或1时才有描述
 @property (nonatomic, strong) NSString *tips;
+
+@end
+
+#pragma mark - AMapNaviParallelRoadStatus
+
+///平行路状态信息 since 5.3.0
+@interface AMapNaviParallelRoadStatus : NSObject
+
+///主辅路标识(存在平行路时,可切换到的平行路类型)
+@property (nonatomic, assign) AMapNaviParallelRoadStatusFlag flag;
 
 @end

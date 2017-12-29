@@ -1,5 +1,4 @@
-import moment from 'moment';
-import { ShowToast, ShowResult } from '../utils';
+import { ShowResult } from '../utils';
 import * as pointService from '../services/pointService';
 import { getUseNetConfig, loadToken } from '../dvapack/storage';
 import { Model } from '../dvapack';
@@ -83,8 +82,9 @@ export default Model.extend({
       yield update({ selectedpoint });
       callback();
     },
-    * selectpoint({ payload: { dgimn } }, { call, put, update, callWithLoading }) {
-      const { data: selectedpoint } = yield callWithLoading(pointService.selectsinglepoint
+    * selectpoint({ payload: { dgimn } }, { call, put, update }) {
+      yield put('showLoading', { selectedpoint: null });
+      const { data: selectedpoint } = yield call(pointService.selectsinglepoint
         , { dgimn, fileLength: 50000, width: 300 });
       const netconfig = getUseNetConfig();
       selectedpoint.img = [];
@@ -100,17 +100,7 @@ export default Model.extend({
           selectedpoint.thumbimg.push(`${netconfig.neturl}/upload/${thumbimgList[key]}`);
         });
       }
-
-      if (selectedpoint.MonitorPointPollutant.length !== 0) {
-        yield update({ selectedpoint });
-        yield put('monitordata/searchdata', { dgimn,
-          startDate: moment().add(-10, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
-          endDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-          pollutant: selectedpoint.PollutantTypeInfo[0],
-          dataType: 'realtime' });
-      } else {
-        ShowToast('该监测点没有绑定污染物');
-      }
+      yield put('hideLoading', { selectedpoint });
     },
     * fetchmore({ payload }, { put, call, update, select }) {
       const { pollutanttype } = yield select(state => state.app);
@@ -120,13 +110,13 @@ export default Model.extend({
         if (loadpage === undefined) {
           loadpage = page;
         }
-        yield put('showLoading', { page: loadpage });
+        yield put('showSpinning', { page: loadpage });
         const pollutantType = pollutanttype[loadpage].ID;
         const { data: pointlist } = yield call(pointService.fetchlist,
           { pollutantType, pageIndex: 1, pageSize: 10000 });
         const { data: legend } = yield call(pointService.getlegend, { pollutantType });
         yield update({ pointlist, legend });
-        yield put('hideLoading', {});
+        yield put('hideSpinning', {});
       }
     },
     * loadcollectpointlist({ payload }, { update, callWithLoading }) {

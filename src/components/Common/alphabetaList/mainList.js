@@ -14,10 +14,11 @@ import {
 import pinyin from 'pinyin';
 import heightMsg from './heightMsg';
 import styles from './style';
+import PropTypes from 'prop-types';
 
 export default class MainList extends React.Component {
     static propTypes = {
-        dataSource: React.PropTypes.object
+        dataSource: PropTypes.object
     };
 
     constructor(props){

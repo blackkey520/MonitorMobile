@@ -18,7 +18,7 @@ export default Model.extend({
           dispatch({ type: 'loadverifiedlist',
             payload: {
               isfirst: true,
-              time: moment().format('YYYY-MM-DD')
+              time: moment().format('YYYY-MM-DD'),
             },
           });
         },
@@ -28,6 +28,9 @@ export default Model.extend({
   effects: {
     * loadverifiedlist({ payload: { isfirst, time } }, { callWithLoading, update, select }) {
       let { verifiedlist } = yield select(state => state.verified);
+      if (isfirst) {
+        yield update({ verifiedlist: [] });
+      }
       const { data } = yield callWithLoading(AlarmService.loadaverifiedlist, { time });
       let getmoreverified = false;
       let fetchtime = moment(time).add(-6, 'days');

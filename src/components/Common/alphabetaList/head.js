@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   Platform
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import pinyin from 'pinyin';
 import heightMsg from './heightMsg';
@@ -21,8 +22,8 @@ import styles from './style';
 
 export default class Head extends React.Component {
     static propTypes = {
-        headHeight: React.PropTypes.number,
-        changeHeadHeight: React.PropTypes.func
+        headHeight: PropTypes.number,
+        changeHeadHeight: PropTypes.func
     };
 
     constructor(props) {

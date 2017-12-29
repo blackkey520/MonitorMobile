@@ -24,15 +24,15 @@ const options = {
   quality: 0.1,
   storageOptions: {
     skipBackup: true,
-    path: 'images'
-  }
+    path: 'images',
+  },
 };
 @connect(({ point }) => ({ selectedpoint: point.selectedpoint }))
 export default class PointDetail extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      collect: false
+      collect: false,
     };
   }
 
@@ -54,7 +54,7 @@ export default class PointDetail extends PureComponent {
               width: 65,
               position: 'absolute',
               top: 10,
-              left: SCREEN_WIDTH - 70
+              left: SCREEN_WIDTH - 70,
             }}
           >
             <TouchableOpacity
@@ -68,14 +68,14 @@ export default class PointDetail extends PureComponent {
                   source={require('../../images/collect_press.png')}
                   style={{
                     width: 25,
-                    height: 25
+                    height: 25,
                   }}
                 />
                 : <Image
                   source={require('../../images/collect_on.png')}
                   style={{
                     width: 25,
-                    height: 25
+                    height: 25,
                   }}
                 />}
             </TouchableOpacity>
@@ -101,7 +101,7 @@ export default class PointDetail extends PureComponent {
                 source={require('../../images/photo_on.png')}
                 style={{
                   width: 25,
-                  height: 25
+                  height: 25,
                 }}
               />
             </TouchableOpacity>
